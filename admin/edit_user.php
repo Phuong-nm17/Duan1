@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: user_management.php");
         exit;
     } else {
-        $error = "Vui lòng nhập đầy đủ thông tin!";
+        $error = "Vui lòng nhập đầy đủ tin!";
     }
 }
 ?>
