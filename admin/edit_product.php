@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: product.php");
         exit;
     } else {
-        $error = "Vui lòng nhập đầy đủ thông tin!";
+        $error = "Vui lòng nhập đầy đủ tin!";
     }
 }
 ?>
