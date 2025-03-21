@@ -7,7 +7,7 @@ class ProductController{
     }
     public function listing(){
        $arr_products = $this->model_product->getAll();
-        //print_r($arr_products);die();//debug dữ liệu
+        //print_r($arr_products);die();//debug dữ liệuxxxxxxxxxxxxxxxxxxxxxxx
         include('views/listing.php');
     }
 }
