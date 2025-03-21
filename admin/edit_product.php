@@ -13,7 +13,7 @@ $stmt->execute([$id]);
 $product = $stmt->fetch();
 
 if (!$product) {
-    die("Sản phẩm không tồn tại!");
+    die("Sản phẩm tồn tại!");
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
