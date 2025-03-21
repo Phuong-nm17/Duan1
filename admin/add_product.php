@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: product.php");
         exit;
     } else {
-        $error = "Vui lòng nhập thông tin và tải lên hình ảnh!";
+        $error = "Vui lòng nhập tin và tải lên hình ảnh!";
     }
 }
 ?>
