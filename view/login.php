@@ -1,3 +1,40 @@
+<?php
+    session_start();
+    require_once '../model/connect.php';
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $username = $_POST['email'];
+        $password = $_POST['password'];
+
+        $stmt = $conn->prepare("SELECT * FROM user WHERE email = ? ");
+        $stmt -> bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt -> get_result();
+
+        if ($result->num_row > 0 ) {
+            $user = $result->fetch_assoc();
+
+            if (password_verify($password, $user('password'))) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_email'] = $user['email'];
+                $_SESSION['loggedin'] = true;
+
+                header("Location: ../view/home/php");
+                exit();
+            }
+            else {
+                echo('Passord is wrong');
+            }
+        }
+        else {
+            echo('Email is wrong');
+        }
+        $stmt -> close();
+        $conn -> close();
+    }
+?>    
+    
+    
     <!DOCTYPE html>
     <html lang="en">
 
@@ -70,10 +107,10 @@
     <body>
         <!-- Topbar Start -->
         <div class="container-fluid">
-            <div class="row align-items-center py-3 px-xl-5">
-                <div class="col-lg-3 d-none d-lg-block">
+            <div class="row align-items-center px-xl-5 py-3">
+                <div class="col-lg-3 d-lg-block d-none">
                     <a href="index.php" class="text-decoration-none">
-                        <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                        <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
                     </a>
                 </div>
             </div>
@@ -83,33 +120,33 @@
         <!-- Page Header Start -->
         <div class="container-fluid bg-secondary mb-5">
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 100px">
-                <h1 class="font-weight-semi-bold text-uppercase mb-2">Login</h1>
+                <h1 class="text-uppercase font-weight-semi-bold mb-2">Login</h1>
             </div>
         </div>
         <!-- Page Header End -->
         <div class="conteiner">
-            <form action="" method="POST" class="login-form center">
+            <form action="" method="POST" class="center login-form">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
+                <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
             </form>
         </div>
-        <div class="mt-4 text-center">
+        <div class="text-center mt-4">
             <p>Or login with:</p>
             <a class="text-dark px-2" href="" class="btn btn-google">
-                <i class="fab fa-google"></i>
+                <i class="fa-google fab"></i>
             </a>
             <a class="text-dark px-2" href="" class="btn btn-facebook">
-                <i class="fab fa-facebook"></i>
+                <i class="fa-facebook fab"></i>
             </a>
             <a class="text-dark px-2" href="" class="btn btn-twitter">
-                <i class="fab fa-twitter"></i>
+                <i class="fa-twitter fab"></i>
             </a>
         </div>
         <!-- Back to Top -->

@@ -6,11 +6,11 @@ if (isset($_GET["act"])) {
         case 'contact':
             include "view/contact.php";
             break;
-        case 'login':
-            include "view/login.php";
-            break;
         case 'register':
             include "view/register.php";
+            break;
+        case 'login':
+            include "view/login.php";
             break;
         case 'cart':
             include "view/cart.php";
