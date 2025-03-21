@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: index.php");
         exit;
     } else {
-        $error = "Sai tên đăng nhập hoặc mật khẩu!";
+        $error = " tên nhập mật khẩu!";
     }
 }
 ?>
