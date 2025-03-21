@@ -3,7 +3,7 @@ session_start();
 
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['admin']) || empty($_SESSION['admin'])) {
-    header("Location: login.php");
+    header("Location: auth/login.php");
     exit;
 }
 

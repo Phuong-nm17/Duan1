@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../model/connect.php';
+require '../../model/connect.php';
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");

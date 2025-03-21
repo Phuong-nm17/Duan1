@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../model/connect.php';
+require '../../model/connect.php';
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
@@ -8,31 +8,34 @@ if (!isset($_SESSION['admin'])) {
 }
 
 $id = $_GET['id'] ?? 0;
-$stmt = $conn->prepare("SELECT * FROM user WHERE id = ?");
+$stmt = $conn->prepare("SELECT * FROM product WHERE id = ?");
 $stmt->execute([$id]);
-$user = $stmt->fetch();
+$product = $stmt->fetch();
 
-if (!$user) {
-    die("Sản phẩm không tồn tại!");
+if (!$product) {
+    die("Sản phẩm tồn tại!");
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $fullname = $_POST['fullname'];
-    $email = $_POST['email'];
-    $phone_number = $_POST['phone_number'];
-    $address = $_POST['address'];
+    $title = $_POST['title'];
+    $price = $_POST['price'];
+    $discount = $_POST['discount'];
+    $thumbnail = $_POST['thumbnail'];
+    $description = $_POST['description'];
+    $color = $_POST['color'];
+    $size = $_POST['size'];
 
-    if (!empty($fullname) && $email > 0) {
+    if (!empty($title) && $price > 0) {
         // if ($image['size'] > 0) {
         // $imageName = time() . '_' . $image['name'];
         // move_uploaded_file($image['tmp_name'], "assets/images/" . $imageName);
-        $stmt = $conn->prepare("UPDATE user SET fullname=?, email=?,phone_number=?, address=? WHERE id=?");
-        $stmt->execute([$fullname, $email, $phone_number, $address, $id]);
+        $stmt = $conn->prepare("UPDATE product SET title=?, price=?,discount=?, thumbnail=?,description=?, color=?, size=? WHERE id=?");
+        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color, $size, $id]);
         // } else {
         // $stmt = $conn->prepare("UPDATE products SET title=?, price=? WHERE id=?");
         // $stmt->execute([$title, $price, $id]);
         // }
-        header("Location: user_management.php");
+        header("Location: product.php");
         exit;
     } else {
         $error = "Vui lòng nhập đầy đủ tin!";
@@ -156,6 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <!-- Sidebar -->
+    <!-- Sidebar -->
     <div id="sidebar">
         <h4>Admin Panel</h4>
 
@@ -190,28 +194,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <div id="content">
-        <h2>Chỉnh sửa thông tin khách hàng</h2>
+        <h2>sửa Sản phẩm</h2>
+        <a href="product.php" class="btn btn-secondary">Quay lại</a>
         <form method="POST" enctype="multipart/form-data" class="mt-3">
             <?php if (!empty($error)) echo "<p class='text-danger'>$error</p>"; ?>
             <div class="mb-3">
-                <label>Họ và tên:</label>
-                <input type="text" name="fullname" class="form-control" value="<?= $user['fullname'] ?>" required>
+                <label>Tên sản phẩm:</label>
+                <input type="text" name="title" class="form-control" value="<?= $product['title'] ?>" required>
             </div>
             <div class="mb-3">
-                <label>email:</label>
-                <input type="email" name="email" class="form-control" value="<?= $user['email'] ?>" required>
+                <label>Giá:</label>
+                <input type="number" name="price" class="form-control" value="<?= $product['price'] ?>" required>
             </div>
             <div class="mb-3">
-                <label>Số điện thoại:</label>
-                <input type="number" name="phone_number" class="form-control" value="<?= $user['phone_number'] ?>" required>
+                <label>Giá discount:</label>
+                <input type="number" name="discount" class="form-control" value="<?= $product['discount'] ?>" required>
             </div>
             <div class="mb-3">
-                <label>Địa chỉ:</label>
-                <input type="text" name="address" class="form-control" value="<?= $user['address'] ?>" required>
+                <label>Hình ảnh:</label>
+                <input type="text" name="thumbnail" class="form-control" value="<?= $product['thumbnail'] ?>" required>
             </div>
-            <button type="submit" class="btn btn-success">chỉnh sửa</button>
+            <div class="mb-3">
+                <label>Mô tả:</label>
+                <input type="text" name="description" class="form-control" value="<?= $product['description'] ?>" required>
+            </div>
+            <div class="mb-3">
+                <label>Màu sắc:</label>
+                <select class="form-select" name="color" value="<?= $product['color'] ?>">
+                    <option value="Black">Black</option>
+                    <option value="White">White</option>
+                    <option value="Green">Green</option>
+                    <option value="Red">Red</option>
+                    <option value="Blue">Blue</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>Kích thước:</label>
+                <select class="form-select" name="size" value="<?= $product['size'] ?>">
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Sửa Sản Phẩm</button>
         </form>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+
+            document.getElementById('toggle-btn').addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                content.classList.toggle('full-width');
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -1,19 +1,10 @@
 <?php
 session_start();
-require '../model/connect.php';
+require '../../model/connect.php';
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit;
-}
-
-$id = $_GET['id'] ?? 0;
-$stmt = $conn->prepare("SELECT * FROM product WHERE id = ?");
-$stmt->execute([$id]);
-$product = $stmt->fetch();
-
-if (!$product) {
-    die("Sản phẩm tồn tại!");
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -26,19 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $size = $_POST['size'];
 
     if (!empty($title) && $price > 0) {
-        // if ($image['size'] > 0) {
         // $imageName = time() . '_' . $image['name'];
-        // move_uploaded_file($image['tmp_name'], "assets/images/" . $imageName);
-        $stmt = $conn->prepare("UPDATE product SET title=?, price=?,discount=?, thumbnail=?,description=?, color=?, size=? WHERE id=?");
-        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color, $size, $id]);
-        // } else {
-        // $stmt = $conn->prepare("UPDATE products SET title=?, price=? WHERE id=?");
-        // $stmt->execute([$title, $price, $id]);
-        // }
+        // move_uploaded_file($image['tmp_name'], "assets/images/" . $thumbnail);
+
+        $stmt = $conn->prepare("INSERT INTO product (title, price,discount, thumbnail, description, color, size) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color, $size]);
+
         header("Location: product.php");
         exit;
     } else {
-        $error = "Vui lòng nhập đầy đủ tin!";
+        $error = "Vui lòng nhập tin và tải lên hình ảnh!";
     }
 }
 ?>
@@ -47,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="vi">
 
 <head>
-    <title>sửa Sản phẩm</title>
+    <title>Thêm Sản phẩm</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body {
@@ -159,7 +147,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <!-- Sidebar -->
-    <!-- Sidebar -->
     <div id="sidebar">
         <h4>Admin Panel</h4>
 
@@ -194,33 +181,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <div id="content">
-        <h2>sửa Sản phẩm</h2>
-        <a href="product.php" class="btn btn-secondary">Quay lại</a>
+        <h2>Thêm Sản phẩm</h2>
         <form method="POST" enctype="multipart/form-data" class="mt-3">
             <?php if (!empty($error)) echo "<p class='text-danger'>$error</p>"; ?>
             <div class="mb-3">
                 <label>Tên sản phẩm:</label>
-                <input type="text" name="title" class="form-control" value="<?= $product['title'] ?>" required>
+                <input type="text" name="title" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label>Giá:</label>
-                <input type="number" name="price" class="form-control" value="<?= $product['price'] ?>" required>
+                <input type="number" name="price" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label>Giá discount:</label>
-                <input type="number" name="discount" class="form-control" value="<?= $product['discount'] ?>" required>
+                <input type="number" name="discount" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label>Hình ảnh:</label>
-                <input type="text" name="thumbnail" class="form-control" value="<?= $product['thumbnail'] ?>" required>
+                <input type="text" name="thumbnail" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label>Mô tả:</label>
-                <input type="text" name="description" class="form-control" value="<?= $product['description'] ?>" required>
+                <input type="text" name="description" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label>Màu sắc:</label>
-                <select class="form-select" name="color" value="<?= $product['color'] ?>">
+                <select class="form-select" name="color">
                     <option value="Black">Black</option>
                     <option value="White">White</option>
                     <option value="Green">Green</option>
@@ -230,7 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="mb-3">
                 <label>Kích thước:</label>
-                <select class="form-select" name="size" value="<?= $product['size'] ?>">
+                <select class="form-select" name="size">
                     <option value="S">S</option>
                     <option value="M">M</option>
                     <option value="L">L</option>
@@ -238,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <option value="XXL">XXL</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-success">Sửa Sản Phẩm</button>
+            <button type="submit" class="btn btn-success">Thêm Sản Phẩm</button>
         </form>
     </div>
     <script>

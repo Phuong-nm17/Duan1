@@ -1,17 +1,22 @@
 <?php
 session_start();
-require '../model/connect.php';
+require '../../model/connect.php';
+
+// Kiểm tra đăng nhập
 if (!isset($_SESSION['admin'])) header("Location: login.php");
 
-$stmt = $conn->query("SELECT * FROM user");
-$user = $stmt->fetchAll();
+// Lấy danh sách sản phẩm
+$stmt = $conn->query("SELECT * FROM product");
+$product = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
-    <title>Danh sách khách hàng</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách sản phẩm</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body {
@@ -136,7 +141,7 @@ $user = $stmt->fetchAll();
         </div>
 
         <div class="menu-item">
-            <a href="#"><i>👤</i> <span>Quản lý khách hàng</span></a>
+            <a href="user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
             <div class="submenu">
                 <a href="user_management.php">Danh sách khách hàng</a>
             </div>
@@ -155,28 +160,35 @@ $user = $stmt->fetchAll();
 
     <!-- Nội dung chính -->
     <div id="content">
-        <h2>Danh sách khách hàng</h2>
+        <h2>Danh sách sản phẩm</h2>
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
                 <tr class="text-center">
                     <th>ID</th>
-                    <th>Họ và tên</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Địa chỉ</th>
+                    <th>Tên</th>
+                    <th>Giá</th>
+                    <th>Giá Discount</th>
+                    <th>Hình ảnh</th>
+                    <th>Mô tả</th>
+                    <th>Màu sắc</th>
+                    <th>Size</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($user as $u): ?>
+                <?php foreach ($product as $p): ?>
                     <tr>
-                        <td><?= $u['id'] ?></td>
-                        <td><?= $u['fullname'] ?></td>
-                        <td><?= $u['email'] ?></td>
-                        <td><?= $u['phone_number'] ?></td>
-                        <td><?= $u['address'] ?></td>
+                        <td><?= $p['id'] ?></td>
+                        <td><?= $p['title'] ?></td>
+                        <td><?= number_format($p['price'], 0, ',', '.') ?> đ</td>
+                        <td><?= number_format($p['discount'], 0, ',', '.') ?> đ</td>
+                        <td><img src="<?= $p['thumbnail'] ?>" width="50"></td>
+                        <td><?= $p['description'] ?></td>
+                        <td><?= $p['color'] ?></td>
+                        <td><?= $p['size'] ?></td>
                         <td>
-                            <a href="edit_user.php?id=<?= $u['id'] ?>" class="btn btn-primary">Sửa</a>
+                            <a href="edit_product.php?id=<?= $p['id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
+                            <a href="delete_product.php?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
