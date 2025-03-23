@@ -10,21 +10,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $conn->prepare("SELECT * FROM user WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch();
-        print_r($user);
         if ($user) {
-            // if (password_verify($password, $user['password'])) {
-                // $_SESSION['id'] = $user['id'];
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
                 header("Location: index.php?act=home");
                 exit();
-            // } else {
-            //     $error = "Sai mật khẩu!";
-            //     print_r($error);
-            // }
+            } else {
+                $error = "Sai mật khẩu!";
+            }
         } else {
             $error = "Email không tồn tại!";
-                print_r($error);
-
         }
     } catch (PDOException $e) {
         die("Lỗi kết nối: " . $e->getMessage());

@@ -151,7 +151,7 @@ try {
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             <a href="index.php?act=login" class="nav-item nav-link">Login</a>
-                            <a href="index.php?act=Register" class="nav-item nav-link">Register</a>
+                            <a href="index.php?act=register" class="nav-item nav-link">Register</a>
                         </div>
                     </div>
                 </nav>

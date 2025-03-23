@@ -1,3 +1,32 @@
+<?php
+session_start();
+require_once(__DIR__ . '/../model/connect.php');
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $fullname = $_POST['fullname'];
+    $email = $_POST['email'];
+    $address = $_POST['address'];
+    $phone_number = $_POST['phone_number'];
+    $password = $_POST['password'];
+    $confirm = $_POST['confirm'];
+
+    if (empty($fullname) || empty($email) || empty($address) || empty($phone_number) || empty($password) || empty($confirm)) {
+        $error = "Vui lòng nhập đầy đủ thông tin!";
+    } elseif ($password !== $confirm) {
+        $error = "Mật khẩu xác nhận không khớp!";
+    } else {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("INSERT INTO user (fullname, email, address, phone_number, password) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$fullname, $email, $address, $phone_number, $hashed_password]);
+
+        header("Location: index.php?act=login");
+        exit;
+    }
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,7 +42,8 @@
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -77,34 +107,35 @@
         </div>
     </div>
     <!-- Page Header End -->
-     
+
     <div class="conteiner">
-        <form class="register-form">
+        <form class="register-form" method="POST">
             <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                <label for="username" class="form-label">Fullname</label>
+                <input type="text" class="form-control" name="fullname" placeholder="Enter your username" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
             </div>
             <div class="mb-3">
                 <label for="address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="address" placeholder="Enter your address" required>
+                <input type="text" class="form-control" name="address" placeholder="Enter your address" required>
             </div>
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone number</label>
-                <input type="number" class="form-control" id="phone" placeholder="Enter your phone number" required>
+                <input type="number" class="form-control" name="phone_number" placeholder="Enter your phone number"
+                    required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
             </div>
             <div class="mb-3">
                 <label for="confirm-password" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your password" required>
+                <input type="password" class="form-control" name="confirm" placeholder="Confirm your password" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Register</button>
+            <button type="submit" name="submit" class="btn btn-primary w-100">Register</button>
         </form>
     </div>
 
