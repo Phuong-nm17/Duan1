@@ -144,7 +144,7 @@ try {
 
 
     <!-- Subscribe Start -->
-    <div class="container-fluid bg-secondary my-5">
+    <!-- <div class="container-fluid bg-secondary my-5">
         <div class="row justify-content-md-center px-xl-5 py-5">
             <div class="col-12 col-md-6 py-5">
                 <div class="text-center mb-2 pb-2">
@@ -161,11 +161,11 @@ try {
                 </form>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Subscribe End -->
 
     <!-- Vendor Start -->
-    <div class="container-fluid py-5">
+    <!-- <div class="container-fluid py-5">
         <div class="row px-xl-5">
             <div class="col">
                 <div class="owl-carousel vendor-carousel">
@@ -196,5 +196,5 @@ try {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- Vendor End -->

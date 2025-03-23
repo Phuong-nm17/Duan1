@@ -148,7 +148,7 @@ try {
                 </button>
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="index.php?act=home" class="nav-item nav-link active">Home</a>
                         <a href="index.php?act=ProductList" class="nav-item nav-link">Shop</a>
                         <a href="index.php?act=ProductDetail" class="nav-item nav-link">Shop Detail</a>
                         <div class="nav-item dropdown">
@@ -211,3 +211,19 @@ try {
     </div>
 </div>
 <!-- Products End -->
+      <!-- Back to Top -->
+      <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="view/lib/easing/easing.min.js"></script>
+<script src="view/lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Contact Javascript File -->
+<script src="view/mail/jqBootstrapValidation.min.js"></script>
+<script src="view/mail/contact.js"></script>
+
+<!-- Template Javascript -->
+<script src="view/js/main.js"></script>

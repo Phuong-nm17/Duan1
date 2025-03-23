@@ -170,7 +170,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <a href="add_product.php">Thêm sản phẩm</a>
             </div>
         </div>
-
+        <div class="menu-item">
+            <a href="categories.php"><i>📦</i> <span>Quản lý danh mục</span></a>
+            <div class="submenu">
+                <a href="categories.php">Danh sách danh mục</a>
+                <a href="add_categories.php">Thêm danh mục</a>
+            </div>
+        </div>
         <div class="menu-item">
             <a href="user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
             <div class="submenu">

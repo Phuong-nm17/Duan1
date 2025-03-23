@@ -6,6 +6,11 @@ if (isset($_GET["act"])) {
         case 'contact':
             include "view/contact.php";
             break;
+        case 'home':
+            include "view/header.php";
+            include "view/home.php";
+            include "view/footer.php";
+            break;
         case 'register':
             include "view/register.php";
             break;
@@ -17,16 +22,20 @@ if (isset($_GET["act"])) {
             break;
         case 'ProductList':
             include "view/ProductList.php";
+            include "view/footer.php";
             break;
         case 'ProductDetail':
             include "view/ProductDetail.php";
+            include "view/footer.php";
             break;
         default:
             include "view/home.php";
+            
     }
 } else {
     include "view/header.php";
     include "view/home.php";
+    include "view/footer.php";
 }
 
-// include "view/footer.php";
+

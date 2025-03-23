@@ -8,25 +8,17 @@ if (!isset($_SESSION['admin'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = $_POST['title'];
-    $price = $_POST['price'];
-    $discount = $_POST['discount'];
-    $thumbnail = $_POST['thumbnail'];
-    $description = $_POST['description'];
-    $color = $_POST['color'];
-    $size = $_POST['size'];
+    $name = $_POST['name'];
 
-    if (!empty($title) && $price > 0) {
-        // $imageName = time() . '_' . $image['name'];
-        // move_uploaded_file($image['tmp_name'], "assets/images/" . $thumbnail);
+    if (!empty($name)) {
+       
+        $stmt = $conn->prepare("INSERT INTO category (name) VALUES (?)");
+        $stmt->execute([$name]);
 
-        $stmt = $conn->prepare("INSERT INTO product (title, price,discount, thumbnail, description, color, size) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color, $size]);
-
-        header("Location: product.php");
+        header("Location: categories.php");
         exit;
     } else {
-        $error = "Vui lòng nhập đủ thông tin và tải lên hình ảnh!";
+        $error = "Vui lòng nhập tên!";
     }
 }
 ?>
@@ -35,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="vi">
 
 <head>
-    <title>Thêm Sản phẩm</title>
+    <title>Thêm danh mục</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body {
@@ -129,9 +121,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 20px;
             cursor: pointer;
         }
-
-        /* Nội dung chính */
-        #content {
+         /* Nội dung chính */
+         #content {
             margin-left: 250px;
             /* Để tránh bị sidebar che */
             width: calc(100% - 250px);
@@ -142,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         #content.full-width {
             margin-left: 300px;
         }
+        
     </style>
 </head>
 
@@ -187,50 +179,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <div id="content">
-        <h2>Thêm Sản phẩm</h2>
+        <h2>Thêm danh mục </h2>
         <form method="POST" enctype="multipart/form-data" class="mt-3">
             <?php if (!empty($error)) echo "<p class='text-danger'>$error</p>"; ?>
             <div class="mb-3">
-                <label>Tên sản phẩm:</label>
-                <input type="text" name="title" class="form-control" required>
+                <label>Tên danh mục :</label>
+                <input type="text" name="name" class="form-control" required>
             </div>
-            <div class="mb-3">
-                <label>Giá:</label>
-                <input type="number" name="price" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Giá discount:</label>
-                <input type="number" name="discount" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Hình ảnh:</label>
-                <input type="text" name="thumbnail" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Mô tả:</label>
-                <input type="text" name="description" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Màu sắc:</label>
-                <select class="form-select" name="color">
-                    <option value="Black">Black</option>
-                    <option value="White">White</option>
-                    <option value="Green">Green</option>
-                    <option value="Red">Red</option>
-                    <option value="Blue">Blue</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label>Kích thước:</label>
-                <select class="form-select" name="size">
-                    <option value="S">S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="XXL">XXL</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-success">Thêm Sản Phẩm</button>
+            <button type="submit" class="btn btn-success">Thêm danh mục </button>
         </form>
     </div>
     <script>

@@ -2,35 +2,13 @@
 session_start();
 require '../model/connect.php';
 
-if (!isset($_SESSION['admin'])) {
-    header("Location: login.php");
-    exit;
-}
+// Kiểm tra đăng nhập
+if (!isset($_SESSION['admin'])) header("Location: login.php");
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = $_POST['title'];
-    $price = $_POST['price'];
-    $discount = $_POST['discount'];
-    $thumbnail = $_POST['thumbnail'];
-    $description = $_POST['description'];
-    $color = $_POST['color'];
-    $size = $_POST['size'];
-
-    if (!empty($title) && $price > 0) {
-        // $imageName = time() . '_' . $image['name'];
-        // move_uploaded_file($image['tmp_name'], "assets/images/" . $thumbnail);
-
-        $stmt = $conn->prepare("INSERT INTO product (title, price,discount, thumbnail, description, color, size) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color, $size]);
-
-        header("Location: product.php");
-        exit;
-    } else {
-        $error = "Vui lòng nhập đủ thông tin và tải lên hình ảnh!";
-    }
-}
+// Lấy danh sách sản phẩm
+$stmt = $conn->query("SELECT * FROM category");
+$category = $stmt->fetchAll();
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -185,65 +163,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <a href="logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
     </div>
-
+    <!-- noi dung chinh -->
     <div id="content">
-        <h2>Thêm Sản phẩm</h2>
-        <form method="POST" enctype="multipart/form-data" class="mt-3">
-            <?php if (!empty($error)) echo "<p class='text-danger'>$error</p>"; ?>
-            <div class="mb-3">
-                <label>Tên sản phẩm:</label>
-                <input type="text" name="title" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Giá:</label>
-                <input type="number" name="price" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Giá discount:</label>
-                <input type="number" name="discount" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Hình ảnh:</label>
-                <input type="text" name="thumbnail" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Mô tả:</label>
-                <input type="text" name="description" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Màu sắc:</label>
-                <select class="form-select" name="color">
-                    <option value="Black">Black</option>
-                    <option value="White">White</option>
-                    <option value="Green">Green</option>
-                    <option value="Red">Red</option>
-                    <option value="Blue">Blue</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label>Kích thước:</label>
-                <select class="form-select" name="size">
-                    <option value="S">S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="XXL">XXL</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-success">Thêm Sản Phẩm</button>
-        </form>
+        <h2>Danh sách danh mục</h2>
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr class="text-center">
+                    <th>ID</th>
+                    <th>Tên</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($category as $cat): ?>
+                    <tr>
+                        <td><?= $cat['id'] ?></td>
+                        <td><?= $cat['name'] ?></td>
+                        <td>
+                            <a href="edit_categories.php?id=<?= $cat['id'] ?>" class="btn btn-primary btn-sm">Sửa</a>
+                            <a href="dele_categories.php?id=<?= $cat['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const sidebar = document.getElementById('sidebar');
-            const content = document.getElementById('content');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        const toggleBtn = document.getElementById('toggle-btn');
 
-            document.getElementById('toggle-btn').addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                content.classList.toggle('full-width');
-            });
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('full-width');
         });
     </script>
-</body>
+    </body>
 
 </html>
