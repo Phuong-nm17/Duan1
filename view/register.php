@@ -69,8 +69,6 @@
 </head>
 
 <body>
-    <!-- Topbar Start -->
-    <!-- Topbar End -->
 
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
@@ -79,6 +77,7 @@
         </div>
     </div>
     <!-- Page Header End -->
+     
     <div class="conteiner">
         <form class="register-form">
             <div class="mb-3">
