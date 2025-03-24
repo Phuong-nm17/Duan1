@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../model/connect.php';
+require '../../model/connect.php';
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
@@ -8,8 +8,8 @@ if (!isset($_SESSION['admin'])) {
 }
 
 $id = $_GET['id'] ?? 0;
-$stmt = $conn->prepare("DELETE FROM category WHERE id = ?");
+$stmt = $conn->prepare("DELETE FROM product WHERE id = ?");
 $stmt->execute([$id]);
 
-header("Location: categories.php");
+header("Location: product.php");
 exit;

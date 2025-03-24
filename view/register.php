@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $conn->prepare("INSERT INTO user (fullname, email, address, phone_number, password) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$fullname, $email, $address, $phone_number, $hashed_password]);
 
-        header("Location: index.php?act=home");
+        header("Location: index.php?act=login");
         exit;
     }
 }
@@ -99,8 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <!-- Topbar Start -->
-    <!-- Topbar End -->
 
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
@@ -109,6 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
     <!-- Page Header End -->
+
     <div class="conteiner">
         <form class="register-form" method="POST">
             <div class="mb-3">

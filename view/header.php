@@ -31,7 +31,7 @@ try {
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -42,7 +42,7 @@ try {
     <!-- Customized Bootstrap Stylesheet -->
     <link href="view/css/style.css" rel="stylesheet">
 
-    
+
 </head>
 
 <body>
@@ -120,11 +120,11 @@ try {
                     <i class="fa fa-angle-down text-dark"></i>
                 </a>
                 <nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
-                <div class="navbar-nav w-100 overflow-hidden" style="height: 410px">
-                <?php foreach ($category as $cat) : ?>
-                    <a href="" class="nav-item nav-link"><?= $cat['name'] ?></a>
-                <?php endforeach; ?>
-                </div>
+                    <div class="navbar-nav w-100 overflow-hidden" style="height: 410px">
+                        <?php foreach ($category as $cat) : ?>
+                            <a href="" class="nav-item nav-link"><?= $cat['name'] ?></a>
+                        <?php endforeach; ?>
+                    </div>
                 </nav>
             </div>
             <div class="col-lg-9">
@@ -193,19 +193,19 @@ try {
         </div>
     </div>
     <!-- Navbar End -->
-     <!-- Back to Top -->
+    <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
 
-<!-- JavaScript Libraries -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-<script src="view/lib/easing/easing.min.js"></script>
-<script src="view/lib/owlcarousel/owl.carousel.min.js"></script>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="view/lib/easing/easing.min.js"></script>
+    <script src="view/lib/owlcarousel/owl.carousel.min.js"></script>
 
-<!-- Contact Javascript File -->
-<script src="view/mail/jqBootstrapValidation.min.js"></script>
-<script src="view/mail/contact.js"></script>
+    <!-- Contact Javascript File -->
+    <script src="view/mail/jqBootstrapValidation.min.js"></script>
+    <script src="view/mail/contact.js"></script>
 
-<!-- Template Javascript -->
-<script src="view/js/main.js"></script>
+    <!-- Template Javascript -->
+    <script src="view/js/main.js"></script>
