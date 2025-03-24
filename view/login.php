@@ -6,31 +6,8 @@
         $username = $_POST['email'];
         $password = $_POST['password'];
 
-        $stmt = $conn->prepare("SELECT * FROM user WHERE email = ? ");
-        $stmt -> bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt -> get_result();
+        $stmt = $conn->prepare("SELECT * FROM user WHERE email = ?  AND password = ? ");
 
-        if ($result->num_row > 0 ) {
-            $user = $result->fetch_assoc();
-
-            if (password_verify($password, $user('password'))) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_email'] = $user['email'];
-                $_SESSION['loggedin'] = true;
-
-                header("Location: ../view/home/php");
-                exit();
-            }
-            else {
-                echo('Passord is wrong');
-            }
-        }
-        else {
-            echo('Email is wrong');
-        }
-        $stmt -> close();
-        $conn -> close();
     }
 ?>    
     
