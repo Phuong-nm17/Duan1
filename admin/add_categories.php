@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: categories.php");
         exit;
     } else {
-        $error = "Vui lòng nhập tên!";
+        $error = "Vui lòng nhập tên danh mục !";
     }
 }
 ?>
