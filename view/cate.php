@@ -5,10 +5,14 @@ require_once(__DIR__ . '/../model/connect.php');
 
 try {
 
-    $sql = "SELECT * FROM product;";
-
+    $sql = "  SELECT product.id AS product_id, product.title, product.price, product.thumbnail, product.discount, 
+               category.name
+        FROM product 
+        JOIN category ON product.category_id = category.id
+";
     $stmt = $conn->prepare($sql);
 
+    $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
     $stmt->execute();
 
     $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -166,17 +170,17 @@ try {
                 </div>
             </nav>
         </div>
-    </div>
+</div>
 </div>
 <!-- Navbar End -->
 <!-- Page Header Start -->
 <div class="container-fluid bg-secondary mb-5">
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-        <h1 class="font-weight-semi-bold text-uppercase mb-3">Shop</h1>
+        <h1 class="font-weight-semi-bold text-uppercase mb-3"><?= $category[0]['name'] ?? 'Category' ?></h1>
         <div class="d-inline-flex">
             <p class="m-0"><a href="">Home</a></p>
             <p class="m-0 px-2">-</p>
-            <p class="m-0">Shop</p>
+            <p class="m-0"><?= $category[0]['name'] ?? 'Category' ?></p>
         </div>
     </div>
 </div>
@@ -184,9 +188,10 @@ try {
 <!-- Products start -->
 <div class="container-fluid pt-5">
     <div class="text-center mb-4">
-        <h2 class="section-title px-5"><span class="px-2">Shop</span></h2>
+        <h2 class="section-title px-5"><span class="px-2"></span></h2>
     </div>
     <div class="row px-xl-5 pb-3">
+        <?php if (!empty($product)) : ?>
         <?php foreach ($product as $p) : ?>
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="card product-item border-0 mb-4">
@@ -207,6 +212,9 @@ try {
                 </div>
             </div>
         <?php endforeach; ?>
+        <?php else : ?>
+    <p class="text-center">Không có sản phẩm nào trong danh mục này.</p>
+<?php endif; ?>
     </div>
 </div>
 <!-- Products End -->
