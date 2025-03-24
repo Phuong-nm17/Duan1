@@ -4,17 +4,25 @@ require_once(__DIR__ . '/../model/connect.php');
 
 
 try {
+    $category_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
     $sql = "  SELECT product.id AS product_id, product.title, product.price, product.thumbnail, product.discount, 
                category.name
         FROM product 
         JOIN category ON product.category_id = category.id
 ";
+
+    if ($category_id > 0) {
+        $sql .= " WHERE product.category_id = :category_id";
+    }
+    
     $stmt = $conn->prepare($sql);
-
-    $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
+    
+    if ($category_id > 0) {
+        $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
+    }
+    
     $stmt->execute();
-
     $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     die($e->getMessage());
@@ -136,7 +144,7 @@ try {
             <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                 <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
                 <?php foreach ($category as $cat) : ?>
-                    <a href="" class="nav-item nav-link"><?= $cat['name'] ?></a>
+                    <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
                 <?php endforeach; ?>
                     </div>
             </nav>
@@ -176,11 +184,11 @@ try {
 <!-- Page Header Start -->
 <div class="container-fluid bg-secondary mb-5">
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-        <h1 class="font-weight-semi-bold text-uppercase mb-3"><?= $category[0]['name'] ?? 'Category' ?></h1>
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">  <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></h1>
         <div class="d-inline-flex">
             <p class="m-0"><a href="">Home</a></p>
             <p class="m-0 px-2">-</p>
-            <p class="m-0"><?= $category[0]['name'] ?? 'Category' ?></p>
+            <p class="m-0"> <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></p>
         </div>
     </div>
 </div>
@@ -206,7 +214,7 @@ try {
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                    <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
                         <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
                     </div>
                 </div>
