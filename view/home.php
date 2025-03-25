@@ -178,7 +178,7 @@ try {
                 <div class="d-flex card-footer bg-light border justify-content-between">
                     <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
                             class="text-primary fa-eye fas mr-1"></i>View Detail</a>
-                    <a href="" class="btn btn-sm p-0 text-dark"><i
+                    <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
                             class="text-primary fa-shopping-cart fas mr-1"></i>Add To Cart</a>
                 </div>
             </div>
