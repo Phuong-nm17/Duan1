@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../model/connect.php';
+require '../../model/connect.php';
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
@@ -15,9 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
 
     if (!empty($name)) {
-       
+
         $stmt = $conn->prepare("UPDATE category SET name=? WHERE id=?");
-        $stmt->execute([$name,$id]);
+        $stmt->execute([$name, $id]);
 
         header("Location: categories.php");
         exit;
@@ -143,7 +143,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <!-- Sidebar -->
-    <!-- Sidebar -->
     <div id="sidebar">
         <h4>Admin Panel</h4>
 
@@ -152,23 +151,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="menu-item">
-            <a href="product.php"><i>📦</i> <span>Quản lý sản phẩm</span></a>
+            <a href="../product/product.php"><i>📦</i> <span>Quản lý sản phẩm</span></a>
             <div class="submenu">
-                <a href="product.php">Danh sách sản phẩm</a>
-                <a href="add_product.php">Thêm sản phẩm</a>
+                <a href="../product/product.php">Danh sách sản phẩm</a>
+                <a href="../product/add_product.php">Thêm sản phẩm</a>
             </div>
         </div>
         <div class="menu-item">
-            <a href="categories.php"><i>📦</i> <span>Quản lý danh mục</span></a>
+            <a href="../category/categories.php"><i>📦</i> <span>Quản lý danh mục</span></a>
             <div class="submenu">
-                <a href="categories.php">Danh sách danh mục</a>
-                <a href="add_categories.php">Thêm danh mục</a>
+                <a href="../category/categories.php">Danh sách danh mục</a>
+                <a href="../category/add_categories.php">Thêm danh mục</a>
             </div>
         </div>
         <div class="menu-item">
-            <a href="user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
+            <a href="../user/user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
             <div class="submenu">
-                <a href="user_management.php">Danh sách khách hàng</a>
+                <a href="../user/user_management.php">Danh sách khách hàng</a>
             </div>
         </div>
 
@@ -187,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h2>sửa danh mục</h2>
         <a href="categories.php" class="btn btn-secondary">Quay lại</a>
         <form method="POST" class="mt-3">
-            
+
             <div class="mb-3">
                 <label>Tên danh mục:</label>
                 <input type="text" name="name" class="form-control" value="<?= $category['name'] ?>" required>

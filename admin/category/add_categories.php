@@ -1,17 +1,33 @@
 <?php
 session_start();
-require '../model/connect.php';
-if (!isset($_SESSION['admin'])) header("Location: login.php");
+require '../../model/connect.php';
 
-$stmt = $conn->query("SELECT * FROM user");
-$user = $stmt->fetchAll();
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'];
+
+    if (!empty($name)) {
+
+        $stmt = $conn->prepare("INSERT INTO category (name) VALUES (?)");
+        $stmt->execute([$name]);
+
+        header("Location: categories.php");
+        exit;
+    } else {
+        $error = "Vui lòng nhập tên danh mục !";
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
-    <title>Danh sách khách hàng</title>
+    <title>Thêm danh mục</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body {
@@ -26,6 +42,8 @@ $user = $stmt->fetchAll();
             color: white;
             padding: 20px;
             position: fixed;
+            left: 0;
+            top: 0;
             transition: width 0.3s ease-in-out;
             overflow: hidden;
         }
@@ -106,14 +124,15 @@ $user = $stmt->fetchAll();
 
         /* Nội dung chính */
         #content {
-            margin-left: 260px;
-            width: 100%;
+            margin-left: 250px;
+            /* Để tránh bị sidebar che */
+            width: calc(100% - 250px);
             padding: 20px;
-            transition: margin-left 0.3s ease-in-out;
+            transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
         }
 
         #content.full-width {
-            margin-left: 90px;
+            margin-left: 300px;
         }
     </style>
 </head>
@@ -128,24 +147,23 @@ $user = $stmt->fetchAll();
         </div>
 
         <div class="menu-item">
-            <a href="product.php"><i>📦</i> <span>Quản lý sản phẩm</span></a>
+            <a href="../product/product.php"><i>📦</i> <span>Quản lý sản phẩm</span></a>
             <div class="submenu">
-                <a href="product.php">Danh sách sản phẩm</a>
-                <a href="add_product.php">Thêm sản phẩm</a>
+                <a href="../product/product.php">Danh sách sản phẩm</a>
+                <a href="../product/add_product.php">Thêm sản phẩm</a>
             </div>
         </div>
         <div class="menu-item">
-            <a href="categories.php"><i>📦</i> <span>Quản lý danh mục</span></a>
+            <a href="../category/categories.php"><i>📦</i> <span>Quản lý danh mục</span></a>
             <div class="submenu">
-                <a href="categories.php">Danh sách danh mục</a>
-                <a href="add_categories.php">Thêm danh mục</a>
+                <a href="../category/categories.php">Danh sách danh mục</a>
+                <a href="../category/add_categories.php">Thêm danh mục</a>
             </div>
         </div>
-
         <div class="menu-item">
-            <a href="#"><i>👤</i> <span>Quản lý khách hàng</span></a>
+            <a href="../user/user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
             <div class="submenu">
-                <a href="user_management.php">Danh sách khách hàng</a>
+                <a href="../user/user_management.php">Danh sách khách hàng</a>
             </div>
         </div>
 
@@ -160,45 +178,27 @@ $user = $stmt->fetchAll();
         <a href="logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
     </div>
 
-    <!-- Nội dung chính -->
+
     <div id="content">
-        <h2>Danh sách khách hàng</h2>
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark">
-                <tr class="text-center">
-                    <th>ID</th>
-                    <th>Họ và tên</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Địa chỉ</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($user as $u): ?>
-                    <tr>
-                        <td><?= $u['id'] ?></td>
-                        <td><?= $u['fullname'] ?></td>
-                        <td><?= $u['email'] ?></td>
-                        <td><?= $u['phone_number'] ?></td>
-                        <td><?= $u['address'] ?></td>
-                        <td>
-                            <a href="edit_user.php?id=<?= $u['id'] ?>" class="btn btn-primary">Sửa</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <h2>Thêm danh mục </h2>
+        <form method="POST" enctype="multipart/form-data" class="mt-3">
+            <?php if (!empty($error)) echo "<p class='text-danger'>$error</p>"; ?>
+            <div class="mb-3">
+                <label>Tên danh mục :</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Thêm danh mục </button>
+        </form>
     </div>
-
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const content = document.getElementById('content');
-        const toggleBtn = document.getElementById('toggle-btn');
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
 
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            content.classList.toggle('full-width');
+            document.getElementById('toggle-btn').addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                content.classList.toggle('full-width');
+            });
         });
     </script>
 </body>
