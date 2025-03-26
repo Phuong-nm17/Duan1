@@ -17,6 +17,9 @@ if (isset($_GET["act"])) {
         case 'login':
             include "view/login.php";
             break;
+        case 'Logout':
+            include "view/Logout.php";
+            break;
         case 'cart':
             include "view/cart.php";
             break;
@@ -33,12 +36,9 @@ if (isset($_GET["act"])) {
             break;
         default:
             include "view/home.php";
-            
     }
 } else {
     include "view/header.php";
     include "view/home.php";
     include "view/footer.php";
 }
-
-
