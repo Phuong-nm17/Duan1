@@ -4,13 +4,25 @@ require_once(__DIR__ . '/../model/connect.php');
 
 
 try {
+    $category_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-    $sql = "SELECT * FROM product;";
+    $sql = "  SELECT product.id AS product_id, product.title, product.price, product.thumbnail, product.discount, 
+               category.name
+        FROM product 
+        JOIN category ON product.category_id = category.id
+";
 
+    if ($category_id > 0) {
+        $sql .= " WHERE product.category_id = :category_id";
+    }
+    
     $stmt = $conn->prepare($sql);
-
+    
+    if ($category_id > 0) {
+        $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
+    }
+    
     $stmt->execute();
-
     $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     die($e->getMessage());
@@ -166,17 +178,17 @@ try {
                 </div>
             </nav>
         </div>
-    </div>
+</div>
 </div>
 <!-- Navbar End -->
 <!-- Page Header Start -->
 <div class="container-fluid bg-secondary mb-5">
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-        <h1 class="font-weight-semi-bold text-uppercase mb-3">Shop</h1>
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">  <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></h1>
         <div class="d-inline-flex">
             <p class="m-0"><a href="">Home</a></p>
             <p class="m-0 px-2">-</p>
-            <p class="m-0">Shop</p>
+            <p class="m-0"> <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></p>
         </div>
     </div>
 </div>
@@ -184,9 +196,10 @@ try {
 <!-- Products start -->
 <div class="container-fluid pt-5">
     <div class="text-center mb-4">
-        <h2 class="section-title px-5"><span class="px-2">Shop</span></h2>
+        <h2 class="section-title px-5"><span class="px-2"></span></h2>
     </div>
     <div class="row px-xl-5 pb-3">
+        <?php if (!empty($product)) : ?>
         <?php foreach ($product as $p) : ?>
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="card product-item border-0 mb-4">
@@ -201,12 +214,15 @@ try {
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-between bg-light border">
-                        <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                        <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                    <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                        <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
                     </div>
                 </div>
             </div>
         <?php endforeach; ?>
+        <?php else : ?>
+    <p class="text-center">Không có sản phẩm nào trong danh mục này.</p>
+<?php endif; ?>
     </div>
 </div>
 <!-- Products End -->

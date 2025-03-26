@@ -6,27 +6,39 @@ if (isset($_GET["act"])) {
         case 'contact':
             include "view/contact.php";
             break;
-        case 'login':
-            include "view/login.php";
+        case 'home':
+            include "view/header.php";
+            include "view/home.php";
+            include "view/footer.php";
             break;
         case 'register':
             include "view/register.php";
             break;
+        case 'login':
+            include "view/login.php";
+            break;
         case 'cart':
             include "view/cart.php";
             break;
+        case 'cate':
+            include "view/cate.php";
+            break;
         case 'ProductList':
             include "view/ProductList.php";
+            include "view/footer.php";
             break;
         case 'ProductDetail':
             include "view/ProductDetail.php";
+            include "view/footer.php";
             break;
         default:
             include "view/home.php";
+            
     }
 } else {
     include "view/header.php";
     include "view/home.php";
+    include "view/footer.php";
 }
 
-// include "view/footer.php";
+

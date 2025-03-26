@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../model/connect.php';
+require '../../model/connect.php';
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: product.php");
         exit;
     } else {
-        $error = "Vui lòng nhập đầy đủ thông tin và tải lên hình ảnh!";
+        $error = "Vui lòng nhập tin và tải lên hình ảnh!";
     }
 }
 ?>
@@ -155,17 +155,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="menu-item">
-            <a href="product.php"><i>📦</i> <span>Quản lý sản phẩm</span></a>
+            <a href="../product/product.php"><i>📦</i> <span>Quản lý sản phẩm</span></a>
             <div class="submenu">
-                <a href="product.php">Danh sách sản phẩm</a>
-                <a href="add_product.php">Thêm sản phẩm</a>
+                <a href="../product/product.php">Danh sách sản phẩm</a>
+                <a href="../product/add_product.php">Thêm sản phẩm</a>
             </div>
         </div>
-
         <div class="menu-item">
-            <a href="user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
+            <a href="../category/categories.php"><i>📦</i> <span>Quản lý danh mục</span></a>
             <div class="submenu">
-                <a href="user_management.php">Danh sách khách hàng</a>
+                <a href="../category/categories.php">Danh sách danh mục</a>
+                <a href="../category/add_categories.php">Thêm danh mục</a>
+            </div>
+        </div>
+        <div class="menu-item">
+            <a href="../user/user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
+            <div class="submenu">
+                <a href="../user/user_management.php">Danh sách khách hàng</a>
             </div>
         </div>
 
@@ -179,6 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <a href="logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
     </div>
+
 
     <div id="content">
         <h2>Thêm Sản phẩm</h2>
