@@ -26,7 +26,7 @@ try {
 
 <?php
     if (isset($_GET['search'])): ?>
-<h2 class="text-primary text-uppercase mb-3" style="margin-left: 40px;">
+<h2 class="text-primary text-uppercase mb-3" spullpulltyle="margin-left: 40px;">
     Kết quả tìm kiếm cho: "<?= htmlspecialchars($_GET['search']) ?>"
 </h2>
 
