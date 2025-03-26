@@ -99,7 +99,6 @@ try {
     <div class="row pb-3 px-xl-5">
         <div class="col-lg-4 col-md-6 pb-1">
             <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
-                <p class="text-right">15 Products</p>
                 <a href="" class="position-relative cat-img mb-3 overflow-hidden">
                     <img class="img-fluid" src="view/img/cat-1.jpg" alt="">
                 </a>
@@ -108,7 +107,6 @@ try {
         </div>
         <div class="col-lg-4 col-md-6 pb-1">
             <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
-                <p class="text-right">15 Products</p>
                 <a href="" class="position-relative cat-img mb-3 overflow-hidden">
                     <img class="img-fluid" src="view/img/cat-2.jpg" alt="">
                 </a>
@@ -117,7 +115,6 @@ try {
         </div>
         <div class="col-lg-4 col-md-6 pb-1">
             <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
-                <p class="text-right">15 Products</p>
                 <a href="" class="position-relative cat-img mb-3 overflow-hidden">
                     <img class="img-fluid" src="view/img/cat-4.jpg" alt="">
                 </a>
@@ -161,7 +158,7 @@ try {
     <div class="text-center mb-4">
         <h2 class="px-5 section-title"><span class="px-2">Trandy Products</span></h2>
     </div>
-    <div class="row pb-3 px-xl-5">
+    <div class="row pb-3 px-xl-2">
         <?php foreach ($product as $p) : ?>
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
             <div class="card border-0 mb-4 product-item">
@@ -175,12 +172,8 @@ try {
                         <h6 class="text-muted ml-2"><del>$<?= number_format($p['price']) ?></del></h6>
                     </div>
                 </div>
-                <div class="d-flex card-footer bg-light border justify-content-between">
-                    <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
-                            class="text-primary fa-eye fas mr-1"></i>View Detail</a>
-                    <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
-                            class="text-primary fa-shopping-cart fas mr-1"></i>Add To Cart</a>
-                </div>
+
+
             </div>
         </div>
         <?php endforeach; ?>
