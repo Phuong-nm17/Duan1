@@ -166,10 +166,7 @@ if (isset($_SESSION['email'])) {
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
                         <?php foreach ($category as $cat) : ?>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
-
                         <?php endforeach; ?>
-
-
                     </div>
                 </nav>
             </div>
