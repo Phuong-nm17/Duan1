@@ -45,14 +45,15 @@ if (isset($_GET['search'])): ?>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6> $ <?= number_format($p['discount']) ?></h6>
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price']) ?></del></h6>
+                                <h6> $ <?= number_format($p['price']) ?></h6>
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount']) ?></del></h6>
                             </div>
                         </div>
                         <div class="d-flex card-footer bg-light border justify-content-between">
                             <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
                                     class="text-primary fa-eye fas mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm p-0 text-dark"><i class="text-primary fa-shopping-cart fas mr-1"></i>Add To
+                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
+                                    class="text-primary fa-shopping-cart fas mr-1"></i>Add To
                                 Cart</a>
                         </div>
                     </div>
@@ -168,19 +169,16 @@ if (isset($_GET['search'])): ?>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6> $ <?= number_format($p['discount']) ?></h6>
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price']) ?></del></h6>
+                                <h6> $ <?= number_format($p['price']) ?></h6>
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount']) ?></del></h6>
                             </div>
                         </div>
                         <div class="d-flex card-footer bg-light border justify-content-between">
                             <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
                                     class="text-primary fa-eye fas mr-1"></i>View Detail</a>
                             <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
-                                    class="text-primary fa-shopping-cart fas mr-1"></i>Add To
-                                Cart</a>
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
-                                    class="text-primary fa-shopping-cart fas mr-1"></i>Add To
-                                thu </a>
+                                    class="text-primary fa-shopping-cart fas mr-1"></i>Add To Cart
+                            </a>
                         </div>
 
                     </div>

@@ -180,7 +180,7 @@ try {
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="index.html" class="nav-item nav-link active">Home</a>
+                            <a href="index.php?act=home" class="nav-item nav-link active">Home</a>
                             <a href="index.php?act=ProductList" class="nav-item nav-link">Shop</a>
                             <a href="index.php?act=ProductDetail" class="nav-item nav-link">Shop Detail</a>
                             <div class="nav-item dropdown">
@@ -245,7 +245,7 @@ try {
                     </div>
                     <small class="pt-1">(50 Reviews)</small>
                 </div>
-                <h3 class="font-weight-semi-bold mb-4"><?= $product['price'] ?>đ</h3>
+                <h3 class="font-weight-semi-bold mb-4">$ <?= $product['price'] ?></h3>
                 <p class="mb-4"><?= $product['description'] ?></p>
                 <div class="d-flex mb-3">
                     <p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
