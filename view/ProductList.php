@@ -46,10 +46,10 @@ try {
         $sql = "SELECT * FROM productrandy";
         $stmt = $conn->prepare($sql);
     }
-    
+
     $stmt->execute();
     $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -164,7 +164,7 @@ try {
             <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light"
                 id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                 <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
-                    <?php foreach ($category as $cat) : ?>
+                    <?php foreach ($category as $cat): ?>
 
                         <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
                             class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
@@ -230,7 +230,7 @@ if (isset($_GET['search'])): ?>
         </p>
     <?php else: ?>
         <div class=" row pb-3 px-xl-5">
-            <?php foreach ($product as $p) : ?>
+            <?php foreach ($product as $p): ?>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card border-0 mb-4 product-item">
                         <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
@@ -246,7 +246,8 @@ if (isset($_GET['search'])): ?>
                         <div class="d-flex card-footer bg-light border justify-content-between">
                             <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
                                     class="text-primary fa-eye fas mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm p-0 text-dark"><i class="text-primary fa-shopping-cart fas mr-1"></i>Add To
+                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
+                                    class="text-primary fa-shopping-cart fas mr-1"></i>Add To
                                 Cart</a>
                         </div>
                     </div>
@@ -262,7 +263,7 @@ if (isset($_GET['search'])): ?>
             <h2 class="section-title px-5"><span class="px-2">Shop</span></h2>
         </div>
         <div class="row px-xl-5 pb-3">
-            <?php foreach ($product as $p) : ?>
+            <?php foreach ($product as $p): ?>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card product-item border-0 mb-4">
                         <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
@@ -276,8 +277,10 @@ if (isset($_GET['search'])): ?>
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i
+                                    class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                            <a href="" class="btn btn-sm text-dark p-0"><i
+                                    class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
                         </div>
 
                     </div>
