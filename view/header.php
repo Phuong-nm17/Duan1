@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once(__DIR__ . '/../model/connect.php');
 
@@ -14,6 +15,17 @@ try {
     $category = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     die($e->getMessage());
+}
+if (isset($_SESSION['email'])) {
+    try {
+        $sql = "SELECT fullname FROM user WHERE email = :email";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        die("Lỗi truy vấn: " . $e->getMessage());
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -42,7 +54,37 @@ try {
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="view/css/style.css" rel="stylesheet">
+    <style>
+        .menu-item {
+            position: relative;
+            display: inline-block;
+        }
 
+        .menu-item .submenu {
+            display: none;
+            position: absolute;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            min-width: 80px;
+            z-index: 10;
+        }
+
+        .menu-item:hover .submenu {
+            display: block;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .submenu a:hover {
+            background: #f1f1f1;
+        }
+    </style>
 
 </head>
 
@@ -127,9 +169,10 @@ try {
                     id="navbar-vertical">
 
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
-                        <?php foreach ($category as $cat): ?>
-                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
-                                class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
+
+                        <?php foreach ($category as $cat) : ?>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
+
                         <?php endforeach; ?>
 
                     </div>
@@ -159,8 +202,19 @@ try {
                             <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <a href="index.php?act=login" class="nav-item nav-link">Login</a>
-                            <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                            <?php if (!isset($_SESSION['email'])) : ?>
+                                <a href="index.php?act=login" class="nav-item nav-link">Login</a>
+                                <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                            <?php else : ?>
+                                <div class="menu-item">
+                                    <a href="#" class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                    <div class="submenu">
+                                        <a href="index.php?act=Logout">LogOut</a>
+                                        <a href="#"></a>
+                                    </div>
+                                </div>
+                            <?php endif ?>
+
                         </div>
                     </div>
                 </nav>
