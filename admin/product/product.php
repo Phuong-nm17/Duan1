@@ -12,10 +12,12 @@ try {
             product.discount, 
             product.description, 
             size.name AS size_name, 
-            color.name AS color_name
+            color.name AS color_name,
+            category.name AS category_name
         FROM product 
         JOIN size ON product.size_id = size.id
-        JOIN color ON product.color_id = color.id";
+        JOIN color ON product.color_id = color.id
+        JOIN category ON product.category_id = category.id";
 
     $stmt = $conn->prepare($sql);
     $stmt->execute();
@@ -177,7 +179,7 @@ try {
             </div>
         </div>
 
-        <a href="logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
+        <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
     </div>
 
     <!-- Nội dung chính -->
@@ -188,12 +190,13 @@ try {
                 <tr class="text-center">
                     <th>ID</th>
                     <th>Tên</th>
-                    <th>Giá</th>
+                    <th>Giá bán</th>
                     <th>Giá Discount</th>
                     <th>Hình ảnh</th>
                     <th>Mô tả</th>
                     <th>Màu sắc</th>
                     <th>Size</th>
+                    <th>category</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
@@ -202,12 +205,13 @@ try {
                     <tr>
                         <td><?= $index ?></td>
                         <td><?= $p['title'] ?></td>
-                        <td><?= number_format($p['price'], 0, ',', '.') ?> đ</td>
-                        <td><?= number_format($p['discount'], 0, ',', '.') ?> đ</td>
+                        <td><?= number_format($p['price'], 0, ',', '.') ?> $</td>
+                        <td><?= number_format($p['discount'], 0, ',', '.') ?> $</td>
                         <td><img src="<?= $p['thumbnail'] ?>" width="50"></td>
                         <td><?= $p['description'] ?></td>
                         <td><?= $p['color_name'] ?></td>
                         <td><?= $p['size_name'] ?></td>
+                        <td><?= $p['category_name'] ?></td>
                         <td class="text-center">
                             <a href="edit_product.php?id=<?= htmlspecialchars($p['product_id']) ?>" class="btn btn-warning btn-sm">Sửa</a>
                             <a href="delete_product.php?id=<?= htmlspecialchars($p['product_id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
