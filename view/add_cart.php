@@ -3,7 +3,7 @@ session_start();
 require_once(__DIR__ . '/../model/connect.php');
 
 if (!isset($_SESSION['id'])) {
-    die("Bạn cần đăng nhập để thêm vào giỏ hàng.");
+    header("Location: ../index.php?act=login");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -3,7 +3,8 @@ session_start();
 require '../../model/connect.php';
 
 // Kiểm tra đăng nhập
-if (!isset($_SESSION['admin'])) header("Location: login.php");
+if (!isset($_SESSION['admin']))
+    header("Location: login.php");
 
 // Lấy danh sách sản phẩm
 $stmt = $conn->query("SELECT * FROM product");
@@ -161,7 +162,7 @@ $product = $stmt->fetchAll();
             </div>
         </div>
 
-        <a href="logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
+        <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
     </div>
 
     <!-- Nội dung chính -->
@@ -190,11 +191,12 @@ $product = $stmt->fetchAll();
                         <td><?= number_format($p['discount'], 0, ',', '.') ?> đ</td>
                         <td><img src="<?= $p['thumbnail'] ?>" width="50"></td>
                         <td><?= $p['description'] ?></td>
-                        <td><?= $p['color'] ?></td>
-                        <td><?= $p['size'] ?></td>
+                        <td><?= $p['color_id'] ?></td>
+                        <td><?= $p['size_id'] ?></td>
                         <td>
                             <a href="edit_product.php?id=<?= $p['id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
-                            <a href="delete_product.php?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
+                            <a href="delete_product.php?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
