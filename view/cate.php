@@ -109,7 +109,7 @@ try {
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="" class="text-decoration-none">
+                <a href="index.php?act=home" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
@@ -245,7 +245,7 @@ if (isset($_GET['search'])): ?>
         </div>
         <div class="row px-xl-5 pb-3">
             <?php if (!empty($product)) : ?>
-                <?php foreach ($product as $p) : ?>
+                <?php foreach ($product as $p): ?>
                     <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                         <div class="card product-item border-0 mb-4">
                             <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
@@ -254,13 +254,15 @@ if (isset($_GET['search'])): ?>
                             <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                                 <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                                 <div class="d-flex justify-content-center">
-                                    <h6><?= number_format($p['discount']) ?> đ</h6>
-                                    <h6 class="text-muted ml-2"><del><?= number_format($p['price']) ?> đ</del></h6>
+                                    <h6>$ <?= number_format($p['price']) ?></h6>
+                                    <h6 class="text-muted ml-2">$ <del><?= number_format($p['discount']) ?> </del></h6>
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                                <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                                <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i
+                                        class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                                <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i
+                                        class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
                             </div>
                         </div>
                     </div>

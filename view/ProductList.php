@@ -1,7 +1,18 @@
 <?php
-
+session_start();
 require_once(__DIR__ . '/../model/connect.php');
 
+if (isset($_SESSION['email'])) {
+    try {
+        $sql = "SELECT fullname FROM user WHERE email = :email";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        die("Lỗi truy vấn: " . $e->getMessage());
+    }
+}
 
 try {
 
@@ -34,6 +45,25 @@ try {
 } catch (Exception $e) {
     die($e->getMessage());
 }
+try {
+
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+    if (!empty($search)) {
+        $sql = "SELECT * FROM product WHERE title LIKE :search";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
+    } else {
+        $sql = "SELECT * FROM productrandy";
+        $stmt = $conn->prepare($sql);
+    }
+
+    $stmt->execute();
+    $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    die($e->getMessage());
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +92,37 @@ try {
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="view/css/style.css" rel="stylesheet">
+    <style>
+        .menu-item {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-item .submenu {
+            display: none;
+            position: absolute;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            min-width: 80px;
+            z-index: 10;
+        }
+
+        .menu-item:hover .submenu {
+            display: block;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .submenu a:hover {
+            background: #f1f1f1;
+        }
+    </style>
 </head>
 
 <body>
@@ -99,12 +160,13 @@ try {
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="" class="text-decoration-none">
+                <a href="index.php?act=home" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span
                             class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
+
                 <form action="index.php" method="GET">
                     <input type="hidden" name="act" value="ProductList">
                     <div class="input-group">
@@ -143,8 +205,11 @@ try {
             </a>
             <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light"
                 id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
-                <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
-                    <?php foreach ($category as $cat) : ?>
+
+                <div class="navbar-nav w-100 overflow-hidden">
+
+                    <?php foreach ($category as $cat): ?>
+
                         <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
                             class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
                     <?php endforeach; ?>
@@ -175,8 +240,20 @@ try {
                         <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="index.php?act=login" class="nav-item nav-link">Login</a>
-                        <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                        <?php if (!isset($_SESSION['email'])): ?>
+                            <a href="index.php?act=login" class="nav-item nav-link">Login</a>
+                            <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                        <?php else: ?>
+                            <div class="menu-item">
+                                <a href="#"
+                                    class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                <div class="submenu">
+                                    <a href="index.php?act=Logout">LogOut</a>
+                                    <a href="#"></a>
+                                </div>
+                            </div>
+                        <?php endif ?>
+
                     </div>
                 </div>
             </nav>
@@ -189,26 +266,27 @@ try {
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
         <h1 class="font-weight-semi-bold text-uppercase mb-3">Shop</h1>
         <div class="d-inline-flex">
-            <p class="m-0"><a href="">Home</a></p>
+            <p class="m-0"><a href="index.php?act=home">Home</a></p>
             <p class="m-0 px-2">-</p>
             <p class="m-0">Shop</p>
         </div>
     </div>
 </div>
 <!-- Page Header End -->
+
 <?php
 if (isset($_GET['search'])): ?>
     <h2 class="text-primary text-uppercase mb-3" style="margin-left: 40px;">
-        Kết quả tìm kiếm cho: "<?= htmlspecialchars($_GET['search']) ?>"
+        Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
     </h2>
 
 
     <?php if (empty($product)): ?>
-        <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">Không tìm thấy sản phẩm nào.
+        <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">No products found.
         </p>
     <?php else: ?>
         <div class=" row pb-3 px-xl-5">
-            <?php foreach ($product as $p) : ?>
+            <?php foreach ($product as $p): ?>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card border-0 mb-4 product-item">
                         <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
@@ -217,15 +295,17 @@ if (isset($_GET['search'])): ?>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6> $ <?= number_format($p['discount']) ?></h6>
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price']) ?></del></h6>
+                                <h6> $ <?= number_format($p['price']) ?></h6>
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount']) ?></del></h6>
                             </div>
                         </div>
                         <div class="d-flex card-footer bg-light border justify-content-between">
                             <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
                                     class="text-primary fa-eye fas mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm p-0 text-dark"><i class="text-primary fa-shopping-cart fas mr-1"></i>Add To
+                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
+                                    class="text-primary fa-shopping-cart fas mr-1"></i>Add To
                                 Cart</a>
+
                         </div>
                     </div>
                 </div>
@@ -240,7 +320,7 @@ if (isset($_GET['search'])): ?>
             <h2 class="section-title px-5"><span class="px-2">Shop</span></h2>
         </div>
         <div class="row px-xl-5 pb-3">
-            <?php foreach ($product as $p) : ?>
+            <?php foreach ($product as $p): ?>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card product-item border-0 mb-4">
                         <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
@@ -249,14 +329,19 @@ if (isset($_GET['search'])): ?>
                         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6><?= number_format($p['discount']) ?> đ</h6>
-                                <h6 class="text-muted ml-2"><del><?= number_format($p['price']) ?> đ</del></h6>
+                                <h6>$ <?= number_format($p['price']) ?></h6>
+                                <h6 class="text-muted ml-2">$ <del><?= number_format($p['discount']) ?> </del></h6>
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i
+                                    class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i
+                                    class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+
+
                         </div>
+
                     </div>
                 </div>
             <?php endforeach; ?>

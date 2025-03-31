@@ -140,7 +140,7 @@ if (isset($_SESSION['email'])) {
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="" class="text-decoration-none">
+                <a href="index.php?act=home" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
@@ -220,6 +220,7 @@ if (isset($_SESSION['email'])) {
                                 <div class="menu-item">
                                     <a href="#" class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
                                     <div class="submenu">
+                                        <a href="index.php?act=cart">Cart</a>
                                         <a href="index.php?act=Logout">LogOut</a>
                                         <a href="#"></a>
                                     </div>
