@@ -1,10 +1,21 @@
 <?php
-
+session_start();
 require_once(__DIR__ . '/../model/connect.php');
 
+if (isset($_SESSION['email'])) {
+    try {
+        $sql = "SELECT fullname FROM user WHERE email = :email";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        die("Lỗi truy vấn: " . $e->getMessage());
+    }
+}
 
 try {
-    $category_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+    $category_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
     $sql = "  SELECT product.id AS product_id, product.title, product.price, product.thumbnail, product.discount, 
                category.name
@@ -15,13 +26,13 @@ try {
     if ($category_id > 0) {
         $sql .= " WHERE product.category_id = :category_id";
     }
-    
+
     $stmt = $conn->prepare($sql);
-    
+
     if ($category_id > 0) {
         $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
     }
-    
+
     $stmt->execute();
     $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
@@ -56,7 +67,8 @@ try {
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -66,6 +78,37 @@ try {
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="view/css/style.css" rel="stylesheet">
+    <style>
+        .menu-item {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-item .submenu {
+            display: none;
+            position: absolute;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            min-width: 80px;
+            z-index: 10;
+        }
+
+        .menu-item:hover .submenu {
+            display: block;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .submenu a:hover {
+            background: #f1f1f1;
+        }
+    </style>
 </head>
 
 <body>
@@ -104,7 +147,8 @@ try {
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="" class="text-decoration-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                    <h1 class="m-0 display-5 font-weight-semi-bold"><span
+                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
@@ -137,22 +181,26 @@ try {
 <div class="container-fluid">
     <div class="row border-top px-xl-5">
         <div class="col-lg-3 d-none d-lg-block">
-                <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
+            <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100"
+                data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
                 <h6 class="m-0">Categories</h6>
                 <i class="fa fa-angle-down text-dark"></i>
             </a>
-            <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
+            <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light"
+                id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                 <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
-                <?php foreach ($category as $cat) : ?>
-                    <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
-                <?php endforeach; ?>
-                    </div>
+                    <?php foreach ($category as $cat): ?>
+                        <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
+                            class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
+                    <?php endforeach; ?>
+                </div>
             </nav>
         </div>
         <div class="col-lg-9">
             <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
                 <a href="" class="text-decoration-none d-block d-lg-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                    <h1 class="m-0 display-5 font-weight-semi-bold"><span
+                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
@@ -172,23 +220,39 @@ try {
                         <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="index.php?act=login" class="nav-item nav-link">Login</a>
-                        <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                        <?php if (!isset($_SESSION['email'])): ?>
+                            <a href="index.php?act=login" class="nav-item nav-link">Login</a>
+                            <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                        <?php else: ?>
+                            <div class="menu-item">
+                                <a href="#"
+                                    class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                <div class="submenu">
+                                    <a href="index.php?act=Logout">LogOut</a>
+                                    <a href="#"></a>
+                                </div>
+                            </div>
+                        <?php endif ?>
+
                     </div>
                 </div>
             </nav>
         </div>
-</div>
+    </div>
 </div>
 <!-- Navbar End -->
 <!-- Page Header Start -->
 <div class="container-fluid bg-secondary mb-5">
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-        <h1 class="font-weight-semi-bold text-uppercase mb-3">  <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></h1>
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">
+            <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?>
+        </h1>
         <div class="d-inline-flex">
-            <p class="m-0"><a href="">Home</a></p>
+            <p class="m-0"><a href="index.php?act=home">Home</a></p>
             <p class="m-0 px-2">-</p>
-            <p class="m-0"> <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></p>
+            <p class="m-0">
+                <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?>
+            </p>
         </div>
     </div>
 </div>
@@ -199,35 +263,37 @@ try {
         <h2 class="section-title px-5"><span class="px-2"></span></h2>
     </div>
     <div class="row px-xl-5 pb-3">
-        <?php if (!empty($product)) : ?>
-        <?php foreach ($product as $p) : ?>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <img class="img-fluid w-100" src="<?= $p['thumbnail'] ?>" alt="">
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
-                        <div class="d-flex justify-content-center">
-                            <h6><?= number_format($p['discount']) ?> đ</h6>
-                            <h6 class="text-muted ml-2"><del><?= number_format($p['price']) ?> đ</del></h6>
+        <?php if (!empty($product)): ?>
+            <?php foreach ($product as $p): ?>
+                <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                    <div class="card product-item border-0 mb-4">
+                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                            <img class="img-fluid w-100" src="<?= $p['thumbnail'] ?>" alt="">
+                        </div>
+                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                            <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
+                            <div class="d-flex justify-content-center">
+                                <h6><?= number_format($p['discount']) ?> đ</h6>
+                                <h6 class="text-muted ml-2"><del><?= number_format($p['price']) ?> đ</del></h6>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between bg-light border">
+                            <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i
+                                    class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                            <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i
+                                    class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
                         </div>
                     </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                    <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                        <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                    </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
-        <?php else : ?>
-    <p class="text-center">Không có sản phẩm nào trong danh mục này.</p>
-<?php endif; ?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="text-center">Không có sản phẩm nào trong danh mục này.</p>
+        <?php endif; ?>
     </div>
 </div>
 <!-- Products End -->
-      <!-- Back to Top -->
-      <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
 
 <!-- JavaScript Libraries -->

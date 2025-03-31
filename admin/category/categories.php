@@ -161,7 +161,7 @@ $category = $stmt->fetchAll();
             </div>
         </div>
 
-        <a href="logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
+        <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
     </div>
 
     <!-- noi dung chinh -->

@@ -45,7 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -106,7 +107,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="row align-items-center px-xl-5 py-3">
             <div class="col-lg-3 d-lg-block d-none">
                 <a href="index.php" class="text-decoration-none">
-                    <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
+                    <h1 class="display-5 m-0 font-weight-semi-bold"><span
+                            class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
                 </a>
             </div>
         </div>
@@ -131,6 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
             <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
+            <a href="index.php?act=register" class="btn btn-primary w-100">Register</a>
         </form>
     </div>
     <div class="text-center mt-4">
