@@ -168,11 +168,14 @@ if (isset($_SESSION['email'])) {
                 <nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0"
                     id="navbar-vertical">
 
+
                     <div class="navbar-nav w-100 overflow-hidden">
+
 
                         <?php foreach ($category as $cat): ?>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
                                 class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
+
 
                         <?php endforeach; ?>
 

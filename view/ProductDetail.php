@@ -334,7 +334,9 @@ if (isset($_SESSION['email'])) {
                         </div>
 
                         <button type="submit" class="btn btn-primary px-3">
+
                             <i class="fa fa-shopping-cart mr-1"></i>Add to cart
+
                         </button>
                     </div>
                 </form>
@@ -439,8 +441,10 @@ if (isset($_SESSION['email'])) {
                         <div class="col-md-6">
                             <h4 class="mb-4">1 review for "Colorful Stylish Shirt"</h4>
                             <div class="media mb-4">
+
                                 <img src="view/img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1"
                                     style="width: 45px;">
+
                                 <div class="media-body">
                                     <h6>John Doe<small> - <i>01 Jan 2045</i></small></h6>
                                     <div class="text-primary mb-2">

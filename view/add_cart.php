@@ -3,7 +3,9 @@ session_start();
 require_once(__DIR__ . '/../model/connect.php');
 
 if (!isset($_SESSION['id'])) {
+
     header("Location: ../index.php?act=login");
+
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

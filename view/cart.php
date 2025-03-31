@@ -2,6 +2,7 @@
 session_start();
 require_once(__DIR__ . '/../model/connect.php');
 
+
 if (isset($_SESSION['email'])) {
     try {
         $sql = "SELECT fullname FROM user WHERE email = :email";
@@ -13,6 +14,7 @@ if (isset($_SESSION['email'])) {
         die("Lỗi truy vấn: " . $e->getMessage());
     }
 }
+
 if (!isset($_SESSION['id'])) {
     // die("Bạn cần đăng nhập để xem giỏ hàng.");
 }
