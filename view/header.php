@@ -3,7 +3,25 @@ session_start();
 
 require_once(__DIR__ . '/../model/connect.php');
 
+try {
 
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+    if (!empty($search)) {
+        $sql = "SELECT * FROM product WHERE title LIKE :search";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
+    } else {
+        $sql = "SELECT * FROM product";
+        $stmt = $conn->prepare($sql);
+    }
+
+    $stmt->execute();
+
+    $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    die($e->getMessage());
+}
 try {
 
     $sql = "SELECT * FROM category;";
@@ -127,13 +145,15 @@ if (isset($_SESSION['email'])) {
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="">
+                <form action="index.php" method="GET">
+                    <input type="hidden" name="act" value="home">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for products">
+                        <input name="search" type="text" class="form-control" placeholder="Search for products"
+                            value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
                         <div class="input-group-append">
-                            <span class="input-group-text bg-transparent text-primary">
+                            <button type="submit" class="input-group-text bg-transparent text-primary">
                                 <i class="fa fa-search"></i>
-                            </span>
+                            </button>
                         </div>
                     </div>
                 </form>
