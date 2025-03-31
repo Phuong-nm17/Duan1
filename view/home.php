@@ -100,26 +100,47 @@ if (isset($_GET['search'])): ?>
         <div class="row pb-3 px-xl-5">
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
-                    <a href="" class="position-relative cat-img mb-3 overflow-hidden">
-                        <img class="img-fluid" src="view/img/cat-1.jpg" alt="">
-                    </a>
-                    <h5 class="m-0 font-weight-semi-bold">Men's dresses</h5>
+                    <?php foreach ($category as $cat): ?>
+                        <?php if ($cat['id'] == 1): ?>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
+                                class="position-relative cat-img mb-3 overflow-hidden">
+                                <img class="img-fluid" src="view/img/cat-1.jpg" alt="">
+                            </a>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link">
+                                <h5 class="m-0 font-weight-semi-bold"><?= htmlspecialchars($cat['name']) ?></h5>
+                            </a>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
-                    <a href="" class="position-relative cat-img mb-3 overflow-hidden">
-                        <img class="img-fluid" src="view/img/cat-2.jpg" alt="">
-                    </a>
-                    <h5 class="m-0 font-weight-semi-bold">Women's dresses</h5>
+                    <?php foreach ($category as $cat): ?>
+                        <?php if ($cat['id'] == 2): ?>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
+                                class="position-relative cat-img mb-3 overflow-hidden">
+                                <img class="img-fluid" src="view/img/cat-2.jpg" alt="">
+                            </a>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link">
+                                <h5 class="m-0 font-weight-semi-bold"><?= htmlspecialchars($cat['name']) ?></h5>
+                            </a>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
-                    <a href="" class="position-relative cat-img mb-3 overflow-hidden">
-                        <img class="img-fluid" src="view/img/cat-4.jpg" alt="">
-                    </a>
-                    <h5 class="m-0 font-weight-semi-bold">Accerssories</h5>
+                    <?php foreach ($category as $cat): ?>
+                        <?php if ($cat['id'] == 3): ?>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
+                                class="position-relative cat-img mb-3 overflow-hidden">
+                                <img class="img-fluid" src="view/img/cat-4.jpg" alt="">
+                            </a>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link">
+                                <h5 class="m-0 font-weight-semi-bold"><?= htmlspecialchars($cat['name']) ?></h5>
+                            </a>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>
