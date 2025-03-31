@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once(__DIR__ . '/../model/connect.php');
 
@@ -15,13 +16,24 @@ try {
 } catch (Exception $e) {
     die($e->getMessage());
 }
+if (isset($_SESSION['email'])) {
+    try {
+        $sql = "SELECT fullname FROM user WHERE email = :email";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        die("Lỗi truy vấn: " . $e->getMessage());
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <title>EShopper - Bootstrap Shop Template</title>
+    <title>Farah</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
@@ -41,7 +53,37 @@ try {
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="view/css/style.css" rel="stylesheet">
+    <style>
+        .menu-item {
+            position: relative;
+            display: inline-block;
+        }
 
+        .menu-item .submenu {
+            display: none;
+            position: absolute;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            min-width: 80px;
+            z-index: 10;
+        }
+
+        .menu-item:hover .submenu {
+            display: block;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .submenu a:hover {
+            background: #f1f1f1;
+        }
+    </style>
 
 </head>
 
@@ -81,17 +123,18 @@ try {
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="" class="text-decoration-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">Farah</span></h1>
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="">
+                <form action="index.php?act=home" method="GET">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for products">
+                        <input name="search" type="text" class="form-control" placeholder="Search for products"
+                            value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
                         <div class="input-group-append">
-                            <span class="input-group-text bg-transparent text-primary">
-                                <i class="fa fa-search"></i>
-                            </span>
+                        <button type="submit" class="input-group-text bg-transparent text-primary">
+                    <i class="fa fa-search"></i>
+                </button>
                         </div>
                     </div>
                 </form>
@@ -124,7 +167,9 @@ try {
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
                         <?php foreach ($category as $cat) : ?>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
-                        <?php endforeach ; ?>
+
+                        <?php endforeach; ?>
+
 
                     </div>
                 </nav>
@@ -152,8 +197,19 @@ try {
                             <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <a href="index.php?act=login" class="nav-item nav-link">Login</a>
-                            <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                            <?php if (!isset($_SESSION['email'])) : ?>
+                                <a href="index.php?act=login" class="nav-item nav-link">Login</a>
+                                <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                            <?php else : ?>
+                                <div class="menu-item">
+                                    <a href="#" class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                    <div class="submenu">
+                                        <a href="index.php?act=Logout">LogOut</a>
+                                        <a href="#"></a>
+                                    </div>
+                                </div>
+                            <?php endif ?>
+
                         </div>
                     </div>
                 </nav>
