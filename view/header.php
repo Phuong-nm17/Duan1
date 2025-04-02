@@ -3,7 +3,25 @@ session_start();
 
 require_once(__DIR__ . '/../model/connect.php');
 
+try {
 
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+    if (!empty($search)) {
+        $sql = "SELECT * FROM product WHERE title LIKE :search";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
+    } else {
+        $sql = "SELECT * FROM product";
+        $stmt = $conn->prepare($sql);
+    }
+
+    $stmt->execute();
+
+    $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    die($e->getMessage());
+}
 try {
 
     $sql = "SELECT * FROM category;";
@@ -73,14 +91,12 @@ if (isset($_SESSION['email'])) {
         .menu-item:hover .submenu {
             display: block;
         }
-
         .submenu a {
             display: block;
             padding: 10px;
             color: #333;
             text-decoration: none;
         }
-
         .submenu a:hover {
             background: #f1f1f1;
         }
@@ -123,19 +139,20 @@ if (isset($_SESSION['email'])) {
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="" class="text-decoration-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                <a href="index.php?act=home" class="text-decoration-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="index.php?act=home" method="GET">
+                <form action="index.php" method="GET">
+                    <input type="hidden" name="act" value="home">
                     <div class="input-group">
-                        <input name="search" type="text" class="form-control" placeholder="Search for products">
+                        <input name="search" type="text" class="form-control" placeholder="Search for products"
+                            value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
                         <div class="input-group-append">
-                            <span class="input-group-text bg-transparent text-primary">
+                            <button type="submit" class="input-group-text bg-transparent text-primary">
                                 <i class="fa fa-search"></i>
-                            </span>
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -167,18 +184,11 @@ if (isset($_SESSION['email'])) {
                 </a>
                 <nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0"
                     id="navbar-vertical">
-
-
                     <div class="navbar-nav w-100 overflow-hidden">
-
-
                         <?php foreach ($category as $cat): ?>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
                                 class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
-
-
                         <?php endforeach; ?>
-
                     </div>
                 </nav>
             </div>
@@ -206,20 +216,19 @@ if (isset($_SESSION['email'])) {
                             <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <?php if (!isset($_SESSION['email'])): ?>
+                            <?php if (!isset($_SESSION['email'])) : ?>
                                 <a href="index.php?act=login" class="nav-item nav-link">Login</a>
                                 <a href="index.php?act=register" class="nav-item nav-link">Register</a>
-                            <?php else: ?>
+                            <?php else : ?>
                                 <div class="menu-item">
-                                    <a href="#"
-                                        class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                    <a href="#" class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
                                     <div class="submenu">
+                                        <a href="index.php?act=cart">Cart</a>
                                         <a href="index.php?act=Logout">LogOut</a>
                                         <a href="#"></a>
                                     </div>
                                 </div>
                             <?php endif ?>
-
                         </div>
                     </div>
                 </nav>

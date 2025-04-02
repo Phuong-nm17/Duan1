@@ -1,14 +1,32 @@
 <?php
 session_start();
 require '../../model/connect.php';
-
-// Kiểm tra đăng nhập
 if (!isset($_SESSION['admin']))
     header("Location: login.php");
+if (!isset($_SESSION['admin'])) header("Location: login.php");
+try {
+    $sql = "  SELECT 
+            product.id AS product_id, 
+            product.title, 
+            product.price, 
+            product.thumbnail, 
+            product.discount, 
+            product.description, 
+            size.name AS size_name, 
+            color.name AS color_name,
+            category.name AS category_name
+        FROM product 
+        JOIN size ON product.size_id = size.id
+        JOIN color ON product.color_id = color.id
+        JOIN category ON product.category_id = category.id";
 
-// Lấy danh sách sản phẩm
-$stmt = $conn->query("SELECT * FROM product");
-$product = $stmt->fetchAll();
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    die($e->getMessage());
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -173,30 +191,32 @@ $product = $stmt->fetchAll();
                 <tr class="text-center">
                     <th>ID</th>
                     <th>Tên</th>
-                    <th>Giá</th>
+                    <th>Giá bán</th>
                     <th>Giá Discount</th>
                     <th>Hình ảnh</th>
                     <th>Mô tả</th>
                     <th>Màu sắc</th>
                     <th>Size</th>
+                    <th>category</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($product as $p): ?>
+                <?php foreach ($product as $index => $p): ?>
                     <tr>
-                        <td><?= $p['id'] ?></td>
+                        <td><?= $index ?></td>
                         <td><?= $p['title'] ?></td>
-                        <td><?= number_format($p['price'], 0, ',', '.') ?> đ</td>
-                        <td><?= number_format($p['discount'], 0, ',', '.') ?> đ</td>
+                        <td><?= number_format($p['price'], 0, ',', '.') ?> $</td>
+                        <td><?= number_format($p['discount'], 0, ',', '.') ?> $</td>
                         <td><img src="<?= $p['thumbnail'] ?>" width="50"></td>
                         <td><?= $p['description'] ?></td>
-                        <td><?= $p['color_id'] ?></td>
-                        <td><?= $p['size_id'] ?></td>
-                        <td>
-                            <a href="edit_product.php?id=<?= $p['id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
-                            <a href="delete_product.php?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
+                        <td><?= $p['color_name'] ?></td>
+                        <td><?= $p['size_name'] ?></td>
+                        <td><?= $p['category_name'] ?></td>
+                        <td class="text-center">
+                            <a href="edit_product.php?id=<?= htmlspecialchars($p['product_id']) ?>" class="btn btn-warning btn-sm">Sửa</a>
+                            <a href="delete_product.php?id=<?= htmlspecialchars($p['product_id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
+
                         </td>
                     </tr>
                 <?php endforeach; ?>
