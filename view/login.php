@@ -140,9 +140,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
             <div class="text-center mt-3">
-                <p>Chưa có tài khoản? <a href="index.php?act=register">Đăng ký ngay</a></p>
+                <p>Do you have account? <a href="index.php?act=register">SignUp</a></p>
             </div>
-
         </form>
     </div>
     <div class="text-center mt-4">

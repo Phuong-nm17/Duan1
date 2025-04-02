@@ -1,7 +1,8 @@
 <?php
 session_start();
 require '../../model/connect.php';
-if (!isset($_SESSION['admin'])) header("Location: login.php");
+if (!isset($_SESSION['admin']))
+    header("Location: login.php");
 
 $stmt = $conn->query("SELECT * FROM user");
 $user = $stmt->fetchAll();
@@ -157,7 +158,6 @@ $user = $stmt->fetchAll();
         </div>
 
         <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
-
     </div>
 
     <!-- Nội dung chính -->

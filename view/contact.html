@@ -1,3 +1,37 @@
+</tbody>
+<tbody class="align-middle">
+<?php if ($result->num_rows > 0): ?>
+    <?php while($row = $result->fetch_assoc()): ?>
+        <tr>
+            <td class="align-middle">
+                <img src="<?= $row['image'] ?>" alt="" style="width: 50px;">
+                <?= htmlspecialchars($row['product_name']) ?>
+            </td>
+            <td class="align-middle"><?= $row['size_name'] ?? 'N/A' ?></td>
+            <td class="align-middle"><?= $row['color_name'] ?? 'N/A' ?></td>
+            <td class="align-middle">$<?= number_format($row['price'], 2) ?></td>
+            <td class="align-middle"><?= $row['quantity'] ?></td>
+            <td class="align-middle">$<?= number_format($row['price'] * $row['quantity'], 2) ?></td>
+            <td class="align-middle">
+                <a href="remove_from_cart.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-primary">
+                    <i class="fa fa-times"></i>
+                </a>
+            </td>
+        </tr>
+    <?php endwhile; ?>
+<?php else: ?>
+    <tr>
+        <td colspan="7">Không có sản phẩm trong giỏ hàng.</td>
+    </tr>
+<?php endif; ?>
+</tbody>
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 

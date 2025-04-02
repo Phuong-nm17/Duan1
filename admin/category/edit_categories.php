@@ -196,11 +196,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const sidebar = document.getElementById('sidebar');
             const content = document.getElementById('content');
 
-            document.getElementById('toggle-btn').addEventListener('click', function() {
+            document.getElementById('toggle-btn').addEventListener('click', function () {
                 sidebar.classList.toggle('collapsed');
                 content.classList.toggle('full-width');
             });

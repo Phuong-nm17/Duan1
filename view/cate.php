@@ -5,6 +5,7 @@ try {
     $search = isset($_GET['search']) ? trim($_GET['search']) : '';
     $category_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
+
     $sql = "SELECT product.id AS product_id, product.title, product.price, product.thumbnail, product.discount, category.name 
             FROM product 
             JOIN category ON product.category_id = category.id";
@@ -29,6 +30,7 @@ try {
     $stmt = $conn->prepare($sql);
     foreach ($params as $key => &$val) {
         $stmt->bindParam($key, $val, is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR);
+
     }
 
     $stmt->execute();
@@ -62,7 +64,8 @@ try {
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -72,6 +75,37 @@ try {
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="view/css/style.css" rel="stylesheet">
+    <style>
+        .menu-item {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-item .submenu {
+            display: none;
+            position: absolute;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            min-width: 80px;
+            z-index: 10;
+        }
+
+        .menu-item:hover .submenu {
+            display: block;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .submenu a:hover {
+            background: #f1f1f1;
+        }
+    </style>
 </head>
 
 <body>
@@ -111,6 +145,7 @@ try {
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="index.php?act=home" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
@@ -146,10 +181,12 @@ try {
     <div class="row border-top px-xl-5">
         <div class="col-lg-3 d-none d-lg-block">
             <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
+
                 <h6 class="m-0">Categories</h6>
                 <i class="fa fa-angle-down text-dark"></i>
             </a>
-            <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
+            <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light"
+                id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                 <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
                     <?php foreach ($category as $cat) : ?>
                         <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
@@ -160,7 +197,8 @@ try {
         <div class="col-lg-9">
             <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
                 <a href="" class="text-decoration-none d-block d-lg-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                    <h1 class="m-0 display-5 font-weight-semi-bold"><span
+                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
@@ -180,8 +218,20 @@ try {
                         <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="index.php?act=login" class="nav-item nav-link">Login</a>
-                        <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                        <?php if (!isset($_SESSION['email'])): ?>
+                            <a href="index.php?act=login" class="nav-item nav-link">Login</a>
+                            <a href="index.php?act=register" class="nav-item nav-link">Register</a>
+                        <?php else: ?>
+                            <div class="menu-item">
+                                <a href="#"
+                                    class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                <div class="submenu">
+                                    <a href="index.php?act=Logout">LogOut</a>
+                                    <a href="#"></a>
+                                </div>
+                            </div>
+                        <?php endif ?>
+
                     </div>
                 </div>
             </nav>
@@ -194,9 +244,11 @@ try {
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
         <h1 class="font-weight-semi-bold text-uppercase mb-3"> <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></h1>
         <div class="d-inline-flex">
-            <p class="m-0"><a href="">Home</a></p>
+            <p class="m-0"><a href="index.php?act=home">Home</a></p>
             <p class="m-0 px-2">-</p>
-            <p class="m-0"> <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></p>
+            <p class="m-0">
+                <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?>
+            </p>
         </div>
     </div>
 </div>
