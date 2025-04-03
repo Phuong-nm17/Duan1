@@ -17,21 +17,34 @@ try {
 
     $stmt->execute();
     $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (Exception $e) {
     die($e->getMessage());
 }
+try {
 
+    $sql = "SELECT * FROM category;";
+
+    $stmt = $conn->prepare($sql);
+
+    $stmt->execute();
+
+    $category = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    die($e->getMessage());
+}
 ?>
 
 <?php
 if (isset($_GET['search'])): ?>
+
     <h2 class="text-primary text-uppercase mb-3" spullpulltyle="margin-left: 40px;">
 
         Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
 
-    </h2>
 
+   
+    </h2>
+        Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
 
     <?php if (empty($product)): ?>
 
@@ -40,7 +53,8 @@ if (isset($_GET['search'])): ?>
         </p>
     <?php else: ?>
         <div class=" row pb-3 px-xl-5">
-            <?php foreach ($product as $p): ?>
+            <?php foreach ($product as $p) : ?>
+
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card border-0 mb-4 product-item">
                         <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
@@ -49,15 +63,14 @@ if (isset($_GET['search'])): ?>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6> $ <?= number_format($p['price']) ?></h6>
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount']) ?></del></h6>
+                                <h6> $ <?= number_format($p['discount']) ?></h6>
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price']) ?></del></h6>
                             </div>
                         </div>
                         <div class="d-flex card-footer bg-light border justify-content-between">
                             <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
                                     class="text-primary fa-eye fas mr-1"></i>View Detail</a>
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
-                                    class="text-primary fa-shopping-cart fas mr-1"></i>Add To
+                            <a href="" class="btn btn-sm p-0 text-dark"><i class="text-primary fa-shopping-cart fas mr-1"></i>Add To
                                 Cart</a>
                         </div>
                     </div>
@@ -105,10 +118,12 @@ if (isset($_GET['search'])): ?>
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
 
+
                     <?php foreach ($category as $cat): ?>
                         <?php if ($cat['id'] == 1): ?>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
                                 class="position-relative cat-img mb-3 overflow-hidden">
+
                                 <img class="img-fluid" src="view/img/cat-1.jpg" alt="">
                             </a>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link">
@@ -122,10 +137,10 @@ if (isset($_GET['search'])): ?>
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
 
-                    <?php foreach ($category as $cat): ?>
-                        <?php if ($cat['id'] == 2): ?>
-                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
-                                class="position-relative cat-img mb-3 overflow-hidden">
+                    <?php foreach ($category as $cat) : ?>
+                        <?php if ($cat['id'] == 2) : ?>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="position-relative cat-img mb-3 overflow-hidden">
+
                                 <img class="img-fluid" src="view/img/cat-2.jpg" alt="">
                             </a>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link">
@@ -139,10 +154,10 @@ if (isset($_GET['search'])): ?>
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
 
-                    <?php foreach ($category as $cat): ?>
-                        <?php if ($cat['id'] == 3): ?>
-                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
-                                class="position-relative cat-img mb-3 overflow-hidden">
+                    <?php foreach ($category as $cat) : ?>
+                        <?php if ($cat['id'] == 3) : ?>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="position-relative cat-img mb-3 overflow-hidden">
+
                                 <img class="img-fluid" src="view/img/cat-4.jpg" alt="">
                             </a>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link">
@@ -191,7 +206,8 @@ if (isset($_GET['search'])): ?>
             <h2 class="px-5 section-title"><span class="px-2">Trandy Products</span></h2>
         </div>
         <div class="row pb-3 px-xl-2">
-            <?php foreach ($product as $p): ?>
+            <?php foreach ($product as $p) : ?>
+
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card border-0 mb-4 product-item">
                         <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
@@ -211,7 +227,6 @@ if (isset($_GET['search'])): ?>
                                     class="text-primary fa-shopping-cart fas mr-1"></i>Add To Cart
                             </a>
                         </div>
-
                     </div>
                 </div>
             <?php endforeach; ?>

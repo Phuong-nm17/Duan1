@@ -7,28 +7,32 @@ if (!isset($_SESSION['admin'])) {
     exit;
 }
 
+$error = "";
+$colors = $conn->query("SELECT * FROM color")->fetchAll(PDO::FETCH_ASSOC);
+$sizes = $conn->query("SELECT * FROM size")->fetchAll(PDO::FETCH_ASSOC);
+$categorys = $conn->query("SELECT * FROM category")->fetchAll(PDO::FETCH_ASSOC);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = $_POST['title'];
-    $price = $_POST['price'];
-    $discount = $_POST['discount'];
-    $thumbnail = $_POST['thumbnail'];
-    $description = $_POST['description'];
-    $color = $_POST['color'];
-    $size = $_POST['size'];
+    $title = htmlspecialchars($_POST['title']);
+    $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
+    $discount = filter_var($_POST['discount'], FILTER_VALIDATE_FLOAT);
+    $thumbnail = htmlspecialchars($_POST['thumbnail']);
+    $description = htmlspecialchars($_POST['description']);
+    $color_id = $_POST['color_id'];
+    $size_id = $_POST['size_id'];
+    $category_id = $_POST['category_id'];
 
-    if (!empty($title) && $price > 0) {
-        // $imageName = time() . '_' . $image['name'];
-        // move_uploaded_file($image['tmp_name'], "assets/images/" . $thumbnail);
-
-        $stmt = $conn->prepare("INSERT INTO product (title, price,discount, thumbnail, description, color, size) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color, $size]);
+    if (!empty($title) && $price > 0 && !empty($thumbnail)) {
+        $stmt = $conn->prepare("INSERT INTO product (title, price, discount, thumbnail, description, color_id, size_id, category_id) VALUES (?, ?, ?, ?, ?, ?, ?,?)");
+        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color_id, $size_id, $category_id]);
 
         header("Location: product.php");
         exit;
     } else {
-        $error = "Vui lòng nhập tin và tải lên hình ảnh!";
+        $error = "Vui lòng nhập đầy đủ thông tin và tải lên hình ảnh!";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -183,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
 
-        <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
+        <a href="logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
     </div>
 
 
@@ -213,22 +217,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
             <div class="mb-3">
                 <label>Màu sắc:</label>
-                <select class="form-select" name="color">
-                    <option value="Black">Black</option>
-                    <option value="White">White</option>
-                    <option value="Green">Green</option>
-                    <option value="Red">Red</option>
-                    <option value="Blue">Blue</option>
+                <select class="form-select" name="color_id">
+                    <?php foreach ($colors as $color) : ?>
+                        <option value="<?= $color['id'] ?>"><?= $color['name'] ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="mb-3">
                 <label>Kích thước:</label>
-                <select class="form-select" name="size">
-                    <option value="S">S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="XXL">XXL</option>
+                <select class="form-select" name="size_id">
+                    <?php foreach ($sizes as $size) : ?>
+                        <option value="<?= $size['id'] ?>"><?= $size['name'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label>thêm vào danh mục</label>
+                <select class="form-select" name="category_id">
+                    <?php foreach ($categorys as $c) : ?>
+                        <option value="<?= $c['id'] ?>"><?= $c['name'] ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <button type="submit" class="btn btn-success">Thêm Sản Phẩm</button>

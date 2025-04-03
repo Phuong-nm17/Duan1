@@ -194,7 +194,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
     </div>
-
     <div id="content">
         <h2>Chỉnh sửa thông tin khách hàng</h2>
         <form method="POST" enctype="multipart/form-data" class="mt-3">

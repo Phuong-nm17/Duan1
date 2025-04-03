@@ -3,8 +3,7 @@ session_start();
 require '../../model/connect.php';
 
 // Kiểm tra đăng nhập
-if (!isset($_SESSION['admin']))
-    header("Location: login.php");
+if (!isset($_SESSION['admin'])) header("Location: login.php");
 
 // Lấy danh sách sản phẩm
 $stmt = $conn->query("SELECT * FROM product");
@@ -173,30 +172,30 @@ $product = $stmt->fetchAll();
                 <tr class="text-center">
                     <th>ID</th>
                     <th>Tên</th>
-                    <th>Giá</th>
+                    <th>Giá bán</th>
                     <th>Giá Discount</th>
                     <th>Hình ảnh</th>
                     <th>Mô tả</th>
                     <th>Màu sắc</th>
                     <th>Size</th>
+                    <th>category</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($product as $p): ?>
+                <?php foreach ($product as $index => $p): ?>
                     <tr>
-                        <td><?= $p['id'] ?></td>
+                        <td><?= $index ?></td>
                         <td><?= $p['title'] ?></td>
-                        <td><?= number_format($p['price'], 0, ',', '.') ?> đ</td>
-                        <td><?= number_format($p['discount'], 0, ',', '.') ?> đ</td>
+                        <td><?= number_format($p['price'], 0, ',', '.') ?> $</td>
+                        <td><?= number_format($p['discount'], 0, ',', '.') ?> $</td>
                         <td><img src="<?= $p['thumbnail'] ?>" width="50"></td>
                         <td><?= $p['description'] ?></td>
-                        <td><?= $p['color_id'] ?></td>
-                        <td><?= $p['size_id'] ?></td>
+                        <td><?= $p['color'] ?></td>
+                        <td><?= $p['size'] ?></td>
                         <td>
                             <a href="edit_product.php?id=<?= $p['id'] ?>" class="btn btn-warning btn-sm">Sửa</a>
-                            <a href="delete_product.php?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
+                            <a href="delete_product.php?id=<?= $p['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

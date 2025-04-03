@@ -102,6 +102,7 @@ $result = $conn->query($sql);
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
+                <a href="index.php?act=home" class="text-decoration-none">
                 <a href="" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span
                             class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
@@ -169,7 +170,8 @@ $result = $conn->query($sql);
                         while ($row = $result->fetch(PDO::FETCH_ASSOC)):
                             $item_total = $row['price'] * $row['quantity'];
                             $subtotal += $item_total;
-                            ?>
+                        ?>
+
                             <tr>
                                 <td class="align-middle">
                                     <img src="<?= $row['thumbnail'] ?>" alt="" style="width: 50px;">
