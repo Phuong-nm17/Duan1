@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../model/connect.php';
+require '../../model/connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($user) {
         $_SESSION['admin'] = $username;
-        header("Location: index.php");
+        header("Location: ../index.php");
         exit;
     } else {
         $error = "Sai tên đăng nhập hoặc mật khẩu!";
