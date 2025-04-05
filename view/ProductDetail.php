@@ -224,14 +224,6 @@ if (isset($_SESSION['email'])) {
                         <div class="navbar-nav mr-auto py-0">
                             <a href="index.php?act=home" class="nav-item nav-link active">Home</a>
                             <a href="index.php?act=ProductList" class="nav-item nav-link">Shop</a>
-                            <a href="index.php?act=ProductDetail" class="nav-item nav-link">Shop Detail</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                                <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="index.php?act=cart" class="dropdown-item">Shopping Cart</a>
-                                    <a href="checkout.html" class="dropdown-item">Checkout</a>
-                                </div>
-                            </div>
                             <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
@@ -299,7 +291,7 @@ if (isset($_SESSION['email'])) {
                     </div>
                     <small class="pt-1">(50 Reviews)</small>
                 </div>
-                <h3 class="font-weight-semi-bold mb-4">$ <?= $product['price'] ?></h3>
+                <h3 class="font-weight-semi-bold mb-4">$ <?= number_format($product['discount'], 2) ?></h3>
                 <p class="mb-4"><?= $product['description'] ?></p>
                 <form action="view/add_cart.php" method="POST">
                     <input type="hidden" name="product_id" value="<?= $product['id'] ?>">

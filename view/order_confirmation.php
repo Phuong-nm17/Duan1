@@ -10,7 +10,11 @@ if (!isset($_SESSION['id'])) {
 $user_id = $_SESSION['id'];
 
 // Lấy thông tin đơn hàng mới nhất
-$order_sql = "SELECT o.*, p.title AS product_name, p.price AS unit_price 
+$order_sql = "SELECT o.*, 
+                     p.title AS product_name, 
+                     p.price AS unit_price, 
+                     p.thumbnail, 
+                     o.quanity 
               FROM orders o
               JOIN product p ON o.product_id = p.id
               WHERE o.user_id = :user_id
@@ -31,7 +35,7 @@ try {
     // Tính tổng tiền
     $total = 0;
     foreach ($order_items as $item) {
-        $total += $item['total_money'];
+        $total += $item['unit_price'] * $item['quanity'];
     }
     
 } catch (Exception $e) {
@@ -45,6 +49,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xác nhận đơn hàng</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="view/css/style.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
@@ -59,87 +64,72 @@ try {
             object-fit: cover;
             border-radius: 5px;
         }
+        .table-bordered {
+            border: 2px solid #dee2e6;
+        }
+        .bg-secondary {
+            background-color: #f8f9fa !important;
+        }
+        .text-dark {
+            color: #343a40 !important;
+        }
     </style>
 </head>
 <body>
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card confirmation-card mb-4">
-                    <div class="card-header bg-success text-white">
-                        <h3 class="mb-0">Đặt hàng thành công!</h3>
+    <div class="container-fluid pt-5">
+        <div class="row px-xl-5">
+            <!-- Bảng chi tiết đơn hàng -->
+            <div class="col-lg-8 table-responsive mb-5">
+                <table class="table table-bordered text-center mb-0">
+                    <thead class="bg-secondary text-dark">
+                        <tr>
+                            <th>Hình ảnh</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                        <?php foreach ($order_items as $item): ?>
+                            <tr>
+                                <td class="align-middle">
+                                    <img src="<?= htmlspecialchars($item['thumbnail'] ?? 'img/default-product.jpg') ?>" 
+                                         alt="<?= htmlspecialchars($item['product_name']) ?>" 
+                                         style="width: 50px;">
+                                </td>
+                                <td class="align-middle"><?= htmlspecialchars($item['product_name']) ?></td>
+                                <td class="align-middle">$<?= number_format($item['unit_price'], 2) ?></td>
+                                <td class="align-middle"><?= htmlspecialchars($item['quanity']) ?></td>
+                                <td class="align-middle">$<?= number_format($item['unit_price'] * $item['quanity'], 2) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tóm tắt đơn hàng -->
+            <div class="col-lg-4">
+                <div class="card border-secondary mb-5">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Tóm tắt đơn hàng</h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-success">
-                            <h4 class="alert-heading">Cảm ơn bạn đã đặt hàng!</h4>
-                            <p>Đơn hàng của bạn đã được tiếp nhận và đang được xử lý.</p>
-                            <hr>
-                            <p class="mb-0">Mã đơn hàng: #<?= $order_items[0]['id'] ?></p>
+                        <div class="d-flex justify-content-between mb-3 pt-1">
+                            <h6 class="font-weight-medium">Tạm tính</h6>
+                            <h6 class="font-weight-medium">$<?= number_format($total, 2) ?></h6>
                         </div>
-                        
-                        <h5 class="mb-3">Chi tiết đơn hàng</h5>
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Sản phẩm</th>
-                                        <th>Đơn giá</th>
-                                        <th>Số lượng</th>
-                                        <th>Thành tiền</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($order_items as $item): ?>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="<?= $item['thumbnail'] ?? 'img/default-product.jpg' ?>" 
-                                                     alt="<?= htmlspecialchars($item['product_name']) ?>" 
-                                                     class="product-img me-3">
-                                                <span><?= htmlspecialchars($item['product_name']) ?></span>
-                                            </div>
-                                        </td>
-                                        <td>$<?= number_format($item['unit_price'], 2) ?></td>
-                                        <td><?= $item['quantity'] ?></td>
-                                        <td>$<?= number_format($item['total_money'], 2) ?></td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th colspan="3" class="text-end">Tổng cộng:</th>
-                                        <th>$<?= number_format($total, 2) ?></th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            <a href="index.php" class="btn btn-primary">Tiếp tục mua sắm</a>
-                            <a href="user_orders.php" class="btn btn-outline-secondary">Xem đơn hàng</a>
+                        <div class="d-flex justify-content-between">
+                            <h6 class="font-weight-medium">Phí vận chuyển</h6>
+                            <h6 class="font-weight-medium">$10.00</h6>
                         </div>
                     </div>
-                </div>
-                
-                <div class="card confirmation-card">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Thông tin giao hàng</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Họ tên:</strong> Nguyễn Văn A</p>
-                                <p><strong>Địa chỉ:</strong> 123 Đường ABC, Quận 1, TP.HCM</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong>Số điện thoại:</strong> 0901234567</p>
-                                <p><strong>Email:</strong> customer@example.com</p>
-                            </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5 class="font-weight-bold">Tổng cộng</h5>
+                            <h5 class="font-weight-bold">$<?= number_format($total + 10, 2) ?></h5>
                         </div>
-                        <div class="alert alert-info mt-3">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Đơn hàng sẽ được giao trong vòng 2-3 ngày làm việc.
-                        </div>
+                        <a href="index.php" class="btn btn-block btn-primary my-3 py-3">Tiếp tục mua sắm</a>
                     </div>
                 </div>
             </div>
