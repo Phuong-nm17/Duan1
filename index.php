@@ -6,6 +6,9 @@ if (isset($_GET["act"])) {
         case 'contact':
             include "view/contact.php";
             break;
+        case 'orderconfirm' :
+            include "view/order_confirmation.php";
+            break;
         case 'home':
             include "view/header.php";
             include "view/home.php";
@@ -34,6 +37,12 @@ if (isset($_GET["act"])) {
         case 'ProductDetail':
             include "view/ProductDetail.php";
             include "view/footer.php";
+            break;
+        case 'checkout' :
+            include "view/checkout.php";
+            break;
+        case 'order_confirm' :
+            include "view/order_confirm.php";
             break;
         default:
             include "view/home.php";

@@ -144,8 +144,9 @@ try {
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="" class="text-decoration-none">
+                <a href="index.php?act=home" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
@@ -206,14 +207,6 @@ try {
                     <div class="navbar-nav mr-auto py-0">
                         <a href="index.php?act=home" class="nav-item nav-link active">Home</a>
                         <a href="index.php?act=ProductList" class="nav-item nav-link">Shop</a>
-                        <a href="index.php?act=ProductDetail" class="nav-item nav-link">Shop Detail</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="index.php?act=cart" class="dropdown-item">Shopping Cart</a>
-                                <a href="checkout.html" class="dropdown-item">Checkout</a>
-                            </div>
-                        </div>
                         <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
@@ -253,37 +246,78 @@ try {
 </div>
 <!-- Page Header End -->
 <!-- Products start -->
-<div class="container-fluid pt-5">
-    <div class="text-center mb-4">
-        <h2 class="section-title px-5"><span class="px-2"></span></h2>
-    </div>
-    <div class="row px-xl-5 pb-3">
-        <?php if (!empty($product)) : ?>
-        <?php foreach ($product as $p) : ?>
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <img class="img-fluid w-100" src="<?= $p['thumbnail'] ?>" alt="">
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
-                        <div class="d-flex justify-content-center">
-                            <h6><?= number_format($p['discount']) ?> đ</h6>
-                            <h6 class="text-muted ml-2"><del><?= number_format($p['price']) ?> đ</del></h6>
+<?php
+if (isset($_GET['search'])): ?>
+    <h2 class="text-primary text-uppercase mb-3" style="margin-left: 40px;">
+        Kết quả tìm kiếm cho: "<?= htmlspecialchars($_GET['search']) ?>"
+    </h2>
+
+
+    <?php if (empty($product)): ?>
+        <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">Không tìm thấy sản phẩm nào.
+        </p>
+    <?php else: ?>
+        <div class=" row pb-3 px-xl-5">
+            <?php foreach ($product as $p) : ?>
+                <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                    <div class="card border-0 mb-4 product-item">
+                        <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
+                            <img class="w-100 img-fluid" src="<?= $p['thumbnail'] ?>" alt="">
+                        </div>
+                        <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
+                            <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
+                            <div class="d-flex justify-content-center">
+                                <h6> $ <?= number_format($p['discount']) ?></h6>
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price']) ?></del></h6>
+                            </div>
+                        </div>
+                        <div class="d-flex card-footer bg-light border justify-content-between">
+                            <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                            <a href="" class="btn btn-sm p-0 text-dark"><i class="text-primary fa-shopping-cart fas mr-1"></i>Add To
+                                Cart</a>
                         </div>
                     </div>
-                    <div class="card-footer d-flex justify-content-between bg-light border">
-                    <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                        <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                    </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
-        <?php else : ?>
-    <p class="text-center">Không có sản phẩm nào trong danh mục này.</p>
-<?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <div class="container-fluid pt-5">
+        <div class="text-center mb-4">
+            <h2 class="section-title px-5"><span class="px-2"><?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></span></h2>
+        </div>
+        <div class="row px-xl-5 pb-3">
+            <?php if (!empty($product)) : ?>
+                <?php foreach ($product as $p): ?>
+                    <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                        <div class="card product-item border-0 mb-4">
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                <img class="img-fluid w-100" src="<?= $p['thumbnail'] ?>" alt="">
+                            </div>
+                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
+                                <div class="d-flex justify-content-center">
+                                    <h6>$ <?= number_format($p['price']) ?></h6>
+                                    <h6 class="text-muted ml-2">$ <del><?= number_format($p['discount']) ?> </del></h6>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between bg-light border">
+                                <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i
+                                        class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                                <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i
+                                        class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <p class="text-center">Không có sản phẩm nào trong danh mục này.</p>
+            <?php endif; ?>
+        </div>
     </div>
-</div>
+<?php endif; ?>
+
 <!-- Products End -->
 <!-- Back to Top -->
 <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>

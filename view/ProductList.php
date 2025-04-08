@@ -54,7 +54,7 @@ try {
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
     } else {
-        $sql = "SELECT * FROM productrandy";
+        $sql = "SELECT * FROM product";
         $stmt = $conn->prepare($sql);
     }
 
@@ -229,14 +229,6 @@ try {
                     <div class="navbar-nav mr-auto py-0">
                         <a href="index.php?act=home" class="nav-item nav-link active">Home</a>
                         <a href="index.php?act=ProductList" class="nav-item nav-link">Shop</a>
-                        <a href="index.php?act=ProductDetail" class="nav-item nav-link">Shop Detail</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="index.php?act=cart" class="dropdown-item">Shopping Cart</a>
-                                <a href="checkout.html" class="dropdown-item">Checkout</a>
-                            </div>
-                        </div>
                         <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
@@ -295,8 +287,8 @@ if (isset($_GET['search'])): ?>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6> $ <?= number_format($p['price']) ?></h6>
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount']) ?></del></h6>
+                                <h6> $ <?= number_format($p['price'], 2) ?></h6>
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount'], 2) ?></del></h6>
                             </div>
                         </div>
                         <div class="d-flex card-footer bg-light border justify-content-between">
@@ -329,8 +321,8 @@ if (isset($_GET['search'])): ?>
                         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6>$ <?= number_format($p['price']) ?></h6>
-                                <h6 class="text-muted ml-2">$ <del><?= number_format($p['discount']) ?> </del></h6>
+                                <h6>$ <?= number_format($p['discount'], 2) ?></h6>
+                                <h6 class="text-muted ml-2">$ <del><?= number_format($p['price'], 2) ?> </del></h6>
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
