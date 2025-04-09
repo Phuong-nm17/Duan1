@@ -54,7 +54,7 @@ try {
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
     } else {
-        $sql = "SELECT * FROM productrandy";
+        $sql = "SELECT * FROM product";
         $stmt = $conn->prepare($sql);
     }
 
