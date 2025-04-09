@@ -39,7 +39,7 @@ if (isset($_GET['search'])): ?>
     <h2 class="text-primary text-uppercase mb-3" style="margin-left: 40px;">
         Kết quả tìm kiếm cho: "<?= htmlspecialchars($_GET['search']) ?>"
     </h2>
-
+        Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
 
     <?php if (empty($product)): ?>
         <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">Không tìm thấy sản phẩm nào.
@@ -47,6 +47,7 @@ if (isset($_GET['search'])): ?>
     <?php else: ?>
         <div class=" row pb-3 px-xl-5">
             <?php foreach ($product as $p) : ?>
+
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card border-0 mb-4 product-item">
                         <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
@@ -133,6 +134,7 @@ if (isset($_GET['search'])): ?>
                             </a>
                         <?php endif; ?>
                     <?php endforeach; ?>
+
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 pb-1">
@@ -188,6 +190,7 @@ if (isset($_GET['search'])): ?>
         </div>
         <div class="row pb-3 px-xl-2">
             <?php foreach ($product as $p) : ?>
+
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card border-0 mb-4 product-item">
                         <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
@@ -196,9 +199,16 @@ if (isset($_GET['search'])): ?>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6> $ <?= number_format($p['discount']) ?></h6>
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price']) ?></del></h6>
+                                <h6> $ <?= number_format($p['price']) ?></h6>
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount']) ?></del></h6>
                             </div>
+                        </div>
+                        <div class="d-flex card-footer bg-light border justify-content-between">
+                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
+                                    class="text-primary fa-eye fas mr-1"></i>View Detail</a>
+                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
+                                    class="text-primary fa-shopping-cart fas mr-1"></i>Add To Cart
+                            </a>
                         </div>
                     </div>
                 </div>

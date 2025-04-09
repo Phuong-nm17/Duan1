@@ -38,3 +38,4 @@ if ($cart_id > 0 && in_array($action, ['increase', 'decrease'])) {
 
 header("Location: ../index.php?act=cart");
 exit;
+?>

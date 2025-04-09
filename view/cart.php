@@ -103,6 +103,7 @@ $result = $conn->query($sql);
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="index.php?act=home" class="text-decoration-none">
+                <a href="" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span
                             class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
@@ -170,6 +171,7 @@ $result = $conn->query($sql);
                             $item_total = $row['price'] * $row['quantity'];
                             $subtotal += $item_total;
                         ?>
+
                             <tr>
                                 <td class="align-middle">
                                     <img src="<?= $row['thumbnail'] ?>" alt="" style="width: 50px;">
@@ -187,7 +189,7 @@ $result = $conn->query($sql);
                                     <div class="input-group quantity mx-auto" style="width: 100px;">
                                         <div class="input-group-btn">
                                             <a href="view/update_cart.php?action=decrease&id=<?= $row['id'] ?>"
-                                                type="button" class="btn btn-sm btn-primary btn-minus">
+                                                class="btn btn-sm btn-primary btn-minus">
                                                 <i class="fa fa-minus"></i>
                                             </a>
                                         </div>
@@ -195,7 +197,7 @@ $result = $conn->query($sql);
                                             value="<?= $row['quantity'] ?>" readonly>
                                         <div class="input-group-btn">
                                             <a href="view/update_cart.php?action=increase&id=<?= $row['id'] ?>"
-                                                type="button" class="btn btn-sm btn-primary btn-plus">
+                                                class="btn btn-sm btn-primary btn-plus">
                                                 <i class="fa fa-plus"></i>
                                             </a>
                                         </div>
