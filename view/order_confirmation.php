@@ -240,16 +240,19 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <td><?= $item['product_title'] ?></td>
                   <td><?= $item['size_name'] ?></td>
                   <td><?= $item['color_name'] ?></td>
-                  <td><?= number_format($item['price'], 0, ',', '.') ?> đ</td>
+
+                  <td>$<?= number_format($item['price'], 0, ',', '.') ?></td>
                   <td><?= $item['quantity'] ?></td>
-                  <td><?= number_format($subtotal, 0, ',', '.') ?> đ</td>
+                  <td>$<?= number_format($subtotal, 0, ',', '.') ?></td>
+
                 </tr>
                 <?php endforeach;
             }
             ?>
           </tbody>
         </table>
-        <div class="total">Total: <?= number_format($total, 0, ',', '.') ?> đ</div>
+        <div class="total">Total:$<?= number_format($subtotal + 10, 2) ?></div>
+
       </fieldset>
 
       <button type="submit" name="confirm_order" class="submit-btn">Confirm Order</button>
