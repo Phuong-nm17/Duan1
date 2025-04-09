@@ -107,8 +107,8 @@ if (isset($_SESSION['email'])) {
 <body>
     <!-- Topbar Start -->
     <div class="container-fluid">
-        <div class="row bg-secondary py-2 px-xl-5">
-            <div class="col-lg-6 d-none d-lg-block">
+        <div class="row bg-secondary px-xl-5 py-2">
+            <div class="col-lg-6 d-lg-block d-none">
                 <div class="d-inline-flex align-items-center">
                     <a class="text-dark" href="">FAQs</a>
                     <span class="text-muted px-2">|</span>
@@ -120,19 +120,19 @@ if (isset($_SESSION['email'])) {
             <div class="col-lg-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
                     <a class="text-dark px-2" href="">
-                        <i class="fab fa-facebook-f"></i>
+                        <i class="fa-facebook-f fab"></i>
                     </a>
                     <a class="text-dark px-2" href="">
-                        <i class="fab fa-twitter"></i>
+                        <i class="fa-twitter fab"></i>
                     </a>
                     <a class="text-dark px-2" href="">
-                        <i class="fab fa-linkedin-in"></i>
+                        <i class="fa-linkedin-in fab"></i>
                     </a>
                     <a class="text-dark px-2" href="">
-                        <i class="fab fa-instagram"></i>
+                        <i class="fa-instagram fab"></i>
                     </a>
                     <a class="text-dark pl-2" href="">
-                        <i class="fab fa-youtube"></i>
+                        <i class="fa-youtube fab"></i>
                     </a>
                 </div>
             </div>
@@ -157,13 +157,13 @@ if (isset($_SESSION['email'])) {
                     </div>
                 </form>
             </div>
-            <div class="col-lg-3 col-6 text-right">
+            <div class="col-6 col-lg-3 text-right">
                 <a href="" class="btn border">
-                    <i class="fas fa-heart text-primary"></i>
+                    <i class="text-primary fa-heart fas"></i>
                     <span class="badge">0</span>
                 </a>
                 <a href="" class="btn border">
-                    <i class="fas fa-shopping-cart text-primary"></i>
+                    <i class="text-primary fa-shopping-cart fas"></i>
                     <span class="badge">0</span>
                 </a>
             </div>
@@ -184,17 +184,19 @@ if (isset($_SESSION['email'])) {
                 </a>
                 <nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0"
                     id="navbar-vertical">
+
                     <div class="navbar-nav w-100 overflow-hidden">
                         <?php foreach ($category as $cat): ?>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
                                 class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
+
                         <?php endforeach; ?>
                     </div>
                 </nav>
             </div>
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                    <a href="" class="text-decoration-none d-block d-lg-none">
+                    <a href="index.php" class="text-decoration-none d-block d-lg-none">
                         <h1 class="m-0 display-5 font-weight-semi-bold"><span
                                 class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                     </a>
@@ -205,23 +207,16 @@ if (isset($_SESSION['email'])) {
                         <div class="navbar-nav mr-auto py-0">
                             <a href="index.php?act=home" class="nav-item nav-link active">Home</a>
                             <a href="index.php?act=ProductList" class="nav-item nav-link">Shop</a>
-                            <a href="index.php?act=ProductDetail" class="nav-item nav-link">Shop Detail</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                                <div class="dropdown-menu rounded-0 m-0">
-                                    <a href="index.php?act=cart" class="dropdown-item">Shopping Cart</a>
-                                    <a href="checkout.html" class="dropdown-item">Checkout</a>
-                                </div>
-                            </div>
                             <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <?php if (!isset($_SESSION['email'])) : ?>
+                            <?php if (!isset($_SESSION['email'])): ?>
                                 <a href="index.php?act=login" class="nav-item nav-link">Login</a>
                                 <a href="index.php?act=register" class="nav-item nav-link">Register</a>
-                            <?php else : ?>
+                            <?php else: ?>
                                 <div class="menu-item">
-                                    <a href="#" class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                    <a href="#"
+                                        class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
                                     <div class="submenu">
                                         <a href="index.php?act=cart">Cart</a>
                                         <a href="index.php?act=Logout">LogOut</a>
@@ -234,25 +229,25 @@ if (isset($_SESSION['email'])) {
                 </nav>
                 <div id="header-carousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner">
-                        <div class="carousel-item active" style="height: 410px;">
-                            <img class="img-fluid" src="view/img/carousel-1.jpg" alt="Image">
-                            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                        <div class="active carousel-item" style="height: 410px;">
+                            <img src="view/img/carousel-1.jpg" alt="Image">
+                            <div class="d-flex flex-column align-items-center justify-content-center carousel-caption">
                                 <div class="p-3" style="max-width: 700px;">
                                     <h4 class="text-light text-uppercase font-weight-medium mb-3">10% Off Your First
                                         Order</h4>
                                     <h3 class="display-4 text-white font-weight-semi-bold mb-4">Fashionable Dress</h3>
-                                    <a href="" class="btn btn-light py-2 px-3">Shop Now</a>
+                                    <a href="" class="btn btn-light px-3 py-2">Shop Now</a>
                                 </div>
                             </div>
                         </div>
                         <div class="carousel-item" style="height: 410px;">
-                            <img class="img-fluid" src="view/img/carousel-2.jpg" alt="Image">
-                            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                            <img src="view/img/carousel-2.jpg" alt="Image">
+                            <div class="d-flex flex-column align-items-center justify-content-center carousel-caption">
                                 <div class="p-3" style="max-width: 700px;">
                                     <h4 class="text-light text-uppercase font-weight-medium mb-3">10% Off Your First
                                         Order</h4>
                                     <h3 class="display-4 text-white font-weight-semi-bold mb-4">Reasonable Price</h3>
-                                    <a href="" class="btn btn-light py-2 px-3">Shop Now</a>
+                                    <a href="" class="btn btn-light px-3 py-2">Shop Now</a>
                                 </div>
                             </div>
                         </div>

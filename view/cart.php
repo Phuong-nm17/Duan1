@@ -17,6 +17,7 @@ if (isset($_SESSION['email'])) {
 
 if (!isset($_SESSION['id'])) {
     // die("Bạn cần đăng nhập để xem giỏ hàng.");
+    header("Location: index.php?act=login");
 }
 $user_id = $_SESSION['id'];
 
@@ -36,9 +37,6 @@ $sql = "SELECT
 $result = $conn->query($sql);
 
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -103,7 +101,7 @@ $result = $conn->query($sql);
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="index.php?act=home" class="text-decoration-none">
-                <a href="" class="text-decoration-none">
+                <a href="index.php" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span
                             class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
@@ -249,7 +247,9 @@ $result = $conn->query($sql);
                             <h5 class="font-weight-bold">Total</h5>
                             <h5 class="font-weight-bold">$<?= number_format($subtotal + 10, 2) ?></h5>
                         </div>
-                        <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
+                        <a href="index.php?act=checkout">
+                            <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
+                        </a>
                     </div>
                 </div>
             </div>
