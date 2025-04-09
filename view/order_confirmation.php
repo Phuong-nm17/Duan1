@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'connect.php';
+require_once(__DIR__ . '/../model/connect.php');
 
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['id'])) {
@@ -11,7 +11,7 @@ if (!isset($_SESSION['id'])) {
 $user_id = $_SESSION['id'];
 
 // Lấy đơn hàng mới nhất
-$order_sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT 1";
+$order_sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC LIMIT 1";
 $stmt = $conn->prepare($order_sql);
 $stmt->execute([$user_id]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -21,8 +21,31 @@ if (!$order) {
     exit();
 }
 
+// Xử lý khi xác nhận đơn hàng
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
+    $fullname = $_POST['fullname'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $address = $_POST['address'];
+    $shipping_method = $_POST['shipping_method'];
+    $payment_method = $_POST['payment_method'];
+    $note = $_POST['note'];
+
+    $update_sql = "UPDATE orders SET fullname = ?, email = ?, phone = ?, address = ?,  payment_method = ?, note = ? WHERE id = ?";
+    $stmt = $conn->prepare($update_sql);
+    $stmt->execute([$fullname, $email, $phone, $address, $payment_method, $note, $order['id']]);
+
+    echo "<script>
+        alert('🎉 Đặt hàng thành công!');
+        setTimeout(function() {
+            window.location.href = '../Duan1/';
+        }, 500);
+    </script>";
+    exit();
+}
+
 // Lấy chi tiết sản phẩm trong đơn hàng
-$details_sql = "SELECT od.*, p.name AS product_name, p.thumbnail, s.name AS size_name, c.name AS color_name 
+$details_sql = "SELECT od.*, p.title AS product_title, p.thumbnail, s.name AS size_name, c.name AS color_name 
                 FROM order_details od
                 JOIN product p ON od.product_id = p.id
                 JOIN size s ON od.size_id = s.id
@@ -31,112 +54,207 @@ $details_sql = "SELECT od.*, p.name AS product_name, p.thumbnail, s.name AS size
 $stmt = $conn->prepare($details_sql);
 $stmt->execute([$order['id']]);
 $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Tính tổng tiền (chưa cộng phí ship)
-$total = 0;
-foreach ($order_items as $item) {
-    $total += $item['unit_price'] * $item['quanity'];
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xác nhận đơn hàng</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="view/css/style.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .confirmation-card {
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        .product-img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-        .table-bordered {
-            border: 2px solid #dee2e6;
-        }
-        .bg-secondary {
-            background-color: #f8f9fa !important;
-        }
-        .text-dark {
-            color: #343a40 !important;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Order Confirmation</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      padding: 30px;
+    }
+
+    .checkout-container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      text-align: center;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+
+    fieldset {
+      border: none;
+      margin-bottom: 25px;
+    }
+
+    legend {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0 4px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #f1f1f1;
+    }
+
+    .total {
+      text-align: right;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #333;
+    }
+
+    .submit-btn {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #28a745;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #218838;
+    }
+
+    @media (max-width: 600px) {
+      .checkout-container {
+        padding: 20px;
+      }
+
+      table th, table td {
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container-fluid pt-5">
-        <div class="row px-xl-5">
-            <!-- Bảng chi tiết đơn hàng -->
-            <div class="col-lg-8 table-responsive mb-5">
-                <table class="table table-bordered text-center mb-0">
-                    <thead class="bg-secondary text-dark">
-                        <tr>
-                            <th>Hình ảnh</th>
-                            <th>Tên sản phẩm</th>
-                            <th>Size</th>
-                            <th>Màu</th>
-                            <th>Đơn giá</th>
-                            <th>Số lượng</th>
-                            <th>Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody class="align-middle">
-                        <?php foreach ($order_items as $item): ?>
-                            <tr>
-                                <td class="align-middle">
-                                    <img src="<?= htmlspecialchars($item['thumbnail'] ?? 'img/default-product.jpg') ?>" 
-                                         alt="<?= htmlspecialchars($item['product_name']) ?>" 
-                                         class="product-img">
-                                </td>
-                                <td class="align-middle"><?= htmlspecialchars($item['product_name']) ?></td>
-                                <td class="align-middle"><?= htmlspecialchars($item['size_name']) ?></td>
-                                <td class="align-middle"><?= htmlspecialchars($item['color_name']) ?></td>
-                                <td class="align-middle">$<?= number_format($item['unit_price'], 2) ?></td>
-                                <td class="align-middle"><?= $item['quanity'] ?></td>
-                                <td class="align-middle">$<?= number_format($item['unit_price'] * $item['quanity'], 2) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
 
-            <!-- Tóm tắt đơn hàng -->
-            <div class="col-lg-4">
-                <div class="card border-secondary mb-5">
-                    <div class="card-header bg-secondary border-0">
-                        <h4 class="font-weight-semi-bold m-0">Tóm tắt đơn hàng</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3 pt-1">
-                            <h6 class="font-weight-medium">Tạm tính</h6>
-                            <h6 class="font-weight-medium">$<?= number_format($total, 2) ?></h6>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <h6 class="font-weight-medium">Phí vận chuyển</h6>
-                            <h6 class="font-weight-medium">$10.00</h6>
-                        </div>
-                    </div>
-                    <div class="card-footer border-secondary bg-transparent">
-                        <div class="d-flex justify-content-between mt-2">
-                            <h5 class="font-weight-bold">Tổng cộng</h5>
-                            <h5 class="font-weight-bold">$<?= number_format($total + 10, 2) ?></h5>
-                        </div>
-                        <a href="index.php" class="btn btn-block btn-primary my-3 py-3">Tiếp tục mua sắm</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="checkout-container">
+    <form action="" method="POST">
+      <h2>ORDER CONFIRMATION</h2>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <fieldset>
+        <legend>1. Recipient Information</legend>
+        <label>Full Name:</label>
+        <input type="text" name="fullname" value="<?= htmlspecialchars($order['fullname']) ?>">
+
+        <label>Email:</label>
+        <input type="email" name="email" value="<?= htmlspecialchars($order['email']) ?>">
+
+        <label>Phone Number:</label>
+        <input type="tel" name="phone" value="<?= htmlspecialchars($order['phone']) ?>">
+
+        <label>Shipping Address:</label>
+        <textarea name="address"><?= htmlspecialchars($order['address']) ?></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>2. Shipping & Payment</legend>
+        <label>Shipping Method:</label>
+        <select name="shipping_method" required>
+          <option value="normal" >Standard Shipping (3-5 days)</option>
+          <option value="fast">Express Shipping (1-2 days)</option>
+        </select>
+
+        <label>Payment Method:</label>
+        <select name="payment_method" required>
+          <option value="cod" <?= $order['payment_method'] === 'cod' ? 'selected' : '' ?>>Cash on Delivery (COD)</option>
+          <option value="bank" <?= $order['payment_method'] === 'bank' ? 'selected' : '' ?>>Bank Transfer</option>
+          <option value="momo" <?= $order['payment_method'] === 'momo' ? 'selected' : '' ?>>MoMo E-Wallet</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. Order Note</legend>
+        <textarea name="note" rows="3" placeholder="Any additional notes for your order..."></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>4. Cart Items</legend>
+        <table>
+          <thead>
+            <tr>
+              <th>Thumbnail</th>
+              <th>Product</th>
+              <th>Size</th>
+              <th>Color</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+            $total = 0;
+            if (empty($order_items)) {
+                echo '<tr><td colspan="7" style="color: red;">⚠️ No products found in this order.</td></tr>';
+            } else {
+                foreach ($order_items as $item):
+                    $subtotal = $item['price'] * $item['quantity'];
+                    $total += $subtotal;
+                ?>
+                <tr>
+                  <td><img src="<?= $item['thumbnail'] ?>" style="width: 50px;"></td>
+                  <td><?= $item['product_title'] ?></td>
+                  <td><?= $item['size_name'] ?></td>
+                  <td><?= $item['color_name'] ?></td>
+                  <td><?= number_format($item['price'], 0, ',', '.') ?> đ</td>
+                  <td><?= $item['quantity'] ?></td>
+                  <td><?= number_format($subtotal, 0, ',', '.') ?> đ</td>
+                </tr>
+                <?php endforeach;
+            }
+            ?>
+          </tbody>
+        </table>
+        <div class="total">Total: <?= number_format($total, 0, ',', '.') ?> đ</div>
+      </fieldset>
+
+      <button type="submit" name="confirm_order" class="submit-btn">Confirm Order</button>
+    </form>
+  </div>
+
 </body>
 </html>

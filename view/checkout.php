@@ -11,7 +11,9 @@ if (!isset($_SESSION['id'])) {
 $user_id = $_SESSION['id'];
 
 // Lấy thông tin giỏ hàng của user
-$sql = "SELECT cart.*, product.title AS product_name, product.price, size.name AS size_name, color.name AS color_name
+$sql =  "SELECT cart.product_id, cart.size_id, cart.color_id, cart.quantity, 
+               product.title AS product_name, product.price, 
+               size.name AS size_name, color.name AS color_name
         FROM cart
         JOIN product ON cart.product_id = product.id
         JOIN size ON cart.size_id = size.id
@@ -32,13 +34,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullname = $_POST['fullname'] ?? '';
     $phone = $_POST['phone'] ?? '';
     $address = $_POST['address'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $order_date = $_POST['order_date'] ?? '';
+    $country = $_POST['country'] ?? '';
+    $city = $_POST['city'] ?? '';
+    $payment_method = $_POST['payment_method'] ?? '';
+    $zipcode = $_POST['zipcode'] ?? '';
+    $note = $_POST['note'] ?? '';
 
     if ($fullname && $phone && $address) {
         // Thêm đơn hàng
-        $order_sql = "INSERT INTO orders (user_id, fullname, phone, address, total_price, created_at)
-                      VALUES (?, ?, ?, ?, ?, NOW())";
+        $order_sql = "INSERT INTO orders (user_id, fullname, phone, address, email, order_date, country, city, payment_method, zipcode,note)
+              VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?,?)";
         $order_stmt = $conn->prepare($order_sql);
-        $order_stmt->execute([$user_id, $fullname, $phone, $address, $total]);
+        $order_stmt->execute([
+        $user_id, $fullname, $phone, $address,
+        $email, $country, $city, $payment_method, $zipcode,$note
+        ]);
+
 
         $order_id = $conn->lastInsertId();
 
@@ -64,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $delete_cart_stmt->execute([$user_id]);
 
         // Chuyển hướng đến trang order_confirm
-        header("Location: index.php?act=order_confirm");
+        header("Location:index.php?act=orderconfirm&id=$order_id");
         exit();
     } else {
         $error = "Vui lòng nhập đầy đủ thông tin.";
@@ -185,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     <!-- Checkout Start -->
-    <form method="POST" action="checkout.php">
+    <form method="POST">
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <div class="col-lg-8">
@@ -271,20 +284,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="card-body">
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="paypal" value="Paypal" checked>
-                                <label class="custom-control-label" for="paypal">Paypal</label>
+                                <input type="radio" class="custom-control-input" name="payment_method" id="cod" value="cod" checked>
+                                <label class="custom-control-label" for="cod">Cash on Delivery (COD)</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="directcheck" value="Direct Check">
-                                <label class="custom-control-label" for="directcheck">Direct Check</label>
+                                <input type="radio" class="custom-control-input" name="payment_method" id="bank" value="bank">
+                                <label class="custom-control-label" for="bank">Bank Transfer</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="banktransfer" value="Bank Transfer">
-                                <label class="custom-control-label" for="banktransfer">Bank Transfer</label>
+                                <input type="radio" class="custom-control-input" name="payment_method" id="momo" value="momo">
+                                <label class="custom-control-label" for="momo">MoMo E-Wallet</label>
                             </div>
                         </div>
                     </div>
