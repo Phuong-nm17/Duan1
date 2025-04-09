@@ -37,19 +37,14 @@ try {
 <?php
 if (isset($_GET['search'])): ?>
 
-    <h2 class="text-primary text-uppercase mb-3" spullpulltyle="margin-left: 40px;">
-
-        Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
-
-
-   
+    <h2 class="text-primary text-uppercase mb-3" style="margin-left: 40px;">
+        Kết quả tìm kiếm cho: "<?= htmlspecialchars($_GET['search']) ?>"
     </h2>
         Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
 
+
     <?php if (empty($product)): ?>
-
-        <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">No products found.
-
+        <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">Không tìm thấy sản phẩm nào.
         </p>
     <?php else: ?>
         <div class=" row pb-3 px-xl-5">
@@ -64,7 +59,9 @@ if (isset($_GET['search'])): ?>
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
                                 <h6> $ <?= number_format($p['discount']) ?></h6>
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price'], 2) ?></del></h6>
+
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price']) ?></del></h6>
+
                             </div>
                         </div>
                         <div class="d-flex card-footer bg-light border justify-content-between">
@@ -118,11 +115,9 @@ if (isset($_GET['search'])): ?>
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
 
-
-                    <?php foreach ($category as $cat): ?>
-                        <?php if ($cat['id'] == 1): ?>
-                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
-                                class="position-relative cat-img mb-3 overflow-hidden">
+                    <?php foreach ($category as $cat) : ?>
+                        <?php if ($cat['id'] == 1) : ?>
+                            <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="position-relative cat-img mb-3 overflow-hidden">
 
                                 <img class="img-fluid" src="view/img/cat-1.jpg" alt="">
                             </a>
@@ -131,7 +126,6 @@ if (isset($_GET['search'])): ?>
                             </a>
                         <?php endif; ?>
                     <?php endforeach; ?>
-
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 pb-1">
@@ -165,7 +159,6 @@ if (isset($_GET['search'])): ?>
                             </a>
                         <?php endif; ?>
                     <?php endforeach; ?>
-
                 </div>
             </div>
         </div>

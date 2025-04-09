@@ -1,11 +1,21 @@
 <?php
-
+session_start();
 require_once(__DIR__ . '/../model/connect.php');
 
+if (isset($_SESSION['email'])) {
+    try {
+        $sql = "SELECT fullname FROM user WHERE email = :email";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        die("Lỗi truy vấn: " . $e->getMessage());
+    }
+}
 
 try {
-    $category_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-
+    $category_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
     $sql = "SELECT product.id AS product_id, product.title, product.price, product.thumbnail, product.discount, category.name 
             FROM product 
@@ -29,7 +39,7 @@ try {
     }
 
     $stmt = $conn->prepare($sql);
-    
+
     if ($category_id > 0) {
         $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
     }
@@ -181,17 +191,19 @@ try {
 <div class="container-fluid">
     <div class="row border-top px-xl-5">
         <div class="col-lg-3 d-none d-lg-block">
-                <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
+            <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100"
+                data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
                 <h6 class="m-0">Categories</h6>
                 <i class="fa fa-angle-down text-dark"></i>
             </a>
             <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light"
                 id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                 <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
-                <?php foreach ($category as $cat) : ?>
-                    <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
-                <?php endforeach; ?>
-                    </div>
+                    <?php foreach ($category as $cat): ?>
+                        <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
+                            class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
+                    <?php endforeach; ?>
+                </div>
             </nav>
         </div>
         <div class="col-lg-9">
@@ -234,7 +246,9 @@ try {
 <!-- Page Header Start -->
 <div class="container-fluid bg-secondary mb-5">
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-        <h1 class="font-weight-semi-bold text-uppercase mb-3">  <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></h1>
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">
+            <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?>
+        </h1>
         <div class="d-inline-flex">
             <p class="m-0"><a href="index.php?act=home">Home</a></p>
             <p class="m-0 px-2">-</p>

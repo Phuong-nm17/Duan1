@@ -210,13 +210,12 @@ if (isset($_SESSION['email'])) {
                             <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <?php if (!isset($_SESSION['email'])): ?>
+                            <?php if (!isset($_SESSION['email'])) : ?>
                                 <a href="index.php?act=login" class="nav-item nav-link">Login</a>
                                 <a href="index.php?act=register" class="nav-item nav-link">Register</a>
-                            <?php else: ?>
+                            <?php else : ?>
                                 <div class="menu-item">
-                                    <a href="#"
-                                        class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                    <a href="#" class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
                                     <div class="submenu">
                                         <a href="index.php?act=cart">Cart</a>
                                         <a href="index.php?act=Logout">LogOut</a>
