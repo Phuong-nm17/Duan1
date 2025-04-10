@@ -3,7 +3,7 @@ session_start();
 require '../../model/connect.php';
 if (!isset($_SESSION['admin']))
     header("Location: login.php");
-if (!isset($_SESSION['admin'])) header("Location: login.php");
+
 try {
     $sql = "  SELECT 
             product.id AS product_id, 
@@ -18,10 +18,29 @@ try {
         FROM product 
         JOIN size ON product.size_id = size.id
         JOIN color ON product.color_id = color.id
-        JOIN category ON product.category_id = category.id";
+        JOIN category ON product.category_id = category.id 
+        WHERE 1=1 ";
 
+    $params = [];
+
+    if (!empty($_GET['min_price'])) {
+        $sql .= " AND product.price >= ?";
+        $params[] = $_GET['min_price'];
+    }
+
+    if (!empty($_GET['max_price'])) {
+        $sql .= " AND product.price <= ?";
+        $params[] = $_GET['max_price'];
+    }
+    if (!empty($_GET['sort'])) {
+        if ($_GET['sort'] === 'asc') {
+            $sql .= " ORDER BY product.price ASC";
+        } elseif ($_GET['sort'] === 'desc') {
+            $sql .= " ORDER BY product.price DESC";
+        }
+    }
     $stmt = $conn->prepare($sql);
-    $stmt->execute();
+    $stmt->execute($params);
     $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     die($e->getMessage());
@@ -144,48 +163,37 @@ try {
 
 <body>
     <!-- Sidebar -->
-    <div id="sidebar">
-        <h4>Admin Panel</h4>
+    <?php include '../sidebar.php'; ?>
 
-        <div class="menu-item">
-            <a href="index.php"><i>🏠</i> <span>Trang chủ</span></a>
-        </div>
-
-        <div class="menu-item">
-            <a href="../product/product.php"><i>📦</i> <span>Quản lý sản phẩm</span></a>
-            <div class="submenu">
-                <a href="../product/product.php">Danh sách sản phẩm</a>
-                <a href="../product/add_product.php">Thêm sản phẩm</a>
-            </div>
-        </div>
-        <div class="menu-item">
-            <a href="../category/categories.php"><i>📦</i> <span>Quản lý danh mục</span></a>
-            <div class="submenu">
-                <a href="../category/categories.php">Danh sách danh mục</a>
-                <a href="../category/add_categories.php">Thêm danh mục</a>
-            </div>
-        </div>
-        <div class="menu-item">
-            <a href="../user/user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
-            <div class="submenu">
-                <a href="../user/user_management.php">Danh sách khách hàng</a>
-            </div>
-        </div>
-
-        <div class="menu-item">
-            <a href="#"><i>🛒</i> <span>Quản lý đơn hàng</span></a>
-            <div class="submenu">
-                <a href="order_management.php">Danh sách đơn hàng</a>
-                <a href="order_pending.php">Đơn hàng chờ xử lý</a>
-            </div>
-        </div>
-
-        <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
-    </div>
 
     <!-- Nội dung chính -->
     <div id="content">
         <h2>Danh sách sản phẩm</h2>
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-auto">
+                <label for="min_price" class="form-label">Giá từ:</label>
+                <input type="number" class="form-control" name="min_price" id="min_price"
+                    value="<?= $_GET['min_price'] ?? '' ?>" placeholder="0$">
+            </div>
+            <div class="col-auto">
+                <label for="max_price" class="form-label">Đến:</label>
+                <input type="number" class="form-control" name="max_price" id="max_price"
+                    value="<?= $_GET['max_price'] ?? '' ?>" placeholder="10000$">
+            </div>
+            <div class="col-auto">
+                <label for="sort" class="form-label">Sắp xếp:</label>
+                <select class="form-select" name="sort" id="sort">
+                    <option value="">-- Chọn --</option>
+                    <option value="asc" <?= (($_GET['sort'] ?? '') === 'asc') ? 'selected' : '' ?>>Giá tăng dần</option>
+                    <option value="desc" <?= (($_GET['sort'] ?? '') === 'desc') ? 'selected' : '' ?>>Giá giảm dần</option>
+                </select>
+            </div>
+            <div class="col-auto align-self-end">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+                <a href="product.php" class="btn btn-secondary">Reset</a>
+            </div>
+        </form>
+
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
                 <tr class="text-center">

@@ -123,23 +123,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
     <!-- Page Header End -->
-    <div class="conteiner">
-        <form method="POST" class="center login-form">
+    <div class="container">
+        <form method="POST" class="center login-form" style="max-width: 400px; margin: 0 auto; padding: 30px;">
+            <h3 class="text-center mb-4">Đăng nhập</h3>
+
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
+
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label">Mật khẩu</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
+
             <?php if (!empty($error)) : ?>
-                <div class="text-danger mb-3"><?php echo $error; ?></div>
+                <div class="text-danger mb-3"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
-            <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
+            <button type="submit" name="login" class="btn btn-primary w-100">Đăng nhập</button>
+
+            <div class="text-center mt-3">
+                <a href="forgot_password.php">Quên mật khẩu?</a>
+            </div>
+
+            <div class="text-center mt-2">
+                Don't have an account? <a href="index.php?act=register">Sign up</a>
+            </div>
         </form>
     </div>
+
     <div class="text-center mt-4">
         <p>Or login with:</p>
         <a class="text-dark px-2" href="" class="btn btn-google">

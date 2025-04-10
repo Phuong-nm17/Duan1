@@ -1,53 +1,46 @@
 <?php
 session_start();
 require '../../model/connect.php';
-if (!isset($_SESSION['admin']))
+
+if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
+    exit;
+}
+$from = $_GET['from_date'] ?? null;
+$to = $_GET['to_date'] ?? null;
 
-try {
-    $sql = "SELECT * FROM user WHERE 1=1";
-    $params = [];
+$where = "";
+$params = [];
 
-    if (!empty($_GET['keyword'])) {
-        $sql .= " AND (fullname LIKE ? OR email LIKE ?)";
-        $keyword = '%' . $_GET['keyword'] . '%';
-        $params[] = $keyword;
-        $params[] = $keyword;
-    }
-
-    if (!empty($_GET['sort'])) {
-        switch ($_GET['sort']) {
-            case 'name_asc':
-                $sql .= " ORDER BY fullname ASC";
-                break;
-            case 'name_desc':
-                $sql .= " ORDER BY fullname DESC";
-                break;
-            case 'email_asc':
-                $sql .= " ORDER BY email ASC";
-                break;
-            case 'email_desc':
-                $sql .= " ORDER BY email DESC";
-                break;
-        }
-    }
-
-    $stmt = $conn->prepare($sql);
-    $stmt->execute($params);
-    $user = $stmt->fetchAll();
-} catch (PDOException $e) {
-    die("Lỗi truy vấn: " . $e->getMessage());
+if ($from && $to) {
+    $where = "WHERE DATE(order_date) BETWEEN :from AND :to";
+    $params = ['from' => $from, 'to' => $to];
+} elseif ($from) {
+    $where = "WHERE DATE(order_date) >= :from";
+    $params = ['from' => $from];
+} elseif ($to) {
+    $where = "WHERE DATE(order_date) <= :to";
+    $params = ['to' => $to];
 }
 
 
+try {
+    $sql = "SELECT * FROM orders $where ORDER BY id DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
+    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    die("Lỗi: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
-    <title>Danh sách khách hàng</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Danh sách đơn hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             display: flex;
@@ -139,78 +132,70 @@ try {
             cursor: pointer;
         }
 
-        /* Nội dung chính */
         #content {
             margin-left: 260px;
             width: 100%;
             padding: 20px;
-            transition: margin-left 0.3s ease-in-out;
-        }
-
-        #content.full-width {
-            margin-left: 90px;
         }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar -->
     <?php include '../sidebar.php'; ?>
 
-
-    <!-- Nội dung chính -->
     <div id="content">
-        <h2>Danh sách khách hàng</h2>
+        <h2>Danh sách đơn hàng</h2>
         <form method="get" class="row g-3 mb-4">
             <div class="col-auto">
-                <label for="keyword" class="form-label">Tìm kiếm:</label>
-                <input type="text" class="form-control" name="keyword" id="keyword"
-                    value="<?= $_GET['keyword'] ?? '' ?>" placeholder="Nhập tên hoặc email">
+                <label for="from_date" class="form-label">Từ ngày:</label>
+                <input type="date" class="form-control" name="from_date" id="from_date" value="<?= $_GET['from_date'] ?? '' ?>">
             </div>
             <div class="col-auto">
-                <label for="sort" class="form-label">Sắp xếp theo:</label>
-                <select class="form-select" name="sort" id="sort">
-                    <option value="">-- Mặc định --</option>
-                    <option value="name_asc" <?= ($_GET['sort'] ?? '') === 'name_asc' ? 'selected' : '' ?>>Tên A-Z</option>
-                    <option value="name_desc" <?= ($_GET['sort'] ?? '') === 'name_desc' ? 'selected' : '' ?>>Tên Z-A</option>
-                    <option value="email_asc" <?= ($_GET['sort'] ?? '') === 'email_asc' ? 'selected' : '' ?>>Email A-Z</option>
-                    <option value="email_desc" <?= ($_GET['sort'] ?? '') === 'email_desc' ? 'selected' : '' ?>>Email Z-A</option>
-                </select>
+                <label for="to_date" class="form-label">Đến ngày:</label>
+                <input type="date" class="form-control" name="to_date" id="to_date" value="<?= $_GET['to_date'] ?? '' ?>">
             </div>
             <div class="col-auto align-self-end">
-                <button type="submit" class="btn btn-primary">Tìm</button>
-                <a href="user_management.php" class="btn btn-secondary">Reset</a>
+                <button type="submit" class="btn btn-primary">Lọc</button>
+                <a href="orders.php" class="btn btn-secondary">Reset</a>
             </div>
         </form>
-
         <table class="table table-bordered table-hover">
-            <thead class="table-dark">
-                <tr class="text-center">
+            <thead class="table-dark text-center">
+                <tr>
                     <th>ID</th>
-                    <th>Họ và tên</th>
+                    <th>Ngày đặt</th>
+                    <th>Họ tên</th>
                     <th>Email</th>
-                    <th>Số điện thoại</th>
+                    <th>Điện thoại</th>
                     <th>Địa chỉ</th>
-                    <th>Hành động</th>
+                    <th>Phương thức</th>
+                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($user as $u): ?>
+                <?php foreach ($orders as $order): ?>
                     <tr>
-                        <td><?= $u['id'] ?></td>
-                        <td><?= $u['fullname'] ?></td>
-                        <td><?= $u['email'] ?></td>
-                        <td><?= $u['phone_number'] ?></td>
-                        <td><?= $u['address'] ?></td>
+                        <td><?= $order['id'] ?></td>
+                        <td><?= $order['order_date'] ?></td>
+                        <td><?= htmlspecialchars($order['fullname']) ?></td>
+                        <td><?= htmlspecialchars($order['email']) ?></td>
+                        <td><?= htmlspecialchars($order['phone']) ?></td>
                         <td>
-                            <a href="edit_user.php?id=<?= $u['id'] ?>" class="btn btn-primary">Sửa</a>
+                            <?= htmlspecialchars($order['address']) ?>,
+                            <?= htmlspecialchars($order['city']) ?>,
+                            <?= htmlspecialchars($order['country']) ?>,
+                            <?= $order['zipcode'] ?>
+                        </td>
+                        <td><?= htmlspecialchars($order['payment_method']) ?></td>
+                        <td class="text-center">
+                            <a href="view_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-info btn-sm">Chi tiết</a>
+                            <a href="edit_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-success btn-sm">sửa</a>
                         </td>
                     </tr>
-                <?php endforeach; ?>
+                <?php endforeach ?>
             </tbody>
         </table>
     </div>
-
     <script>
         const sidebar = document.getElementById('sidebar');
         const content = document.getElementById('content');
