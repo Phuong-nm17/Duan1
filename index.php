@@ -20,6 +20,12 @@ if (isset($_GET["act"])) {
         case 'login':
             include "view/login.php";
             break;
+        case 'forgot_password':
+            include "view/forgot_password.php";
+            break;
+        case 'reset_password':
+            include "view/reset_password.php";
+            break;
         case 'Logout':
             include "view/Logout.php";
             break;

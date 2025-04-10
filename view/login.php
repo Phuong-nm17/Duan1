@@ -5,7 +5,7 @@ require_once(__DIR__ . '/../model/connect.php');
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST['email']);
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = trim($_POST['password']);
 
     try {
@@ -77,22 +77,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 14px;
         }
 
-        .conteiner {
+        .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 40vh;
-            margin: 0;
+            min-height: 60vh;
             background-color: #f8f9fa;
         }
 
         .login-form {
-            width: 800px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-danger {
+            color: #dc3545;
+            font-weight: 500;
+            text-align: center;
         }
 
         .btn {
@@ -144,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit" name="login" class="btn btn-primary w-100">Đăng nhập</button>
 
             <div class="text-center mt-3">
-                <a href="forgot_password.php">Quên mật khẩu?</a>
+                <a href="index.php?act=forgot_password">Quên mật khẩu?</a>
             </div>
 
             <div class="text-center mt-2">
