@@ -108,9 +108,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container-fluid">
         <div class="row align-items-center px-xl-5 py-3">
             <div class="col-lg-3 d-lg-block d-none">
-                <a href="index.php?act=home" class="text-decoration-none">
-                    <h1 class="display-5 m-0 font-weight-semi-bold"><span
-                            class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
+                <a href="index.php" class="text-decoration-none">
+                    <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
                 </a>
             </div>
         </div>
@@ -139,9 +138,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php endif; ?>
 
             <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
-            <div class="text-center mt-3">
-                <p>Do you have account? <a href="index.php?act=register">SignUp</a></p>
-            </div>
         </form>
     </div>
     <div class="text-center mt-4">
