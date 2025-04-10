@@ -31,6 +31,9 @@ if (isset($_GET["act"])) {
             include "view/ProductDetail.php";
             include "view/footer.php";
             break;
+        case 'checkout' :
+            include "view/checkout.php";
+            break;
         default:
             include "view/home.php";
             

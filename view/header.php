@@ -204,6 +204,7 @@ if (isset($_SESSION['email'])) {
                                 <div class="menu-item">
                                     <a href="#" class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
                                     <div class="submenu">
+                                        <a href="index.php?act=cart">Cart</a>
                                         <a href="index.php?act=Logout">LogOut</a>
                                         <a href="#"></a>
                                     </div>
