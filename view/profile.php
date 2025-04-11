@@ -7,86 +7,39 @@ if (!isset($_SESSION['id'])) {
 
 require_once(__DIR__ . '/../model/connect.php');
 
-class ProfileManager
-{
-    private $conn;
-    private $userId;
-
-    public function __construct($conn, $userId)
-    {
-        $this->conn = $conn;
-        $this->userId = $userId;
-    }
-
-    public function getUserData()
-    {
-        $stmt = $this->conn->prepare("SELECT * FROM user WHERE id = ?");
-        $stmt->execute([$this->userId]);
-        return $stmt->fetch();
-    }
-
-    public function updateProfile($data, $files)
-    {
-        if (isset($files['avatar']) && $files['avatar']['error'] === UPLOAD_ERR_OK) {
-            $this->handleAvatarUpload($files['avatar']);
-        }
-
-        $this->updateUserInfo($data);
-        return true;
-    }
-
-    private function handleAvatarUpload($file)
-    {
-        $uploadDir = __DIR__ . '/../uploads/avatar/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-
-        // Validate file type
-        $allowedTypes = ['image/jpeg', 'image/png'];
-        if (!in_array($file['type'], $allowedTypes)) {
-            throw new Exception('Invalid file type. Only JPEG and PNG are allowed.');
-        }
-
-        // Validate file size (1MB max)
-        if ($file['size'] > 1048576) {
-            throw new Exception('File too large. Maximum size is 1MB.');
-        }
-
-        $fileName = uniqid() . '-' . basename($file['name']);
-        $destination = $uploadDir . $fileName;
-
-        if (move_uploaded_file($file['tmp_name'], $destination)) {
-            $stmt = $this->conn->prepare("UPDATE user SET avatar = ? WHERE id = ?");
-            $stmt->execute([$fileName, $this->userId]);
-        }
-    }
-
-    private function updateUserInfo($data)
-    {
-        $stmt = $this->conn->prepare("UPDATE user SET fullname = ?, phone_number = ?, address = ? WHERE id = ?");
-        $stmt->execute([
-            $data['fullname'] ?? '',
-            $data['phone_number'] ?? '',
-            $data['address'] ?? '',
-            $this->userId
-        ]);
-    }
-}
-
-// Initialize profile manager
-$profileManager = new ProfileManager($conn, $_SESSION['id']);
-$user = $profileManager->getUserData();
-
-// Handle form submission
+// Lấy thông tin user từ DB
+$stmt = $conn->prepare("SELECT * FROM user WHERE id = ?");
+$stmt->execute([$_SESSION['id']]);
+$user = $stmt->fetch();
+$updateSuccess = false;
+// Xử lý khi submit form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $profileManager->updateProfile($_POST, $_FILES);
-        header("Location: index.php?act=profile&success=1");
-        exit();
-    } catch (Exception $e) {
-        $error = $e->getMessage();
+    $fullname = $_POST['fullname'] ?? '';
+    $address = $_POST['address'] ?? '';
+    $phone_number = $_POST['phone_number'] ?? '';
+    // Upload avatar nếu có
+    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+        $fileTmp = $_FILES['avatar']['tmp_name'];
+        $fileName = uniqid() . '-' . basename($_FILES['avatar']['name']);
+        $destination = __DIR__ . '/../uploads/avatar/' . $fileName;
+
+        // Tạo thư mục nếu chưa có
+        if (!is_dir(__DIR__ . '/../uploads/avatar')) {
+            mkdir(__DIR__ . '/../uploads/avatar', 0755, true);
+        }
+
+        move_uploaded_file($fileTmp, $destination);
+
+        // Cập nhật avatar
+        $stmt = $conn->prepare("UPDATE user SET avatar = ? WHERE id = ?");
+        $stmt->execute([$fileName, $_SESSION['id']]);
     }
+
+    // Cập nhật thông tin khác
+    $stmt = $conn->prepare("UPDATE user SET fullname = ?, phone_number = ?, address = ? WHERE id = ?");
+    $stmt->execute([$fullname, $phone_number, $address, $_SESSION['id']]);
+    header("Location: index.php?act=profile&success=1");
+    exit();
 }
 ?>
 
@@ -97,7 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Hồ sơ người dùng</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="User Profile" name="description">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="view/img/favicon.ico" rel="icon">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="view/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
@@ -228,57 +184,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <?php include 'partials/header.php'; ?>
+    <!-- Topbar Start -->
+    <div class="container-fluid">
+        <div class="row align-items-center px-xl-5 py-3">
+            <div class="col-lg-3 d-lg-block d-none">
 
+                <a href="index.php" class="text-decoration-none">
+                    <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+    <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 100px">
             <h1 class="text-uppercase font-weight-semi-bold mb-2">Profile</h1>
         </div>
     </div>
+    <!-- Page Header End -->
 
     <div class="container">
-        <?php include 'partials/sidebar.php'; ?>
+        <div class="sidebar">
+            <h3>My Account</h3>
+            <ul>
+                <li>Profile</li>
+                <li>Bank</li>
+                <li><a href="index.php?act=change_password" style="color: inherit; text-decoration: none;">Change Password</a></li>
+                <li>Orders</li>
+            </ul>
+        </div>
 
         <div class="profile-form">
             <h2>My Profile</h2>
             <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
-                <div id="success-message" class="alert alert-success">
+                <div id="success-message" style="background: #e6ffed; color: #2f855a; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
                     ✅ Thông tin đã được cập nhật thành công!
                 </div>
             <?php endif; ?>
-
-            <?php if (isset($error)): ?>
-                <div class="alert alert-danger">
-                    <?php echo htmlspecialchars($error); ?>
-                </div>
-            <?php endif; ?>
-
             <form method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div style="flex: 2;">
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" value="<?= htmlspecialchars($user['email']) ?>" disabled class="form-control">
+                            <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" disabled>
                         </div>
                         <div class="form-group">
                             <label>Phone Number</label>
-                            <input type="tel" name="phone_number" value="<?= htmlspecialchars($user['phone_number'] ?? '') ?>"
-                                pattern="[0-9]{10}" title="Please enter a valid phone number" class="form-control">
+                            <input type="text" name="phone_number" value="<?= htmlspecialchars($user['phone_number'] ?? '') ?>">
                         </div>
                         <div class="form-group">
-                            <label>Address</label>
-                            <input type="text" name="address" value="<?= htmlspecialchars($user['address'] ?? '') ?>" class="form-control">
+                            <label>address</label>
+                            <input type="text" name="address" value="<?= htmlspecialchars($user['address'] ?? '') ?>">
                         </div>
                         <div class="form-bottom">
-                            <button type="submit" class="btn-save">Save Changes</button>
+                            <button type="submit" class="btn-save">Save</button>
                         </div>
                     </div>
                     <div class="avatar-section">
-                        <img src="<?= isset($user['avatar']) ? 'uploads/avatar/' . htmlspecialchars($user['avatar']) : 'assets/img/default-avatar.png' ?>"
-                            alt="Profile Avatar" class="profile-avatar">
+                        <img src="<?= isset($user['avatar']) ? '../uploads/avatar/' . $user['avatar'] : 'https://via.placeholder.com/100' ?>" alt="Avatar">
                         <label class="choose-img">
                             Choose Image
-                            <input type="file" name="avatar" accept="image/jpeg,image/png" hidden>
+                            <input type="file" name="avatar" hidden>
                         </label>
                         <small>Max size: 1MB<br>Formats: .JPEG, .PNG</small>
                     </div>
@@ -287,30 +255,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <?php include 'partials/footer.php'; ?>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="view/lib/easing/easing.min.js"></script>
+    <script src="view/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="view/mail/jqBootstrapValidation.min.js"></script>
+    <script src="view/mail/contact.js"></script>
+    <script src="view/js/main.js"></script>
     <script>
-        // Auto-hide success message
         setTimeout(() => {
             const msg = document.getElementById('success-message');
             if (msg) {
-                msg.style.opacity = '0';
-                setTimeout(() => msg.style.display = 'none', 300);
+                msg.style.display = 'none';
             }
-        }, 3000);
-
-        // Preview avatar image before upload
-        document.querySelector('input[name="avatar"]').addEventListener('change', function(e) {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.querySelector('.profile-avatar').src = e.target.result;
-                };
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
+        }, 1000); // 1000ms = 1s
     </script>
+
 </body>
 
 </html>
