@@ -1,30 +1,12 @@
 <?php
 session_start();
 require_once(__DIR__ . '/../model/connect.php');
-
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
 $token = $_GET['token'] ?? '';
 $message = "";
-$validToken = false;
 
-// Kiểm tra token từ link email (GET)
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if ($token) {
-        $stmt = $conn->prepare("SELECT id FROM user WHERE reset_token = ? AND reset_token_expires > NOW()");
-        $stmt->execute([$token]);
-        $user = $stmt->fetch();
-        if ($user) {
-            $validToken = true;
-        } else {
-            $message = "❌ Token không hợp lệ hoặc đã hết hạn.";
-        }
-    } else {
-        $message = "❌ Liên kết không hợp lệ.";
-    }
-}
-
-// Khi người dùng submit form cập nhật mật khẩu
+// Xử lý khi người dùng submit form cập nhật mật khẩu
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['token'];
     $password = $_POST['password'];
@@ -44,6 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update = $conn->prepare("UPDATE user SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?");
             $update->execute([$hashed, $user['id']]);
             $message = "✅ Mật khẩu đã được thay đổi thành công!";
+            // Tự động chuyển hướng sau 4 giây
+            header("refresh:2;url=index.php?act=login");
         } else {
             $message = "❌ Token không hợp lệ hoặc đã hết hạn.";
         }
@@ -57,12 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Đặt lại mật khẩu</title>
-
-    <!-- Google Font - Poppins -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome (nếu cần icon sau này) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
     <style>
@@ -164,18 +144,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 
-
 <body>
     <form class="form-wrapper" method="POST">
         <h3>Đặt lại mật khẩu</h3>
 
-        <?php if ($message): ?>
+        <!-- <?php if ($message): ?>
             <div class="message <?= strpos($message, '✅') !== false ? 'success' : 'error' ?>">
                 <?= htmlspecialchars($message) ?>
             </div>
-        <?php endif; ?>
+        <?php endif; ?> -->
 
-        <?php if (($validToken || $_SERVER['REQUEST_METHOD'] === 'POST') && strpos($message, '✅') === false): ?>
+        <?php if (!$message || strpos($message, '✅') === false): ?>
             <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
             <div>
                 <label>Mật khẩu mới:</label>
@@ -186,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="confirm" required>
             </div>
             <button type="submit">Cập nhật mật khẩu</button>
-        <?php elseif (strpos($message, '✅') !== false): ?>
+        <?php else: ?>
             <a class="login-link" href="index.php?act=login">➡️ Quay lại đăng nhập</a>
         <?php endif; ?>
     </form>

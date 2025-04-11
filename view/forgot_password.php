@@ -1,18 +1,8 @@
 <?php
 session_start();
-date_default_timezone_set('Asia/Ho_Chi_Minh');
-
 require_once(__DIR__ . '/../model/connect.php');
-require_once(__DIR__ . '/../model/PHPMailer/src/PHPMailer.php');
-require_once(__DIR__ . '/../model/PHPMailer/src/SMTP.php');
-require_once(__DIR__ . '/../model/PHPMailer/src/Exception.php');
-require_once(__DIR__ . '/mail_config.php');
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 $message = "";
-$redirect = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
@@ -23,60 +13,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $stmt->fetch();
 
         if ($user) {
-            $token = bin2hex(random_bytes(16));
-            $resetLink = "http://duan1.test/index.php?act=reset_password&token=$token";
-
+            $token = bin2hex(random_bytes(32));
             $expires = date("Y-m-d H:i:s", strtotime('+15 minutes'));
+
             $updateStmt = $conn->prepare("UPDATE user SET reset_token = ?, reset_token_expires = ? WHERE email = ?");
             $updateStmt->execute([$token, $expires, $email]);
 
-
-            $mail = new PHPMailer(true);
-            try {
-                $mail->isSMTP();
-                $mail->Host       = 'smtp.gmail.com';
-                $mail->SMTPAuth   = true;
-                $mail->Username = 'linhnp992004@gmail.com';
-                $mail->Password = 'wmvd lvel fkgl lcqk';
-                $mail->SMTPSecure = 'tls';
-                $mail->Port       = 587;
-
-                $mail->setFrom('linhnp992004@gmail.com', 'EShopper Support');
-                $mail->addAddress($email, $user['name'] ?? 'User');
-
-                $mail->isHTML(true);
-                $mail->Subject = 'Reset Your Password - EShopper';
-                $mail->Body = "
-    <div style='font-family: Arial, sans-serif; padding: 20px;'>
-        <h2 style='color: #007bff;'>Xin chào,</h2>
-        <p>Bạn đã yêu cầu <strong>đặt lại mật khẩu</strong> cho tài khoản EShopper.</p>
-        <p>Nhấn vào nút bên dưới để tiếp tục:</p>
-        <p>
-            <a href='$resetLink' style='display: inline-block; padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;'>
-                Đặt lại mật khẩu
-            </a>
-        </p>
-        <p>Nếu không nhấn được nút, hãy sao chép và dán đường dẫn sau vào trình duyệt:</p>
-        <p><a href='$resetLink'>$resetLink</a></p>
-        <hr>
-        <p style='font-size: 12px; color: #888;'>Nếu bạn không yêu cầu, hãy bỏ qua email này.</p>
-    </div>
-";
-
-                $mail->send();
-                $message = "✅ Đường dẫn đặt lại mật khẩu đã được gửi tới email của bạn. Vui lòng kiểm tra hộp thư.";
-                $redirect = true;
-            } catch (Exception $e) {
-                $message = "❌ Không thể gửi email. Lỗi: {$mail->ErrorInfo}";
-            }
+            header("Location: index.php?act=reset_password&token=$token");
+            exit;
         } else {
-            $message = "⚠️ Email không tồn tại trong hệ thống!";
+            $message = "Không tìm thấy email trong hệ thống.";
         }
     } catch (PDOException $e) {
         die("Lỗi kết nối CSDL: " . $e->getMessage());
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -84,10 +37,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="utf-8">
     <title>Quên mật khẩu - EShopper</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-    <?php if ($redirect): ?>
-        <meta http-equiv="refresh" content="5;url=index.php?act=login">
-    <?php endif; ?>
 
     <!-- Styles -->
     <link href="view/css/style.css" rel="stylesheet">
