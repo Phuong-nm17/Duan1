@@ -191,15 +191,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label>Số điện thoại:</label>
                 <input type="text" name="phone" class="form-control" value="<?= $order['phone'] ?>" required>
             </div>
-            <!-- <div class="mb-3">
+            <div class="mb-3">
                 <label>Phương thức thanh toán:</label>
                 <select class="form-select" name="payment_method">
                     <option value="Cash on Delivery (COD)" <?= $order['payment_method'] == 'cod' ? 'selected' : '' ?>>Cash on Delivery (COD)</option>
                     <option value="Bank Transfer" <?= $order['payment_method'] == 'bank' ? 'selected' : '' ?>>Bank Transfer</option>
                     <option value="MoMo E-Wallet" <?= $order['payment_method'] == 'momo' ? 'selected' : '' ?>>MoMo E-Wallet</option>
                 </select>
-
-            </div> -->
+            </div>
             <div class="mb-3">
                 <label>Mã Zip:</label>
                 <input type="number" name="zipcode" class="form-control" value="<?= $order['zipcode'] ?>" required>
