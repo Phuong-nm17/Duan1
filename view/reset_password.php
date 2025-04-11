@@ -6,25 +6,10 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
 
 $token = $_GET['token'] ?? '';
 $message = "";
+$redirect = false;
 $validToken = false;
+$showForm = true;
 
-// Kiểm tra token từ link email (GET)
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if ($token) {
-        $stmt = $conn->prepare("SELECT id FROM user WHERE reset_token = ? AND reset_token_expires > NOW()");
-        $stmt->execute([$token]);
-        $user = $stmt->fetch();
-        if ($user) {
-            $validToken = true;
-        } else {
-            $message = "❌ Token không hợp lệ hoặc đã hết hạn.";
-        }
-    } else {
-        $message = "❌ Liên kết không hợp lệ.";
-    }
-}
-
-// Khi người dùng submit form cập nhật mật khẩu
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['token'];
     $password = $_POST['password'];
@@ -35,21 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($password) < 6) {
         $message = "⚠️ Mật khẩu phải có ít nhất 6 ký tự!";
     } else {
-        $stmt = $conn->prepare("SELECT * FROM user WHERE reset_token = ? AND reset_token_expires > NOW()");
-        $stmt->execute([$token]);
-        $user = $stmt->fetch();
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $update = $conn->prepare("UPDATE user SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ?");
+        $update->execute([$hashed, $token]);
 
-        if ($user) {
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $update = $conn->prepare("UPDATE user SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?");
-            $update->execute([$hashed, $user['id']]);
-            $message = "✅ Mật khẩu đã được thay đổi thành công!";
-        } else {
-            $message = "❌ Token không hợp lệ hoặc đã hết hạn.";
-        }
+        $message = "✅ Mật khẩu đã được thay đổi thành công!";
+        $redirect = true;
+        $showForm = false;
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -57,6 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Đặt lại mật khẩu</title>
+    <?php if (!empty($redirect)): ?>
+        <meta http-equiv="refresh" content="3;url=index.php?act=login">
+    <?php endif; ?>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -152,13 +136,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form class="form-wrapper" method="POST">
         <h3>Reset password</h3>
 
-        <?php if ($message): ?>
+        <?php if (!empty($message)): ?>
             <div class="message <?= strpos($message, '✅') !== false ? 'success' : 'error' ?>">
                 <?= htmlspecialchars($message) ?>
             </div>
         <?php endif; ?>
 
-        <?php if (($validToken || $_SERVER['REQUEST_METHOD'] === 'POST') && strpos($message, '✅') === false): ?>
+        <?php if ($showForm): ?>
             <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
             <div>
                 <label>New password:</label>
@@ -169,8 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="confirm" required>
             </div>
             <button type="submit">Update password</button>
-        <?php elseif (strpos($message, '✅') !== false): ?>
-            <a class="login-link" href="index.php?act=login">➡️ Return to login</a>
         <?php endif; ?>
     </form>
 </body>
