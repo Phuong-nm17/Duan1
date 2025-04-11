@@ -57,21 +57,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Đặt lại mật khẩu</title>
+
+    <!-- Google Font - Poppins -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (nếu cần icon sau này) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #d7e1ec, #f0f4f8);
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            margin: 0;
         }
 
         .form-wrapper {
-            background: white;
+            background: #fff;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
         }
@@ -80,12 +93,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-align: center;
             margin-bottom: 20px;
             color: #333;
+            font-weight: 600;
         }
 
         .message {
             margin-bottom: 15px;
             padding: 12px;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: 500;
             text-align: center;
         }
@@ -105,31 +119,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         label {
             display: block;
             margin-bottom: 6px;
+            font-weight: 500;
             color: #333;
         }
 
         input[type="password"] {
             width: 100%;
-            padding: 10px;
+            padding: 10px 12px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
+            border-radius: 8px;
+            font-size: 14px;
         }
 
         button,
         .login-link {
             display: block;
             width: 100%;
-            padding: 12px;
+            padding: 10px 0;
             background-color: #007bff;
             color: white;
             text-align: center;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
             text-decoration: none;
+            transition: background-color 0.3s ease;
         }
 
         button:hover,
@@ -147,6 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </style>
 </head>
+
 
 <body>
     <form class="form-wrapper" method="POST">

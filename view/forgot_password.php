@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $mail->Host       = 'smtp.gmail.com';
                 $mail->SMTPAuth   = true;
                 $mail->Username = 'linhnp992004@gmail.com';
-                $mail->Password = 'uqes tdzl fdjp dvir';
+                $mail->Password = 'wmvd lvel fkgl lcqk';
                 $mail->SMTPSecure = 'tls';
                 $mail->Port       = 587;
 
@@ -121,7 +121,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-
+    <!-- Topbar Start -->
+    <div class="container-fluid">
+        <div class="row align-items-center px-xl-5 py-3">
+            <div class="col-lg-3 d-lg-block d-none">
+                <a href="index.php" class="text-decoration-none">
+                    <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
     <!-- Header -->
     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 100px">
@@ -152,7 +162,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </form>
     </div>
-
+    <div class="text-center mt-4">
+        <p>Or login with:</p>
+        <a class="text-dark px-2" href="" class="btn btn-google">
+            <i class="fa-google fab"></i>
+        </a>
+        <a class="text-dark px-2" href="" class="btn btn-facebook">
+            <i class="fa-facebook fab"></i>
+        </a>
+        <a class="text-dark px-2" href="" class="btn btn-twitter">
+            <i class="fa-twitter fab"></i>
+        </a>
+    </div>
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 </body>
 
 </html>

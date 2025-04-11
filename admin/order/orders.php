@@ -169,6 +169,7 @@ try {
                     <th>Điện thoại</th>
                     <th>Địa chỉ</th>
                     <th>Phương thức</th>
+                    <th>trạng thái</th>
                     <th>Thao tác</th>
                 </tr>
             </thead>
@@ -187,6 +188,7 @@ try {
                             <?= $order['zipcode'] ?>
                         </td>
                         <td><?= htmlspecialchars($order['payment_method']) ?></td>
+                        <td><?= htmlspecialchars($order['status']) ?></td>
                         <td class="text-center">
                             <a href="view_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-info btn-sm">Chi tiết</a>
                             <a href="edit_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-success btn-sm">sửa</a>
