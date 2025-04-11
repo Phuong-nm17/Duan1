@@ -4,8 +4,42 @@ require '../../model/connect.php';
 if (!isset($_SESSION['admin']))
     header("Location: login.php");
 
-$stmt = $conn->query("SELECT * FROM user");
-$user = $stmt->fetchAll();
+try {
+    $sql = "SELECT * FROM user WHERE 1=1";
+    $params = [];
+
+    if (!empty($_GET['keyword'])) {
+        $sql .= " AND (fullname LIKE ? OR email LIKE ?)";
+        $keyword = '%' . $_GET['keyword'] . '%';
+        $params[] = $keyword;
+        $params[] = $keyword;
+    }
+
+    if (!empty($_GET['sort'])) {
+        switch ($_GET['sort']) {
+            case 'name_asc':
+                $sql .= " ORDER BY fullname ASC";
+                break;
+            case 'name_desc':
+                $sql .= " ORDER BY fullname DESC";
+                break;
+            case 'email_asc':
+                $sql .= " ORDER BY email ASC";
+                break;
+            case 'email_desc':
+                $sql .= " ORDER BY email DESC";
+                break;
+        }
+    }
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
+    $user = $stmt->fetchAll();
+} catch (PDOException $e) {
+    die("Lỗi truy vấn: " . $e->getMessage());
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -121,48 +155,34 @@ $user = $stmt->fetchAll();
 
 <body>
     <!-- Sidebar -->
-    <div id="sidebar">
-        <h4>Admin Panel</h4>
+    <?php include '../sidebar.php'; ?>
 
-        <div class="menu-item">
-            <a href="index.php"><i>🏠</i> <span>Trang chủ</span></a>
-        </div>
-
-        <div class="menu-item">
-            <a href="../product/product.php"><i>📦</i> <span>Quản lý sản phẩm</span></a>
-            <div class="submenu">
-                <a href="../product/product.php">Danh sách sản phẩm</a>
-                <a href="../product/add_product.php">Thêm sản phẩm</a>
-            </div>
-        </div>
-        <div class="menu-item">
-            <a href="../category/categories.php"><i>📦</i> <span>Quản lý danh mục</span></a>
-            <div class="submenu">
-                <a href="../category/categories.php">Danh sách danh mục</a>
-                <a href="../category/add_categories.php">Thêm danh mục</a>
-            </div>
-        </div>
-        <div class="menu-item">
-            <a href="../user/user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
-            <div class="submenu">
-                <a href="../user/user_management.php">Danh sách khách hàng</a>
-            </div>
-        </div>
-
-        <div class="menu-item">
-            <a href="#"><i>🛒</i> <span>Quản lý đơn hàng</span></a>
-            <div class="submenu">
-                <a href="order_management.php">Danh sách đơn hàng</a>
-                <a href="order_pending.php">Đơn hàng chờ xử lý</a>
-            </div>
-        </div>
-
-        <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
-    </div>
 
     <!-- Nội dung chính -->
     <div id="content">
         <h2>Danh sách khách hàng</h2>
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-auto">
+                <label for="keyword" class="form-label">Tìm kiếm:</label>
+                <input type="text" class="form-control" name="keyword" id="keyword"
+                    value="<?= $_GET['keyword'] ?? '' ?>" placeholder="Nhập tên hoặc email">
+            </div>
+            <div class="col-auto">
+                <label for="sort" class="form-label">Sắp xếp theo:</label>
+                <select class="form-select" name="sort" id="sort">
+                    <option value="">-- Mặc định --</option>
+                    <option value="name_asc" <?= ($_GET['sort'] ?? '') === 'name_asc' ? 'selected' : '' ?>>Tên A-Z</option>
+                    <option value="name_desc" <?= ($_GET['sort'] ?? '') === 'name_desc' ? 'selected' : '' ?>>Tên Z-A</option>
+                    <option value="email_asc" <?= ($_GET['sort'] ?? '') === 'email_asc' ? 'selected' : '' ?>>Email A-Z</option>
+                    <option value="email_desc" <?= ($_GET['sort'] ?? '') === 'email_desc' ? 'selected' : '' ?>>Email Z-A</option>
+                </select>
+            </div>
+            <div class="col-auto align-self-end">
+                <button type="submit" class="btn btn-primary">Tìm</button>
+                <a href="user_management.php" class="btn btn-secondary">Reset</a>
+            </div>
+        </form>
+
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
                 <tr class="text-center">
