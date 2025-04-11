@@ -4,8 +4,8 @@ require_once(__DIR__ . '/../model/connect.php');
 
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['id'])) {
-    header('Location: login.php');
-    exit();
+  header('Location: login.php');
+  exit();
 }
 
 $user_id = $_SESSION['id'];
@@ -17,31 +17,27 @@ $stmt->execute([$user_id]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$order) {
-    echo "Không tìm thấy đơn hàng.";
-    exit();
+  echo "Không tìm thấy đơn hàng.";
+  exit();
 }
 
 // Xử lý khi xác nhận đơn hàng
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
-    $fullname = $_POST['fullname'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
-    $shipping_method = $_POST['shipping_method'];
-    $payment_method = $_POST['payment_method'];
-    $note = $_POST['note'];
+  $fullname = $_POST['fullname'];
+  $email = $_POST['email'];
+  $phone = $_POST['phone'];
+  $address = $_POST['address'];
+  $shipping_method = $_POST['shipping_method'];
+  $payment_method = $_POST['payment_method'];
+  $note = $_POST['note'];
 
-    $update_sql = "UPDATE orders SET fullname = ?, email = ?, phone = ?, address = ?,  payment_method = ?, note = ? WHERE id = ?";
-    $stmt = $conn->prepare($update_sql);
-    $stmt->execute([$fullname, $email, $phone, $address, $payment_method, $note, $order['id']]);
+  $update_sql = "UPDATE orders SET fullname = ?, email = ?, phone = ?, address = ?,  payment_method = ?, note = ? WHERE id = ?";
+  $stmt = $conn->prepare($update_sql);
+  $stmt->execute([$fullname, $email, $phone, $address, $payment_method, $note, $order['id']]);
 
-    echo "<script>
-        alert('🎉 Đặt hàng thành công!');
-        setTimeout(function() {
-            window.location.href = '../Duan1/';
-        }, 500);
-    </script>";
-    exit();
+  echo "<div style='text-align:center; margin-top:20px; font-size:20px; color:green;'>🎉 Đặt hàng thành công!</div>";
+  header("Refresh: 1; URL=index.php?act=home");
+  exit();
 }
 
 // Lấy chi tiết sản phẩm trong đơn hàng
@@ -58,6 +54,7 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Order Confirmation</title>
@@ -74,7 +71,7 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
       background-color: #fff;
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
     }
 
     h2 {
@@ -122,7 +119,8 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
       margin-top: 10px;
     }
 
-    table th, table td {
+    table th,
+    table td {
       border: 1px solid #ddd;
       padding: 10px;
       text-align: center;
@@ -163,12 +161,14 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
         padding: 20px;
       }
 
-      table th, table td {
+      table th,
+      table td {
         font-size: 14px;
       }
     }
   </style>
 </head>
+
 <body>
 
   <div class="checkout-container">
@@ -194,7 +194,7 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <legend>2. Shipping & Payment</legend>
         <label>Shipping Method:</label>
         <select name="shipping_method" required>
-          <option value="normal" >Standard Shipping (3-5 days)</option>
+          <option value="normal">Standard Shipping (3-5 days)</option>
           <option value="fast">Express Shipping (1-2 days)</option>
         </select>
 
@@ -229,27 +229,30 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php
             $total = 0;
             if (empty($order_items)) {
-                echo '<tr><td colspan="7" style="color: red;">⚠️ No products found in this order.</td></tr>';
+              echo '<tr><td colspan="7" style="color: red;">⚠️ No products found in this order.</td></tr>';
             } else {
-                foreach ($order_items as $item):
-                    $subtotal = $item['price'] * $item['quantity'];
-                    $total += $subtotal;
-                ?>
+              foreach ($order_items as $item):
+                $subtotal = $item['price'] * $item['quantity'];
+                $total += $subtotal;
+            ?>
                 <tr>
                   <td><img src="<?= $item['thumbnail'] ?>" style="width: 50px;"></td>
                   <td><?= $item['product_title'] ?></td>
                   <td><?= $item['size_name'] ?></td>
                   <td><?= $item['color_name'] ?></td>
+
                   <td>$<?= number_format($item['price'], 0, ',', '.') ?></td>
                   <td><?= $item['quantity'] ?></td>
                   <td>$<?= number_format($subtotal, 0, ',', '.') ?></td>
+
                 </tr>
-                <?php endforeach;
+            <?php endforeach;
             }
             ?>
           </tbody>
         </table>
         <div class="total">Total:$<?= number_format($subtotal + 10, 2) ?></div>
+
       </fieldset>
 
       <button type="submit" name="confirm_order" class="submit-btn">Confirm Order</button>
@@ -257,4 +260,5 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
   </div>
 
 </body>
+
 </html>

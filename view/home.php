@@ -37,14 +37,15 @@ try {
 <?php
 if (isset($_GET['search'])): ?>
 
+
     <h2 class="text-primary text-uppercase mb-3" spullpulltyle="margin-left: 40px;">
 
         Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
 
 
-   
+
     </h2>
-        Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
+    Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
 
     <?php if (empty($product)): ?>
 
@@ -64,6 +65,7 @@ if (isset($_GET['search'])): ?>
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
                                 <h6> $ <?= number_format($p['discount']) ?></h6>
+
                                 <h6 class="text-muted ml-2"><del>$<?= number_format($p['price'], 2) ?></del></h6>
                             </div>
                         </div>
@@ -117,6 +119,7 @@ if (isset($_GET['search'])): ?>
         <div class="row pb-3 px-xl-5">
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="d-flex flex-column border cat-item mb-4" style="padding: 30px;">
+
 
 
                     <?php foreach ($category as $cat): ?>

@@ -5,7 +5,7 @@ require_once(__DIR__ . '/../model/connect.php');
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST['email']);
+    $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = trim($_POST['password']);
 
     try {
@@ -77,22 +77,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 14px;
         }
 
-        .conteiner {
+        .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 40vh;
-            margin: 0;
+            min-height: 60vh;
             background-color: #f8f9fa;
         }
 
         .login-form {
-            width: 800px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-danger {
+            color: #dc3545;
+            font-weight: 500;
+            text-align: center;
         }
 
         .btn {
@@ -108,6 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container-fluid">
         <div class="row align-items-center px-xl-5 py-3">
             <div class="col-lg-3 d-lg-block d-none">
+
                 <a href="index.php" class="text-decoration-none">
                     <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
                 </a>
@@ -123,23 +129,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
     <!-- Page Header End -->
-    <div class="conteiner">
-        <form method="POST" class="center login-form">
+    <div class="container">
+        <form method="POST" class="center login-form" style="max-width: 400px; margin: 0 auto; padding: 30px;">
+            <h3 class="text-center mb-4">Login</h3>
+
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
+
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
+
             <?php if (!empty($error)) : ?>
-                <div class="text-danger mb-3"><?php echo $error; ?></div>
+                <div class="text-danger mb-3"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
+
             <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
+
+
+            <div class="text-center mt-3">
+                <a href="index.php?act=forgot_password">Forgot password ?</a>
+            </div>
+
+            <div class="text-center mt-2">
+                Don't have an account? <a href="index.php?act=register">Sign up</a>
+            </div>
         </form>
     </div>
+
     <div class="text-center mt-4">
         <p>Or login with:</p>
         <a class="text-dark px-2" href="" class="btn btn-google">
