@@ -49,8 +49,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?)";
         $order_stmt = $conn->prepare($order_sql);
         $order_stmt->execute([
-        $user_id, $fullname, $phone, $address,
-        $email, $country, $city, $payment_method, $zipcode,$note,'chờ xác nhận'
+            $user_id,
+            $fullname,
+            $phone,
+            $address,
+            $email,
+            $country,
+            $city,
+            $payment_method,
+            $zipcode,
+            $note,
+            'chờ xác nhận'
         ]);
 
 
@@ -200,116 +209,116 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Checkout Start -->
     <form method="POST">
-    <div class="container-fluid pt-5">
-        <div class="row px-xl-5">
-            <div class="col-lg-8">
-                <div class="mb-4">
-                    <h4 class="font-weight-semi-bold mb-4">Billing Address</h4>
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label>Fullname</label>
-                            <input name="fullname" class="form-control" type="text" placeholder="John" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>E-mail</label>
-                            <input name="email" class="form-control" type="email" placeholder="example@email.com" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Mobile No</label>
-                            <input name="phone" class="form-control" type="text" placeholder="+123 456 789" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address</label>
-                            <input name="address" class="form-control" type="text" placeholder="123 Street" required>
-                        </div>
-                        
-                        <div class="col-md-6 form-group">
-                            <label>Country</label>
-                            <select name="country" class="custom-select" required>
-                                <option value="United States">United States</option>
-                                <option value="Afghanistan">Afghanistan</option>
-                                <option value="Laos">Laos</option>
-                                <option value="VietNam">VietNam</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>City</label>
-                            <input name="city" class="form-control" type="text" placeholder="New York" required>
-                        </div>
-                        
-                        <div class="col-md-6 form-group">
-                            <label>ZIP Code</label>
-                            <input name="zipcode" class="form-control" type="text" placeholder="123" required>
+        <div class="container-fluid pt-5">
+            <div class="row px-xl-5">
+                <div class="col-lg-8">
+                    <div class="mb-4">
+                        <h4 class="font-weight-semi-bold mb-4">Billing Address</h4>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Fullname</label>
+                                <input name="fullname" class="form-control" type="text" placeholder="John" required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>E-mail</label>
+                                <input name="email" class="form-control" type="email" placeholder="example@email.com" required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Mobile No</label>
+                                <input name="phone" class="form-control" type="text" placeholder="+123 456 789" required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Address</label>
+                                <input name="address" class="form-control" type="text" placeholder="123 Street" required>
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <label>Country</label>
+                                <select name="country" class="custom-select" required>
+                                    <option value="United States">United States</option>
+                                    <option value="Afghanistan">Afghanistan</option>
+                                    <option value="Laos">Laos</option>
+                                    <option value="VietNam">VietNam</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>City</label>
+                                <input name="city" class="form-control" type="text" placeholder="New York" required>
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                <label>ZIP Code</label>
+                                <input name="zipcode" class="form-control" type="text" placeholder="123" required>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="card border-secondary mb-5">
-                    <div class="card-header bg-secondary border-0">
-                        <h4 class="font-weight-semi-bold m-0">Order Total</h4>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="font-weight-medium mb-3">Products</h5>
+                <div class="col-lg-4">
+                    <div class="card border-secondary mb-5">
+                        <div class="card-header bg-secondary border-0">
+                            <h4 class="font-weight-semi-bold m-0">Order Total</h4>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="font-weight-medium mb-3">Products</h5>
 
-                        <?php foreach ($cart_items as $item): ?>
+                            <?php foreach ($cart_items as $item): ?>
+                                <div class="d-flex justify-content-between">
+                                    <p><?= htmlspecialchars($item['product_name']) ?> (x<?= $item['quantity'] ?>)</p>
+                                    <p>$<?= number_format($item['price'] * $item['quantity'], 2) ?></p>
+                                </div>
+                            <?php endforeach; ?>
+
+                            <hr class="mt-0">
+                            <div class="d-flex justify-content-between mb-3 pt-1">
+                                <h6 class="font-weight-medium">Subtotal</h6>
+                                <h6 class="font-weight-medium">$<?= number_format($total, 2) ?></h6>
+                            </div>
                             <div class="d-flex justify-content-between">
-                                <p><?= htmlspecialchars($item['product_name']) ?> (x<?= $item['quantity'] ?>)</p>
-                                <p>$<?= number_format($item['price'] * $item['quantity'], 2) ?></p>
+                                <h6 class="font-weight-medium">Shipping</h6>
+                                <h6 class="font-weight-medium">$10.00</h6>
                             </div>
-                        <?php endforeach; ?>
+                        </div>
+                        <div class="card-footer border-secondary bg-transparent">
+                            <div class="d-flex justify-content-between mt-2">
+                                <h5 class="font-weight-bold">Total</h5>
+                                <h5 class="font-weight-bold">$<?= number_format($total + 10, 2) ?></h5>
+                            </div>
+                        </div>
+                    </div>
 
-                        <hr class="mt-0">
-                        <div class="d-flex justify-content-between mb-3 pt-1">
-                            <h6 class="font-weight-medium">Subtotal</h6>
-                            <h6 class="font-weight-medium">$<?= number_format($total, 2) ?></h6>
+                    <!-- Payment Method -->
+                    <div class="card border-secondary mb-5">
+                        <div class="card-header bg-secondary border-0">
+                            <h4 class="font-weight-semi-bold m-0">Payment</h4>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium">$10.00</h6>
-                        </div>
-                    </div>
-                    <div class="card-footer border-secondary bg-transparent">
-                    <div class="d-flex justify-content-between mt-2">
-                            <h5 class="font-weight-bold">Total</h5>
-                            <h5 class="font-weight-bold">$<?= number_format($total + 10, 2) ?></h5>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Payment Method -->
-                <div class="card border-secondary mb-5">
-                    <div class="card-header bg-secondary border-0">
-                        <h4 class="font-weight-semi-bold m-0">Payment</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="cod" value="cod" checked>
-                                <label class="custom-control-label" for="cod">Cash on Delivery (COD)</label>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" name="payment_method" id="cod" value="cod" checked>
+                                    <label class="custom-control-label" for="cod">Cash on Delivery (COD)</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" name="payment_method" id="bank" value="bank">
+                                    <label class="custom-control-label" for="bank">Bank Transfer</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" name="payment_method" id="momo" value="momo">
+                                    <label class="custom-control-label" for="momo">MoMo E-Wallet</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="bank" value="bank">
-                                <label class="custom-control-label" for="bank">Bank Transfer</label>
-                            </div>
+                        <div class="card-footer border-secondary bg-transparent">
+                            <button type="submit" name="place_order" class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place Order</button>
                         </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment_method" id="momo" value="momo">
-                                <label class="custom-control-label" for="momo">MoMo E-Wallet</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer border-secondary bg-transparent">
-                        <button type="submit" name="place_order" class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place Order</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
 
     <!-- Checkout End -->
 
