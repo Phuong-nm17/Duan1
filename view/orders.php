@@ -1,0 +1,263 @@
+<?php
+// filepath: c:\laragon\www\Duan1\view\order.php
+session_start();
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+require_once(__DIR__ . '/../model/connect.php');
+
+// Truy vấn dữ liệu từ bảng orders và order_details
+$stmt = $conn->prepare("
+    SELECT 
+        o.id AS order_id, 
+        o.created_at, 
+        o.status, 
+        o.order_date,
+        o.fullname, 
+        o.email, 
+        o.payment_method, 
+        o.phone, 
+        od.product_id, 
+        od.quantity, 
+        od.price,
+        p.title AS product_name,
+        p.thumbnail AS product_thumbnail
+    FROM orders o
+    JOIN order_details od ON o.id = od.order_id
+    JOIN product p ON od.product_id = p.id
+    WHERE o.user_id = ?
+    ORDER BY o.order_date DESC
+");
+
+$stmt->execute([$_SESSION['id']]);
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$orders = [];
+foreach ($rows as $row) {
+    $id = $row['order_id'];
+    if (!isset($orders[$id])) {
+        $orders[$id] = [
+            'created_at' => $row['created_at'],
+            'status' => $row['status'],
+            'order_date' => $row['order_date'],
+            'fullname' => $row['fullname'],
+            'email' => $row['email'],
+            'payment_method' => $row['payment_method'],
+            'phone' => $row['phone'],
+            'items' => []
+        ];
+    }
+    $orders[$id]['items'][] = [
+        'product_name' => $row['product_name'],
+        'quantity' => $row['quantity'],
+        'price' => $row['price'],
+        'product_thumbnail' => $row['product_thumbnail']
+    ];
+}
+
+?>
+
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Orders - EShopper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="view/css/style.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .order-block {
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .order-header {
+            background-color: #f8f8f8;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #555;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .order-header strong {
+            color: #333;
+        }
+
+        .order-content {
+            padding: 20px;
+        }
+
+        .order-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-content table th,
+        .order-content table td {
+            padding: 12px;
+            text-align: left;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .order-content table th {
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        .order-content table td img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .order-content table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .order-footer {
+            padding: 10px 20px;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            border-top: 1px solid #eaeaea;
+        }
+
+        .order-footer span {
+            font-size: 1rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #ff5722;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #e64a19;
+        }
+
+        .no-orders {
+            text-align: center;
+            color: #999;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Your Orders</h1>
+        <?php if (count($orders) > 0): ?>
+            <?php foreach ($orders as $id => $order): ?>
+                <div class="order-block">
+                    <div class="order-header">
+                        <span><strong>Order ID:</strong> #<?= htmlspecialchars($id) ?></span>
+                        <span><strong>Date:</strong> <?= htmlspecialchars($order['order_date']) ?></span>
+                        <span><strong>Status:</strong>
+                            <?php
+                            switch ($order['status']) {
+                                case 'chờ xác nhận':
+                                    echo '<span style="color: purple;">Awaiting Confirmation</span>';
+                                    break;
+                                case 'chờ xử lý':
+                                    echo '<span style="color: orange;">Pending</span>';
+                                    break;
+                                case 'đang giao':
+                                    echo '<span style="color: green;">In Transit</span>';
+                                    break;
+                                case 'Hoàn thành':
+                                    echo '<span style="color: blue;">Completed</span>';
+                                    break;
+                                case 'đã hủy':
+                                    echo '<span style="color: red;">Cancelled</span>';
+                                    break;
+                                default:
+                                    echo '<span style="color: gray;">Unknown</span>';
+                            }
+                            ?>
+                        </span>
+                    </div>
+                    <div class="order-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product Image</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($order['items'] as $item): ?>
+                                    <tr>
+                                        <td>
+                                            <img src="<?= htmlspecialchars($item['product_thumbnail'] ?? 'https://via.placeholder.com/50') ?>"
+                                                alt="<?= htmlspecialchars($item['product_name'] ?? 'No Image') ?>">
+                                        </td>
+                                        <td><?= htmlspecialchars($item['product_name'] ?? 'Unknown Product') ?></td>
+                                        <td><?= htmlspecialchars($item['quantity'] ?? 0) ?></td>
+                                        <td>$<?= number_format(($item['quantity'] ?? 0) * ($item['price'] ?? 0), 2) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="order-footer">
+                        <span>Total: $<?= number_format(array_sum(array_map(fn($item) => $item['quantity'] * $item['price'], $order['items'])), 2) ?></span>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="no-orders">You have no orders yet.</p>
+        <?php endif; ?>
+        <a href="index.php?act=profile" class="btn-back">⬅ Back to Profile</a>
+    </div>
+</body>
+
+</html>

@@ -182,12 +182,12 @@ try {
                     <th>Điện thoại</th>
                     <th>Địa chỉ</th>
                     <th>Phương thức</th>
-<<<<<<< HEAD
-                    <th>trạng thái</th>
-=======
-                    <th>Trạng thái đơn hàng</th>
->>>>>>> 7a667765d640e45cd3bb29fc581db778663ce16d
-                    <th>Thao tác</th>
+                    <<<<<<< HEAD
+                        <th>trạng thái</th>
+                        =======
+                        <th>Trạng thái đơn hàng</th>
+                        >>>>>>> 7a667765d640e45cd3bb29fc581db778663ce16d
+                        <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -205,9 +205,7 @@ try {
                             <?= $order['zipcode'] ?>
                         </td>
                         <td><?= htmlspecialchars($order['payment_method']) ?></td>
-<<<<<<< HEAD
                         <td><?= htmlspecialchars($order['status']) ?></td>
-=======
                         <td>
                             <form method="POST" class="mt-3">
                                 <input type="hidden" name="order_id" id="" value="<?= $order['id'] ?>">
@@ -220,7 +218,7 @@ try {
                                 </select>
                             </form>
                         </td>
->>>>>>> 7a667765d640e45cd3bb29fc581db778663ce16d
+
                         <td class="text-center">
                             <a href="view_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-info btn-sm">Chi tiết</a>
                             <a href="edit_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-success btn-sm">sửa</a>

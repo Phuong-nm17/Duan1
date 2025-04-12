@@ -101,11 +101,15 @@ try {
         .menu-item .submenu {
             display: none;
             position: absolute;
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            min-width: 80px;
-            z-index: 10;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            min-width: 150px;
+            z-index: 1000;
+            padding: 8px 0;
+            transition: all 0.3s ease;
         }
 
         .menu-item:hover .submenu {
@@ -237,15 +241,17 @@ try {
                             <a href="index.php?act=register" class="nav-item nav-link">Register</a>
                         <?php else: ?>
                             <div class="menu-item">
-                                <a href="#"
-                                    class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                <a href="#" class="nav-item nav-link">
+                                    <?= htmlspecialchars($user['fullname'] ?? 'user') ?>
+                                    <i class="fas fa-chevron-down ml-1"></i>
+                                </a>
                                 <div class="submenu">
-                                    <a href="index.php?act=Logout">LogOut</a>
-                                    <a href="#"></a>
+                                    <a href="index.php?act=profile">Profile</a>
+                                    <a href="index.php?act=cart">Cart</a>
+                                    <a href="index.php?act=Logout">Logout</a>
                                 </div>
                             </div>
                         <?php endif ?>
-
                     </div>
                 </div>
             </nav>

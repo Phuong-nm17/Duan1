@@ -188,7 +188,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container-fluid">
         <div class="row align-items-center px-xl-5 py-3">
             <div class="col-lg-3 d-lg-block d-none">
-
                 <a href="index.php" class="text-decoration-none">
                     <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
                 </a>
@@ -210,9 +209,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h3>My Account</h3>
             <ul>
                 <li>Profile</li>
-                <li>Bank</li>
                 <li><a href="index.php?act=change_password" style="color: inherit; text-decoration: none;">Change Password</a></li>
-                <li>Orders</li>
+                <li><a href="index.php?act=orders" style="color: inherit; text-decoration: none;">Orders</a></li>
             </ul>
         </div>
 
@@ -222,6 +220,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div id="success-message" style="background: #e6ffed; color: #2f855a; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
                     ✅ Thông tin đã được cập nhật thành công!
                 </div>
+                <script>
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('success');
+                    window.history.replaceState({}, document.title, url);
+                </script>
             <?php endif; ?>
             <form method="post" enctype="multipart/form-data">
                 <div class="row">
@@ -231,11 +234,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" disabled>
                         </div>
                         <div class="form-group">
+                            <label>Fullname</label>
+                            <input type="text" name="fullname" value="<?= htmlspecialchars($user['fullname'] ?? '') ?>">
+                        </div>
+                        <div class="form-group">
                             <label>Phone Number</label>
                             <input type="text" name="phone_number" value="<?= htmlspecialchars($user['phone_number'] ?? '') ?>">
                         </div>
                         <div class="form-group">
-                            <label>address</label>
+                            <label>Address</label>
                             <input type="text" name="address" value="<?= htmlspecialchars($user['address'] ?? '') ?>">
                         </div>
                         <div class="form-bottom">
