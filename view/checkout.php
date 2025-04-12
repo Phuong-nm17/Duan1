@@ -41,15 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $payment_method = $_POST['payment_method'] ?? '';
     $zipcode = $_POST['zipcode'] ?? '';
     $note = $_POST['note'] ?? '';
+    $status = $_POST['status'] ?? '';
 
     if ($fullname && $phone && $address) {
         // Thêm đơn hàng
-        $order_sql = "INSERT INTO orders (user_id, fullname, phone, address, email, order_date, country, city, payment_method, zipcode,note)
-              VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?,?)";
+        $order_sql = "INSERT INTO orders (user_id, fullname, phone, address, email, order_date, country, city, payment_method, zipcode, note, status)
+              VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?)";
         $order_stmt = $conn->prepare($order_sql);
         $order_stmt->execute([
         $user_id, $fullname, $phone, $address,
-        $email, $country, $city, $payment_method, $zipcode,$note
+        $email, $country, $city, $payment_method, $zipcode,$note,'chờ xác nhận'
         ]);
 
 

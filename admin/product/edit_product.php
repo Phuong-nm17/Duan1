@@ -165,7 +165,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <!-- Sidebar -->
+
     <?php include '../sidebar.php'; ?>
+
 
     <div id="content">
         <h2>sửa Sản phẩm</h2>

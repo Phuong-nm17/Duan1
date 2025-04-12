@@ -1,6 +1,7 @@
 <?php
 session_start();
 require '../../model/connect.php';
+
 if (!isset($_SESSION['admin']))
     header("Location: login.php");
 
@@ -45,6 +46,9 @@ try {
 } catch (Exception $e) {
     die($e->getMessage());
 }
+
+// Kiểm tra đăng nhập
+if (!isset($_SESSION['admin'])) header("Location: login.php");
 
 ?>
 
@@ -225,7 +229,7 @@ try {
                             <a href="edit_product.php?id=<?= htmlspecialchars($p['product_id']) ?>" class="btn btn-warning btn-sm">Sửa</a>
                             <a href="delete_product.php?id=<?= htmlspecialchars($p['product_id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
 
-                        </td>
+                        
                     </tr>
                 <?php endforeach; ?>
             </tbody>

@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
   $stmt = $conn->prepare($update_sql);
   $stmt->execute([$fullname, $email, $phone, $address, $payment_method, $note, $order['id']]);
 
-  echo "<div style='text-align:center; margin-top:20px; font-size:20px; color:green;'>🎉 Đặt hàng thành công! Đang chuyển hướng...</div>";
-  header("Refresh: 2; URL=index.php?act=home");
+  echo "<div style='text-align:center; margin-top:20px; font-size:20px; color:green;'>🎉 Đặt hàng thành công!</div>";
+  header("Refresh: 1; URL=index.php?act=home");
   exit();
 }
 
@@ -240,9 +240,11 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <td><?= $item['product_title'] ?></td>
                   <td><?= $item['size_name'] ?></td>
                   <td><?= $item['color_name'] ?></td>
+
                   <td>$<?= number_format($item['price'], 0, ',', '.') ?></td>
                   <td><?= $item['quantity'] ?></td>
                   <td>$<?= number_format($subtotal, 0, ',', '.') ?></td>
+
                 </tr>
             <?php endforeach;
             }
@@ -250,6 +252,7 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
           </tbody>
         </table>
         <div class="total">Total:$<?= number_format($subtotal + 10, 2) ?></div>
+
       </fieldset>
 
       <button type="submit" name="confirm_order" class="submit-btn">Confirm Order</button>

@@ -29,6 +29,19 @@ try {
     $stmt = $conn->prepare($sql);
     $stmt->execute($params);
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = $_POST['order_id'] ?? null;
+        $status = $_POST['status'] ?? null;
+
+        if ($id && $status) {
+            $stmt = $conn->prepare("UPDATE orders SET status = :status WHERE id = :id");
+            $stmt->execute(['status' => $status, 'id' => $id]);
+        }
+        $redirect = 'orders.php';
+        header("Location: $redirect");
+        exit();
+    }
 } catch (Exception $e) {
     die("Lỗi: " . $e->getMessage());
 }
@@ -169,7 +182,11 @@ try {
                     <th>Điện thoại</th>
                     <th>Địa chỉ</th>
                     <th>Phương thức</th>
+<<<<<<< HEAD
                     <th>trạng thái</th>
+=======
+                    <th>Trạng thái đơn hàng</th>
+>>>>>>> 7a667765d640e45cd3bb29fc581db778663ce16d
                     <th>Thao tác</th>
                 </tr>
             </thead>
@@ -188,7 +205,22 @@ try {
                             <?= $order['zipcode'] ?>
                         </td>
                         <td><?= htmlspecialchars($order['payment_method']) ?></td>
+<<<<<<< HEAD
                         <td><?= htmlspecialchars($order['status']) ?></td>
+=======
+                        <td>
+                            <form method="POST" class="mt-3">
+                                <input type="hidden" name="order_id" id="" value="<?= $order['id'] ?>">
+                                <select class="form-select" name="status" onchange="this.form.submit()">
+                                    <option value=""><?php echo htmlspecialchars($order['status']); ?></option>
+                                    <option value="chờ xử lý">chờ xử lý</option>
+                                    <option value="đang giao">đang giao</option>
+                                    <option value="Hoàn thành">Hoàn thành</option>
+                                    <option value="đã hủy">đã hủy</option>
+                                </select>
+                            </form>
+                        </td>
+>>>>>>> 7a667765d640e45cd3bb29fc581db778663ce16d
                         <td class="text-center">
                             <a href="view_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-info btn-sm">Chi tiết</a>
                             <a href="edit_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-success btn-sm">sửa</a>

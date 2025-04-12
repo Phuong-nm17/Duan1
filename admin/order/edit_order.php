@@ -198,7 +198,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <option value="Bank Transfer" <?= $order['payment_method'] == 'bank' ? 'selected' : '' ?>>Bank Transfer</option>
                     <option value="MoMo E-Wallet" <?= $order['payment_method'] == 'momo' ? 'selected' : '' ?>>MoMo E-Wallet</option>
                 </select>
-
             </div>
             <div class="mb-3">
                 <label>Mã Zip:</label>

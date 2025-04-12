@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (password_verify($password, $user['password'])) {
                 $_SESSION['id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
+                $_SESSION['login_success'] = "Đăng nhập thành công!";
                 header("Location: index.php?act=home");
                 exit();
             } else {
@@ -113,6 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container-fluid">
         <div class="row align-items-center px-xl-5 py-3">
             <div class="col-lg-3 d-lg-block d-none">
+
                 <a href="index.php" class="text-decoration-none">
                     <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
                 </a>
@@ -130,7 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Page Header End -->
     <div class="container">
         <form method="POST" class="center login-form" style="max-width: 400px; margin: 0 auto; padding: 30px;">
-            <h3 class="text-center mb-4">Đăng nhập</h3>
+            <h3 class="text-center mb-4">Login</h3>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
@@ -138,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <div class="mb-3">
-                <label for="password" class="form-label">Mật khẩu</label>
+                <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
 
@@ -146,10 +148,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="text-danger mb-3"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
-            <button type="submit" name="login" class="btn btn-primary w-100">Đăng nhập</button>
+
+            <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
+
 
             <div class="text-center mt-3">
-                <a href="index.php?act=forgot_password">Quên mật khẩu?</a>
+                <a href="index.php?act=forgot_password">Forgot password ?</a>
             </div>
 
             <div class="text-center mt-2">

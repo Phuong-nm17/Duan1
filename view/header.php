@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 require_once(__DIR__ . '/../model/connect.php');
 
 try {
@@ -126,6 +125,13 @@ if (isset($_SESSION['email'])) {
 </head>
 
 <body>
+    <?php if (!empty($_SESSION['login_success'])): ?>
+        <div id="success-alert" class="alert alert-success text-center" style="margin-top: 20px;">
+            <?= $_SESSION['login_success']; ?>
+        </div>
+        <?php unset($_SESSION['login_success']); ?>
+    <?php endif; ?>
+
     <!-- Topbar Start -->
     <div class="container-fluid">
         <div class="row bg-secondary px-xl-5 py-2">
@@ -241,6 +247,7 @@ if (isset($_SESSION['email'])) {
                                         <i class="fas fa-chevron-down ml-1"></i>
                                     </a>
                                     <div class="submenu">
+                                        <a href="index.php?act=profile">Profile</a>
                                         <a href="index.php?act=cart">Cart</a>
                                         <a href="index.php?act=Logout">Logout</a>
                                     </div>
@@ -306,3 +313,11 @@ if (isset($_SESSION['email'])) {
 
     <!-- Template Javascript -->
     <script src="view/js/main.js"></script>
+    <script>
+        setTimeout(function() {
+            const alertBox = document.getElementById("success-alert");
+            if (alertBox) {
+                alertBox.style.display = "none";
+            }
+        }, 1500); // 2000 ms = 2 giây
+    </script>

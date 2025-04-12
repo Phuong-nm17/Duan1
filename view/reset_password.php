@@ -5,8 +5,10 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
 
 $token = $_GET['token'] ?? '';
 $message = "";
+$redirect = false;
+$validToken = false;
+$showForm = true;
 
-// Xử lý khi người dùng submit form cập nhật mật khẩu
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['token'];
     $password = $_POST['password'];
@@ -17,23 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($password) < 6) {
         $message = "⚠️ Mật khẩu phải có ít nhất 6 ký tự!";
     } else {
-        $stmt = $conn->prepare("SELECT * FROM user WHERE reset_token = ? AND reset_token_expires > NOW()");
-        $stmt->execute([$token]);
-        $user = $stmt->fetch();
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $update = $conn->prepare("UPDATE user SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ?");
+        $update->execute([$hashed, $token]);
 
-        if ($user) {
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $update = $conn->prepare("UPDATE user SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?");
-            $update->execute([$hashed, $user['id']]);
-            $message = "✅ Mật khẩu đã được thay đổi thành công!";
-            // Tự động chuyển hướng sau 4 giây
-            header("refresh:2;url=index.php?act=login");
-        } else {
-            $message = "❌ Token không hợp lệ hoặc đã hết hạn.";
-        }
+        $message = "✅ Mật khẩu đã được thay đổi thành công!";
+        $redirect = true;
+        $showForm = false;
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -41,10 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Đặt lại mật khẩu</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
+    <?php if (!empty($redirect)): ?>
+        <meta http-equiv="refresh" content="3;url=index.php?act=login">
+    <?php endif; ?>
     <style>
         * {
             box-sizing: border-box;
@@ -146,27 +141,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <form class="form-wrapper" method="POST">
-        <h3>Đặt lại mật khẩu</h3>
+        <h3>Reset password</h3>
 
-        <!-- <?php if ($message): ?>
+        <?php if (!empty($message)): ?>
             <div class="message <?= strpos($message, '✅') !== false ? 'success' : 'error' ?>">
                 <?= htmlspecialchars($message) ?>
             </div>
         <?php endif; ?> -->
 
-        <?php if (!$message || strpos($message, '✅') === false): ?>
+        <?php if ($showForm): ?>
             <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
             <div>
-                <label>Mật khẩu mới:</label>
+                <label>New password:</label>
                 <input type="password" name="password" required>
             </div>
             <div>
-                <label>Nhập lại mật khẩu:</label>
+                <label>Re-enter the password:</label>
                 <input type="password" name="confirm" required>
             </div>
-            <button type="submit">Cập nhật mật khẩu</button>
-        <?php else: ?>
-            <a class="login-link" href="index.php?act=login">➡️ Quay lại đăng nhập</a>
+            <button type="submit">Update password</button>
         <?php endif; ?>
     </form>
 </body>
