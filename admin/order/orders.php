@@ -182,12 +182,9 @@ try {
                     <th>Điện thoại</th>
                     <th>Địa chỉ</th>
                     <th>Phương thức</th>
-                    <<<<<<< HEAD
-                        <th>trạng thái</th>
-                        =======
-                        <th>Trạng thái đơn hàng</th>
-                        >>>>>>> 7a667765d640e45cd3bb29fc581db778663ce16d
-                        <th>Thao tác</th>
+                    <th>trạng thái</th>
+                    <th>Trạng thái đơn hàng</th>
+                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>

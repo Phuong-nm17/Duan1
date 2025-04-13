@@ -22,11 +22,17 @@ $stmt = $conn->prepare("
         od.product_id, 
         od.quantity, 
         od.price,
+        od.color_id, 
+        od.size_id, 
         p.title AS product_name,
-        p.thumbnail AS product_thumbnail
+        p.thumbnail AS product_thumbnail,
+        c.name AS color,
+        s.name AS size
     FROM orders o
     JOIN order_details od ON o.id = od.order_id
     JOIN product p ON od.product_id = p.id
+    JOIN color c ON od.color_id = c.id
+    JOIN size s ON od.size_id = s.id
     WHERE o.user_id = ?
     ORDER BY o.order_date DESC
 ");
@@ -53,7 +59,9 @@ foreach ($rows as $row) {
         'product_name' => $row['product_name'],
         'quantity' => $row['quantity'],
         'price' => $row['price'],
-        'product_thumbnail' => $row['product_thumbnail']
+        'product_thumbnail' => $row['product_thumbnail'],
+        'color' => $row['color'],
+        'size' => $row['size'],
     ];
 }
 
@@ -229,6 +237,7 @@ foreach ($rows as $row) {
                                 <tr>
                                     <th>Product Image</th>
                                     <th>Product Name</th>
+                                    <th>Attributes</th>
                                     <th>Quantity</th>
                                     <th>Total</th>
                                 </tr>
@@ -241,6 +250,7 @@ foreach ($rows as $row) {
                                                 alt="<?= htmlspecialchars($item['product_name'] ?? 'No Image') ?>">
                                         </td>
                                         <td><?= htmlspecialchars($item['product_name'] ?? 'Unknown Product') ?></td>
+                                        <td><?= htmlspecialchars($item['color'] ?? 'N/A') ?>, <?= htmlspecialchars($item['size'] ?? 'N/A') ?></td>
                                         <td><?= htmlspecialchars($item['quantity'] ?? 0) ?></td>
                                         <td>$<?= number_format(($item['quantity'] ?? 0) * ($item['price'] ?? 0), 2) ?></td>
                                     </tr>

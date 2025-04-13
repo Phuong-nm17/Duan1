@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f5f5f5;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -58,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-wrapper {
             background: #fff;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
         }
@@ -69,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 20px;
             color: #333;
             font-weight: 600;
+            font-size: 18px;
         }
 
         .message {
@@ -77,64 +78,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 8px;
             font-weight: 500;
             text-align: center;
+            font-size: 14px;
         }
 
         .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: #e6f9f0;
+            color: #27ae60;
+            border: 1px solid #b2e2cd;
         }
 
         .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: #ffe6e6;
+            color: #c0392b;
+            border: 1px solid #f5b5b5;
         }
 
         label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 500;
-            color: #333;
+            color: #555;
+            font-size: 14px;
         }
 
         input[type="password"] {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 14px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             font-size: 14px;
+            transition: border-color 0.3s;
         }
 
-        button,
-        .login-link {
+        input[type="password"]:focus {
+            border-color: #ee4d2d;
+            outline: none;
+        }
+
+        button {
             display: block;
             width: 100%;
-            padding: 10px 0;
-            background-color: #007bff;
+            padding: 12px;
+            background: #ee4d2d;
             color: white;
-            text-align: center;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s;
         }
 
-        button:hover,
-        .login-link:hover {
-            background-color: #0056b3;
+        button:hover {
+            background-color: #d63a21;
         }
 
         .login-link {
+            display: block;
             margin-top: 10px;
-            background-color: #28a745;
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
         }
 
         .login-link:hover {
-            background-color: #218838;
+            color: #ee4d2d;
         }
     </style>
 </head>
