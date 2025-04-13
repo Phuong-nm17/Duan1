@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     window.history.replaceState({}, document.title, url);
                 </script>
             <?php endif; ?>
-            <form method="post" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data">
                 <div class="row">
                     <div style="flex: 2;">
                         <div class="form-group">
