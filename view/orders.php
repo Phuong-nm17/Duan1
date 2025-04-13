@@ -63,7 +63,27 @@ foreach ($rows as $row) {
         'size' => $row['size'],
     ];
 }
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $order_id = $_POST['order_id'] ?? 0;
 
+    // Kiểm tra quyền sở hữu đơn hàng
+    $stmt = $conn->prepare("SELECT * FROM orders WHERE id = ? AND user_id = ?");
+    $stmt->execute([$order_id, $_SESSION['id']]);
+    $order = $stmt->fetch();
+
+    if ($order && $order['status'] !== 'đã hủy' && $order['status'] !== 'Hoàn thành') {
+        // Cập nhật trạng thái đơn hàng thành "đã hủy"
+        $update_stmt = $conn->prepare("UPDATE orders SET status = 'đã hủy' WHERE id = ?");
+        $update_stmt->execute([$order_id]);
+
+        // Chuyển hướng về trang orders
+        header("Location: index.php?act=orders");
+        exit();
+    } else {
+        // Nếu không hợp lệ, hiển thị thông báo lỗi
+        echo "<script>alert('Không thể hủy đơn hàng này.'); window.location.href='index.php?act=orders';</script>";
+    }
+}
 ?>
 
 
@@ -194,6 +214,21 @@ foreach ($rows as $row) {
             font-size: 1rem;
             margin-top: 20px;
         }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 
@@ -247,6 +282,12 @@ foreach ($rows as $row) {
                             }
                             ?>
                         </span>
+                        <?php if ($order['status'] !== 'đã hủy' && $order['status'] !== 'Hoàn thành'): ?>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
+                            </form>
+                        <?php endif; ?>
                     </div>
                     <div class="order-content">
                         <table>
