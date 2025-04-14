@@ -42,18 +42,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     try {
         $conn->beginTransaction();
 
-        // Tạo đơn hàng cho từng sản phẩm
+        // Tạo đơn hàng
+        $order_sql = "INSERT INTO orders (user_id, order_date) VALUES (:user_id, NOW())";
+        $stmt = $conn->prepare($order_sql);
+        $stmt->execute([':user_id' => $user_id]);
+
+        // Lấy ID đơn hàng vừa tạo
+        $order_id = $conn->lastInsertId();
+        if (!$order_id) {
+            die("Lỗi: Không thể tạo đơn hàng.");
+        }
+        $_SESSION['latest_order_id'] = $order_id;
+
+        // Lưu chi tiết đơn hàng
         foreach ($cart_items as $item) {
-            // Trong phần xử lý đặt hàng
-            $order_sql = "INSERT INTO orders 
-(user_id, product_id, quanity, total_money, order_date) 
-VALUES (:user_id, :product_id, :quantity, :total, NOW())";
-            $stmt = $conn->prepare($order_sql);
+            $order_detail_sql = "INSERT INTO order_detail (order_id, product_id, price, num, total_money) 
+                                 VALUES (:order_id, :product_id, :price, :num, :total_money)";
+            $stmt = $conn->prepare($order_detail_sql);
             $stmt->execute([
-                ':user_id' => $user_id,
+                ':order_id' => $order_id,
                 ':product_id' => $item['product_id'],
-                ':quantity' => $item['quantity'],
-                ':total' => $item['price'] * $item['quantity']
+                ':price' => $item['price'],
+                ':num' => $item['quantity'],
+                ':total_money' => $item['price'] * $item['quantity']
             ]);
         }
 
@@ -64,18 +75,12 @@ VALUES (:user_id, :product_id, :quantity, :total, NOW())";
 
         $conn->commit();
 
-        // Lấy ID đơn hàng vừa tạo
-        $order_id = $conn->lastInsertId();
-        $_SESSION['latest_order_id'] = $order_id;
-
         // Chuyển hướng đến trang xác nhận
-        header("Location: index.php?act=orderconfirm");
+        header("Location: order_confirmation.php");
         exit();
     } catch (Exception $e) {
         $conn->rollBack();
-        $error = "Lỗi khi đặt hàng: " . $e->getMessage();
-        // Hiển thị lỗi cho người dùng
-        echo "<div class='alert alert-danger'>$error</div>";
+        die("Lỗi khi đặt hàng: " . $e->getMessage());
     }
 }
 ?>
@@ -331,7 +336,7 @@ VALUES (:user_id, :product_id, :quantity, :total, NOW())";
             </div>
             <div class="col-lg-8 col-md-12">
                 <div class="row">
-                    <div class="col-md-4 mb-5">
+                    <div class="col-md-4 mb-5"></div>
                         <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
                         <div class="d-flex flex-column justify-content-start">
                             <a class="text-dark mb-2" href="index.html"><i class="fa fa-angle-right mr-2"></i>Home</a>
