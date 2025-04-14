@@ -39,18 +39,13 @@ if (isset($_GET['search'])): ?>
 
 
     <h2 class="text-primary text-uppercase mb-3" spullpulltyle="margin-left: 40px;">
-
         Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
-
-
 
     </h2>
     Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
 
     <?php if (empty($product)): ?>
-
         <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">No products found.
-
         </p>
     <?php else: ?>
         <div class=" row pb-3 px-xl-5">
@@ -82,6 +77,7 @@ if (isset($_GET['search'])): ?>
         </div>
     <?php endif; ?>
 <?php else: ?>
+  
     <!-- Featured Start -->
     <div class="container-fluid pt-5">
         <div class="row pb-3 px-xl-5">

@@ -2,7 +2,9 @@
     <h4>Admin Panel</h4>
 
     <div class="menu-item">
-        <a href="index.php"><i>🏠</i> <span>Trang chủ</span></a>
+
+        <a href="../index.php"><i>🏠</i> <span>Trang chủ</span></a>
+
     </div>
 
     <div class="menu-item">

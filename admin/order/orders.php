@@ -6,6 +6,7 @@ if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit;
 }
+
 $from = $_GET['from_date'] ?? null;
 $to = $_GET['to_date'] ?? null;
 
@@ -24,11 +25,35 @@ if ($from && $to) {
 }
 
 
+// Define valid status transitions
+$statusFlow = [
+    'chờ xác nhận' => ['chờ xử lý', 'đã hủy'],
+    'chờ xử lý'     => ['đang giao', 'đã hủy'],
+    'đang giao'     => ['hoàn thành', 'đã hủy'],
+    'hoàn thành'    => [],
+    'đã hủy'        => []
+];
+
+
 try {
     $sql = "SELECT * FROM orders $where ORDER BY id DESC";
     $stmt = $conn->prepare($sql);
     $stmt->execute($params);
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id = $_POST['order_id'] ?? null;
+        $status = $_POST['status'] ?? null;
+
+        if ($id && $status) {
+            $stmt = $conn->prepare("UPDATE orders SET status = :status WHERE id = :id");
+            $stmt->execute(['status' => $status, 'id' => $id]);
+        }
+        header("Location: orders.php");
+        exit();
+    }
+
 } catch (Exception $e) {
     die("Lỗi: " . $e->getMessage());
 }
@@ -46,7 +71,7 @@ try {
             display: flex;
         }
 
-        /* Sidebar */
+
         #sidebar {
             width: 250px;
             height: 100vh;
@@ -92,7 +117,9 @@ try {
             background-color: #495057;
         }
 
+
         /* Submenu */
+
         .submenu {
             display: none;
             background: #495057;
@@ -103,7 +130,9 @@ try {
             display: block;
         }
 
+
         /* Nếu sidebar thu nhỏ, hiển thị submenu bên cạnh */
+
         #sidebar.collapsed .submenu {
             display: none;
             position: absolute;
@@ -120,7 +149,9 @@ try {
             display: block;
         }
 
+
         /* Nút thu nhỏ sidebar */
+
         #toggle-btn {
             position: absolute;
             top: 10px;
@@ -159,6 +190,7 @@ try {
                 <a href="orders.php" class="btn btn-secondary">Reset</a>
             </div>
         </form>
+
         <table class="table table-bordered table-hover">
             <thead class="table-dark text-center">
                 <tr>
@@ -169,7 +201,10 @@ try {
                     <th>Điện thoại</th>
                     <th>Địa chỉ</th>
                     <th>Phương thức</th>
-                    <th>Trạng thái đơn hàng</th>
+
+                    <th>Trạng thái</th>
+                    <th>Cập nhật trạng thái</th>
+
                     <th>Thao tác</th>
                 </tr>
             </thead>
@@ -187,17 +222,38 @@ try {
                             <?= htmlspecialchars($order['country']) ?>,
                             <?= $order['zipcode'] ?>
                         </td>
-                        <td><?= htmlspecialchars($order['payment_method']) ?></td>
-                        <td><?php echo htmlspecialchars($order['status']); ?></td>
+
+                        <td><?= htmlspecialchars($order['status']) ?></td>
+                        <td>
+                            <?php
+                                $currentStatus = $order['status'];
+                                $nextStatuses = $statusFlow[$currentStatus] ?? [];
+                            ?>
+                            <?php if (!empty($nextStatuses)): ?>
+                                <form method="POST" class="mt-1">
+                                    <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                                    <select class="form-select" name="status" onchange="this.form.submit()">
+                                        <option selected disabled><?= htmlspecialchars($currentStatus) ?></option>
+                                        <?php foreach ($nextStatuses as $next): ?>
+                                            <option value="<?= $next ?>"><?= ucfirst($next) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </form>
+                            <?php else: ?>
+                                <em>Không thể cập nhật</em>
+                            <?php endif; ?>
+                        </td>
                         <td class="text-center">
                             <a href="view_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-info btn-sm">Chi tiết</a>
-                            <a href="edit_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-success btn-sm">sửa</a>
+                            <a href="edit_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-success btn-sm">Sửa</a>
+
                         </td>
                     </tr>
                 <?php endforeach ?>
             </tbody>
         </table>
     </div>
+
     <script>
         const sidebar = document.getElementById('sidebar');
         const content = document.getElementById('content');
@@ -210,4 +266,6 @@ try {
     </script>
 </body>
 
+
 </html>
+

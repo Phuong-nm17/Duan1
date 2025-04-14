@@ -23,6 +23,17 @@ if (isset($_GET["act"])) {
         case 'forgot_password':
             include "view/forgot_password.php";
             break;
+
+        case 'change_password':
+            include "view/change_password.php";
+            break;
+        case 'profile':
+            include "view/profile.php";
+            break;
+        case 'orders':
+            include "view/orders.php";
+            break;
+
         case 'reset_password':
             include "view/reset_password.php";
             break;
