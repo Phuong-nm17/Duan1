@@ -252,6 +252,7 @@ if (isset($_SESSION['email'])) {
                                         <a href="index.php?act=Logout">Logout</a>
                                     </div>
                                 </div>
+
                             <?php endif ?>
                         </div>
                     </div>

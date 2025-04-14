@@ -164,6 +164,7 @@ try {
                     $total += $subtotal;
                 ?>
                     <tr class="text-center">
+
                         <td class="text-start">
                             <div class="d-flex align-items-center">
                                 <img src="<?= htmlspecialchars($item['product_thumbnail']) ?>"
@@ -171,6 +172,7 @@ try {
                                     width="60" height="60" style="object-fit: cover; border-radius: 5px; margin-right: 10px;">
                                 <span><?= htmlspecialchars($item['product_name']) ?></span>
                             </div>
+
                         </td>
                         <td><?= number_format($item['price'], 0, ',', '.') ?> $</td>
                         <td><?= $item['quantity'] ?></td>
