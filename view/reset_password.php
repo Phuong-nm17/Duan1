@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="message <?= strpos($message, '✅') !== false ? 'success' : 'error' ?>">
                 <?= htmlspecialchars($message) ?>
             </div>
-        <?php endif; ?> -->
+        <?php endif; ?>
 
         <?php if ($showForm): ?>
             <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">

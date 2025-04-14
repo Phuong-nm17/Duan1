@@ -1,5 +1,4 @@
 <?php
-// filepath: c:\laragon\www\Duan1\view\order.php
 session_start();
 if (!isset($_SESSION['id'])) {
     header("Location: login.php");
@@ -199,6 +198,24 @@ foreach ($rows as $row) {
 </head>
 
 <body>
+    <!-- Topbar Start -->
+    <div class="container-fluid">
+        <div class="row align-items-center px-xl-5 py-3">
+            <div class="col-lg-3 d-lg-block d-none">
+                <a href="index.php?act=home" class="text-decoration-none">
+                    <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+    <!-- Page Header Start -->
+    <div class="container-fluid bg-secondary mb-5">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 100px">
+            <h1 class="text-uppercase font-weight-semi-bold mb-2">Order</h1>
+        </div>
+    </div>
+    <!-- Page Header End -->
     <div class="container">
         <h1>Your Orders</h1>
         <?php if (count($orders) > 0): ?>
@@ -268,6 +285,19 @@ foreach ($rows as $row) {
         <?php endif; ?>
         <a href="index.php?act=profile" class="btn-back">⬅ Back to Profile</a>
     </div>
+    <?php include 'footer.php'; ?>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="view/lib/easing/easing.min.js"></script>
+    <script src="view/lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="view/mail/jqBootstrapValidation.min.js"></script>
+    <script src="view/mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="view/js/main.js"></script>
 </body>
 
 </html>
