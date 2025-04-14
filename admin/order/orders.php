@@ -222,7 +222,7 @@ try {
                             <?= htmlspecialchars($order['country']) ?>,
                             <?= $order['zipcode'] ?>
                         </td>
-
+                        <td><?= htmlspecialchars($order['payment_method']) ?></td>
                         <td><?= htmlspecialchars($order['status']) ?></td>
                         <td>
                             <?php
