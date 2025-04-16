@@ -21,7 +21,7 @@ if ($cart_id > 0 && in_array($action, ['increase', 'decrease'])) {
     if ($result) {
         $quantity = (int) $result['quantity'];
 
-        if ($action === 'increase') {
+        if ($action === 'increase' && $quantity < 5) {
             $quantity++;
         } elseif ($action === 'decrease' && $quantity > 1) {
             $quantity--;
@@ -38,4 +38,3 @@ if ($cart_id > 0 && in_array($action, ['increase', 'decrease'])) {
 
 header("Location: ../index.php?act=cart");
 exit;
-?>
