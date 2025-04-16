@@ -6,7 +6,7 @@ if (isset($_GET["act"])) {
         case 'contact':
             include "view/contact.php";
             break;
-        case 'orderconfirm' :
+        case 'orderconfirm':
             include "view/order_confirmation.php";
             break;
         case 'home':
@@ -20,6 +20,23 @@ if (isset($_GET["act"])) {
         case 'login':
             include "view/login.php";
             break;
+        case 'forgot_password':
+            include "view/forgot_password.php";
+            break;
+
+        case 'change_password':
+            include "view/change_password.php";
+            break;
+        case 'profile':
+            include "view/profile.php";
+            break;
+        case 'orders':
+            include "view/orders.php";
+            break;
+
+        case 'reset_password':
+            include "view/reset_password.php";
+            break;
         case 'Logout':
             include "view/Logout.php";
             break;
@@ -30,7 +47,6 @@ if (isset($_GET["act"])) {
             include "view/cate.php";
             break;
         case 'ProductList':
-            
             include "view/ProductList.php";
             include "view/footer.php";
             break;
@@ -38,7 +54,7 @@ if (isset($_GET["act"])) {
             include "view/ProductDetail.php";
             include "view/footer.php";
             break;
-        case 'checkout' :
+        case 'checkout':
             include "view/checkout.php";
             break;
         default:

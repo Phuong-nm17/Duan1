@@ -28,7 +28,7 @@ if (!isset($_SESSION['csrf_token'])) {
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Admin Panel</a>
-            <a href="logout.php" class="btn btn-danger">Đăng xuất</a>
+            <a href="./auth/logout.php" class="btn btn-danger">Đăng xuất</a>
         </div>
     </nav>
 
@@ -38,7 +38,7 @@ if (!isset($_SESSION['csrf_token'])) {
             <a href="product/product.php" class="btn btn-success mb-3">Quản lý Sản phẩm</a>
             <a href="category/categories.php" class="btn btn-secondary mb-3">Quản lý danh mục</a>
             <a href="user/user_management.php" class="btn btn-primary mb-3">Quản lý khách hàng</a>
-            <a href="" class="btn btn-info ">Quản lý đơn hàng</a>
+            <a href="order/orders.php" class="btn btn-info ">Quản lý đơn hàng</a>
         </div>
     </div>
 </body>

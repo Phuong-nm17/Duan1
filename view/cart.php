@@ -101,10 +101,12 @@ $result = $conn->query($sql);
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="index.php?act=home" class="text-decoration-none">
-                <a href="index.php" class="text-decoration-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
-                </a>
+
+                    <a href="index.php" class="text-decoration-none">
+                        <h1 class="m-0 display-5 font-weight-semi-bold"><span
+                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                    </a>
+
             </div>
             <div class="col-lg-6 col-6 text-left">
                 <form action="">
@@ -255,16 +257,10 @@ $result = $conn->query($sql);
             </div>
         </div>
     </div>
+    <?php include 'footer.php'; ?>
     <!-- Cart End -->
-
-
-
-
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
-
-
-    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="view/lib/easing/easing.min.js"></script>

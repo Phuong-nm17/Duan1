@@ -7,8 +7,6 @@ if (!isset($_SESSION['admin'])) {
     exit;
 }
 
-
-
 $id = $_GET['id'] ?? 0;
 $stmt = $conn->prepare("SELECT * FROM product WHERE id = ?");
 $stmt->execute([$id]);
@@ -24,27 +22,23 @@ $categories = $conn->query("SELECT * FROM category")->fetchAll(PDO::FETCH_ASSOC)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
     $price = $_POST['price'];
-    $discount = $_POST['discount'];
     $thumbnail = $_POST['thumbnail'];
     $description = $_POST['description'];
-    $color = $_POST['color'];
-    $size = $_POST['size'];
+    $color = $_POST['color_id'];
+    $size = $_POST['size_id'];
     $category_id = $_POST['category_id'];
 
+    // Tính toán lại discount (giảm 30% của giá mới)
+    $discount = $price * 0.7;
+
     if (!empty($title) && $price > 0) {
-        // if ($image['size'] > 0) {
-        // $imageName = time() . '_' . $image['name'];
-        // move_uploaded_file($image['tmp_name'], "assets/images/" . $imageName);
-        $stmt = $conn->prepare("UPDATE product SET title=?, price=?,discount=?, thumbnail=?,description=?, color=?, size=?, category=? WHERE id=?");
+        // Cập nhật thông tin sản phẩm trong bảng `product`
+        $stmt = $conn->prepare("UPDATE product SET title=?, price=?, discount=?, thumbnail=?, description=?, color_id=?, size_id=?, category_id=? WHERE id=?");
         $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color, $size, $category_id, $id]);
-        // } else {
-        // $stmt = $conn->prepare("UPDATE products SET title=?, price=? WHERE id=?");
-        // $stmt->execute([$title, $price, $id]);
-        // }
         header("Location: product.php");
         exit;
     } else {
-        $error = "Vui lòng nhập đầy đủ tin!";
+        $error = "Vui lòng nhập đầy đủ thông tin!";
     }
 }
 ?>
@@ -165,45 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <!-- Sidebar -->
-    <div id="sidebar">
-        <h4>Admin Panel</h4>
 
-        <div class="menu-item">
-            <a href="index.php"><i>🏠</i> <span>Trang chủ</span></a>
-        </div>
-
-        <div class="menu-item">
-            <a href="../product/product.php"><i>📦</i> <span>Quản lý sản phẩm</span></a>
-            <div class="submenu">
-                <a href="../product/product.php">Danh sách sản phẩm</a>
-                <a href="../product/add_product.php">Thêm sản phẩm</a>
-            </div>
-        </div>
-        <div class="menu-item">
-            <a href="../category/categories.php"><i>📦</i> <span>Quản lý danh mục</span></a>
-            <div class="submenu">
-                <a href="../category/categories.php">Danh sách danh mục</a>
-                <a href="../category/add_categories.php">Thêm danh mục</a>
-            </div>
-        </div>
-        <div class="menu-item">
-            <a href="../user/user_management.php"><i>👤</i> <span>Quản lý khách hàng</span></a>
-            <div class="submenu">
-                <a href="../user/user_management.php">Danh sách khách hàng</a>
-            </div>
-        </div>
-
-        <div class="menu-item">
-            <a href="#"><i>🛒</i> <span>Quản lý đơn hàng</span></a>
-            <div class="submenu">
-                <a href="order_management.php">Danh sách đơn hàng</a>
-                <a href="order_pending.php">Đơn hàng chờ xử lý</a>
-            </div>
-        </div>
-
-        <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
-
-    </div>
+    <?php include '../sidebar.php'; ?>
 
 
     <div id="content">
@@ -218,10 +175,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="mb-3">
                 <label>Giá:</label>
                 <input type="number" name="price" class="form-control" value="<?= $product['price'] ?>" required>
-            </div>
-            <div class="mb-3">
-                <label>Giá discount:</label>
-                <input type="number" name="discount" class="form-control" value="<?= $product['discount'] ?>" required>
             </div>
             <div class="mb-3">
                 <label>Hình ảnh:</label>

@@ -1,9 +1,27 @@
 <?php
+
+session_start();
+
+
+
 require_once(__DIR__ . '/../model/connect.php');
 
+if (isset($_SESSION['email'])) {
+    try {
+        $sql = "SELECT fullname FROM user WHERE email = :email";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        die("Lỗi truy vấn: " . $e->getMessage());
+    }
+}
+
 try {
-    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
     $category_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
 
 
     $sql = "SELECT product.id AS product_id, product.title, product.price, product.thumbnail, product.discount, category.name 
@@ -28,9 +46,9 @@ try {
     }
 
     $stmt = $conn->prepare($sql);
-    foreach ($params as $key => &$val) {
-        $stmt->bindParam($key, $val, is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR);
 
+    if ($category_id > 0) {
+        $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
     }
 
     $stmt->execute();
@@ -84,11 +102,15 @@ try {
         .menu-item .submenu {
             display: none;
             position: absolute;
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            min-width: 80px;
-            z-index: 10;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            min-width: 150px;
+            z-index: 1000;
+            padding: 8px 0;
+            transition: all 0.3s ease;
         }
 
         .menu-item:hover .submenu {
@@ -143,8 +165,8 @@ try {
         </div>
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
-                <a href="index.php" class="text-decoration-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Farah</h1>
+                <a href="index.php?act=home" class="text-decoration-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
 
                 </a>
             </div>
@@ -180,6 +202,7 @@ try {
 <div class="container-fluid">
     <div class="row border-top px-xl-5">
         <div class="col-lg-3 d-none d-lg-block">
+
             <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
 
                 <h6 class="m-0">Categories</h6>
@@ -188,8 +211,10 @@ try {
             <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light"
                 id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
                 <div class="navbar-nav w-100 overflow-hidden" style="height: 120px">
+
                     <?php foreach ($category as $cat) : ?>
                         <a href="index.php?act=cate&id=<?= $cat['id'] ?>" class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
+
                     <?php endforeach; ?>
                 </div>
             </nav>
@@ -215,15 +240,17 @@ try {
                             <a href="index.php?act=register" class="nav-item nav-link">Register</a>
                         <?php else: ?>
                             <div class="menu-item">
-                                <a href="#"
-                                    class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                <a href="#" class="nav-item nav-link">
+                                    <?= htmlspecialchars($user['fullname'] ?? 'user') ?>
+                                    <i class="fas fa-chevron-down ml-1"></i>
+                                </a>
                                 <div class="submenu">
-                                    <a href="index.php?act=Logout">LogOut</a>
-                                    <a href="#"></a>
+                                    <a href="index.php?act=profile">Profile</a>
+                                    <a href="index.php?act=cart">Cart</a>
+                                    <a href="index.php?act=Logout">Logout</a>
                                 </div>
                             </div>
                         <?php endif ?>
-
                     </div>
                 </div>
             </nav>
@@ -234,6 +261,7 @@ try {
 <!-- Page Header Start -->
 <div class="container-fluid bg-secondary mb-5">
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+
         <h1 class="font-weight-semi-bold text-uppercase mb-3"> <?= isset($category_id) && $category_id > 0 ? ($category[array_search($category_id, array_column($category, 'id'))]['name'] ?? 'Category') : 'Category' ?></h1>
         <div class="d-inline-flex">
             <p class="m-0"><a href="index.php?act=home">Home</a></p>
@@ -298,8 +326,8 @@ if (isset($_GET['search'])): ?>
                             <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                                 <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                                 <div class="d-flex justify-content-center">
-                                    <h6>$<?= number_format($p['discount'], 2) ?></h6>
-                                    <h6 class="text-muted ml-2">$ <del><?= number_format($p['price'], 2) ?> </del></h6>
+                                    <h6>$ <?= number_format($p['price']) ?></h6>
+                                    <h6 class="text-muted ml-2">$ <del><?= number_format($p['discount']) ?> </del></h6>
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">

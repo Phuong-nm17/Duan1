@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 require_once(__DIR__ . '/../model/connect.php');
 
 try {
@@ -81,22 +80,43 @@ if (isset($_SESSION['email'])) {
         .menu-item .submenu {
             display: none;
             position: absolute;
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            min-width: 80px;
-            z-index: 10;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            min-width: 150px;
+            z-index: 1000;
+            padding: 8px 0;
+            transition: all 0.3s ease;
         }
 
         .menu-item:hover .submenu {
             display: block;
         }
+
+        .submenu a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .submenu a:hover {
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+
+
         .submenu a {
             display: block;
             padding: 10px;
             color: #333;
             text-decoration: none;
         }
+
         .submenu a:hover {
             background: #f1f1f1;
         }
@@ -105,6 +125,13 @@ if (isset($_SESSION['email'])) {
 </head>
 
 <body>
+    <?php if (!empty($_SESSION['login_success'])): ?>
+        <div id="success-alert" class="alert alert-success text-center" style="margin-top: 20px;">
+            <?= $_SESSION['login_success']; ?>
+        </div>
+        <?php unset($_SESSION['login_success']); ?>
+    <?php endif; ?>
+
     <!-- Topbar Start -->
     <div class="container-fluid">
         <div class="row bg-secondary px-xl-5 py-2">
@@ -184,10 +211,12 @@ if (isset($_SESSION['email'])) {
                 </a>
                 <nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0"
                     id="navbar-vertical">
+
                     <div class="navbar-nav w-100 overflow-hidden">
                         <?php foreach ($category as $cat): ?>
                             <a href="index.php?act=cate&id=<?= $cat['id'] ?>"
                                 class="nav-item nav-link"><?= htmlspecialchars($cat['name']) ?></a>
+
                         <?php endforeach; ?>
                     </div>
                 </nav>
@@ -208,18 +237,22 @@ if (isset($_SESSION['email'])) {
                             <a href="index.php?act=contact" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <?php if (!isset($_SESSION['email'])) : ?>
+                            <?php if (!isset($_SESSION['email'])): ?>
                                 <a href="index.php?act=login" class="nav-item nav-link">Login</a>
                                 <a href="index.php?act=register" class="nav-item nav-link">Register</a>
-                            <?php else : ?>
+                            <?php else: ?>
                                 <div class="menu-item">
-                                    <a href="#" class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                    <a href="#" class="nav-item nav-link">
+                                        <?= htmlspecialchars($user['fullname'] ?? 'user') ?>
+                                        <i class="fas fa-chevron-down ml-1"></i>
+                                    </a>
                                     <div class="submenu">
+                                        <a href="index.php?act=profile">Profile</a>
                                         <a href="index.php?act=cart">Cart</a>
-                                        <a href="index.php?act=Logout">LogOut</a>
-                                        <a href="#"></a>
+                                        <a href="index.php?act=Logout">Logout</a>
                                     </div>
                                 </div>
+
                             <?php endif ?>
                         </div>
                     </div>
@@ -280,3 +313,11 @@ if (isset($_SESSION['email'])) {
 
     <!-- Template Javascript -->
     <script src="view/js/main.js"></script>
+    <script>
+        setTimeout(function() {
+            const alertBox = document.getElementById("success-alert");
+            if (alertBox) {
+                alertBox.style.display = "none";
+            }
+        }, 1500); // 2000 ms = 2 giây
+    </script>
