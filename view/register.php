@@ -108,36 +108,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     <!-- Page Header End -->
 
-    <div class="conteiner">
-        <form class="register-form" method="POST">
+    <div class="container">
+        <form class="register-form" method="POST" style="max-width: 500px; margin: 0 auto; padding: 30px;">
+            <h3 class="text-center mb-4">Register</h3>
+
             <div class="mb-3">
-                <label for="username" class="form-label">Fullname</label>
-                <input type="text" class="form-control" name="fullname" placeholder="Enter your username" required>
+                <label for="fullname" class="form-label">Fullname</label>
+                <input type="text" class="form-control" name="fullname" placeholder="Enter your fullname" required>
             </div>
+
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
             </div>
+
             <div class="mb-3">
                 <label for="address" class="form-label">Address</label>
                 <input type="text" class="form-control" name="address" placeholder="Enter your address" required>
             </div>
+
             <div class="mb-3">
-                <label for="phone" class="form-label">Phone number</label>
-                <input type="number" class="form-control" name="phone_number" placeholder="Enter your phone number"
-                    required>
+                <label for="phone_number" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" name="phone_number" placeholder="Enter your phone number" required>
             </div>
+
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
             </div>
+
             <div class="mb-3">
-                <label for="confirm-password" class="form-label">Confirm Password</label>
+                <label for="confirm" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" name="confirm" placeholder="Confirm your password" required>
             </div>
+
+            <?php if (!empty($error)) : ?>
+                <div class="text-danger mb-3"><?php echo htmlspecialchars($error); ?></div>
+            <?php endif; ?>
+
             <button type="submit" name="submit" class="btn btn-primary w-100">Register</button>
+
+            <div class="text-center mt-3">
+                Already have an account? <a href="index.php?act=login">Login</a>
+            </div>
         </form>
     </div>
+
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
