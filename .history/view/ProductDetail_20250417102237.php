@@ -219,7 +219,7 @@ if (isset($_SESSION['email'])) {
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
                     <a href="index.php?act=home" class="text-decoration-none d-block d-lg-none">
                         <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Sarah</h1>
+                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                     </a>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
@@ -327,7 +327,9 @@ if (isset($_SESSION['email'])) {
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 130px;">
                             <button type="button" class="btn btn-primary btn-minus"><i class="fa fa-minus"></i></button>
-                            <input type="number" name="quantity" class="form-control bg-secondary text-center" value="1" min="1" max="5">
+                            <input type="number" name="quantity" class="form-control bg-secondary text-center" value="1" min="1" max="5"
+                                oninvalid="this.setCustomValidity('You can only purchase up to 5 items')"
+                                oninput="this.setCustomValidity('')">
                             <button type="button" class="btn btn-primary btn-plus"><i class="fa fa-plus"></i></button>
                         </div>
 
@@ -346,7 +348,8 @@ if (isset($_SESSION['email'])) {
                                 if (currentVal < 5) {
                                     quantityInput.val(currentVal + 1).change();
                                 } else {
-                                    alert('You can only purchase up to 5 items');
+                                    quantityInput[0].setCustomValidity('You can only purchase up to 5 items');
+                                    quantityInput[0].reportValidity();
                                 }
                             });
 
@@ -367,7 +370,10 @@ if (isset($_SESSION['email'])) {
                                     $(this).val(1);
                                 } else if (value > 5) {
                                     $(this).val(5);
-                                    alert('You can only purchase up to 5 items');
+                                    this.setCustomValidity('You can only purchase up to 5 items');
+                                    this.reportValidity();
+                                } else {
+                                    this.setCustomValidity('');
                                 }
                             });
                         });

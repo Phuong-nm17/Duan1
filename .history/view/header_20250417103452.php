@@ -44,13 +44,6 @@ if (isset($_SESSION['email'])) {
         die("Lỗi truy vấn: " . $e->getMessage());
     }
 }
-$cartCount = 0;
-if (isset($_SESSION['cart'])) {
-    foreach ($_SESSION['cart'] as $item) {
-        $cartCount += $item['quantity'];
-    }
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -192,16 +185,15 @@ if (isset($_SESSION['cart'])) {
                 </form>
             </div>
             <div class="col-6 col-lg-3 text-right">
-                <a href="index.php?act=wishlist" class="btn border">
+                <a href="" class="btn border">
                     <i class="text-primary fa-heart fas"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="index.php?act=cart" class="btn border">
+                <a href="" class="btn border">
                     <i class="text-primary fa-shopping-cart fas"></i>
-                    <span class="badge"><?= $cartCount ?></span>
+                    <span class="badge">0</span>
                 </a>
             </div>
-
         </div>
     </div>
     <!-- Topbar End -->
@@ -233,7 +225,7 @@ if (isset($_SESSION['cart'])) {
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
                     <a href="index.php" class="text-decoration-none d-block d-lg-none">
                         <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Sarah</h1>
+                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                     </a>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>

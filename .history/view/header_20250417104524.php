@@ -192,15 +192,15 @@ if (isset($_SESSION['cart'])) {
                 </form>
             </div>
             <div class="col-6 col-lg-3 text-right">
-                <a href="index.php?act=wishlist" class="btn border">
-                    <i class="text-primary fa-heart fas"></i>
-                    <span class="badge">0</span>
-                </a>
-                <a href="index.php?act=cart" class="btn border">
-                    <i class="text-primary fa-shopping-cart fas"></i>
-                    <span class="badge"><?= $cartCount ?></span>
-                </a>
-            </div>
+    <a href="index.php?act=wishlist" class="btn border">
+        <i class="text-primary fa-heart fas"></i>
+        <span class="badge">0</span> <!-- Wishlist nếu có -->
+    </a>
+    <a href="index.php?act=cart" class="btn border">
+        <i class="text-primary fa-shopping-cart fas"></i>
+        <span class="badge"><?= $cartCount ?></span> <!-- Giỏ hàng -->
+    </a>
+</div>
 
         </div>
     </div>

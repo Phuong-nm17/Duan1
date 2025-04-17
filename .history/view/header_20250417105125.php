@@ -44,6 +44,10 @@ if (isset($_SESSION['email'])) {
         die("Lỗi truy vấn: " . $e->getMessage());
     }
 }
+echo '<pre>';
+print_r($_SESSION['cart'] ?? []);
+echo '</pre>';
+
 $cartCount = 0;
 if (isset($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {

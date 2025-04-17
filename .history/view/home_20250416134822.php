@@ -77,7 +77,7 @@ if (isset($_GET['search'])): ?>
         </div>
     <?php endif; ?>
 <?php else: ?>
-
+  
     <!-- Featured Start -->
     <div class="container-fluid pt-5">
         <div class="row pb-3 px-xl-5">
@@ -210,9 +210,7 @@ if (isset($_GET['search'])): ?>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card border-0 mb-4 product-item">
                         <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>">
-                                <img class="w-100 img-fluid" src="<?= $p['thumbnail'] ?>" alt="<?= htmlspecialchars($p['title']) ?>">
-                            </a>
+                            <img class="w-100 img-fluid" src="<?= $p['thumbnail'] ?>" alt="">
                         </div>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>

@@ -165,7 +165,7 @@ if (isset($_SESSION['email'])) {
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Farah</h1>
+                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
@@ -219,7 +219,7 @@ if (isset($_SESSION['email'])) {
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
                     <a href="index.php?act=home" class="text-decoration-none d-block d-lg-none">
                         <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Sarah</h1>
+                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                     </a>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
@@ -327,51 +327,49 @@ if (isset($_SESSION['email'])) {
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 130px;">
                             <button type="button" class="btn btn-primary btn-minus"><i class="fa fa-minus"></i></button>
-                            <input type="number" name="quantity" class="form-control bg-secondary text-center" value="1" min="1" max="5">
+                            <input type="text" name="quantity" class="form-control bg-secondary text-center" value="1">
                             <button type="button" class="btn btn-primary btn-plus"><i class="fa fa-plus"></i></button>
                         </div>
+                        <script>
+                            // Trong file main.js hoặc thêm script trực tiếp vào trang
+                            $(document).ready(function() {
+                                // Xử lý nút tăng số lượng
+                                $('.btn-plus').click(function() {
+                                    var quantityInput = $(this).siblings('input[name="quantity"]');
+                                    var currentVal = parseInt(quantityInput.val());
+                                    if (currentVal < 5) {
+                                        quantityInput.val(currentVal + 1).change();
+                                    }
+                                });
+
+                                // Xử lý nút giảm số lượng
+                                $('.btn-minus').click(function() {
+                                    var quantityInput = $(this).siblings('input[name="quantity"]');
+                                    var currentVal = parseInt(quantityInput.val());
+                                    if (currentVal > 1) {
+                                        quantityInput.val(currentVal - 1).change();
+                                    }
+                                });
+
+                                // Xử lý nhập trực tiếp
+                                $('input[name="quantity"]').on('change', function() {
+                                    var value = parseInt($(this).val());
+                                    if (isNaN(value) || value < 1) {
+                                        $(this).val(1);
+                                    } else if (value > 5) {
+                                        $(this).val(5);
+                                        alert('Bạn chỉ có thể mua tối đa 5 sản phẩm');
+                                    }
+                                });
+                            });
+                        </script>
 
                         <button type="submit" class="btn btn-primary px-3">
+
                             <i class="fa fa-shopping-cart mr-1"></i>Add to cart
+
                         </button>
                     </div>
-
-                    <script>
-                        $(document).ready(function() {
-                            // Xử lý nút tăng số lượng
-                            $('.btn-plus').click(function(e) {
-                                e.preventDefault();
-                                var quantityInput = $(this).parent().find('input[name="quantity"]');
-                                var currentVal = parseInt(quantityInput.val());
-                                if (currentVal < 5) {
-                                    quantityInput.val(currentVal + 1).change();
-                                } else {
-                                    alert('You can only purchase up to 5 items');
-                                }
-                            });
-
-                            // Xử lý nút giảm số lượng
-                            $('.btn-minus').click(function(e) {
-                                e.preventDefault();
-                                var quantityInput = $(this).parent().find('input[name="quantity"]');
-                                var currentVal = parseInt(quantityInput.val());
-                                if (currentVal > 1) {
-                                    quantityInput.val(currentVal - 1).change();
-                                }
-                            });
-
-                            // Xử lý nhập trực tiếp
-                            $('input[name="quantity"]').on('change keyup', function() {
-                                var value = parseInt($(this).val());
-                                if (isNaN(value) || value < 1) {
-                                    $(this).val(1);
-                                } else if (value > 5) {
-                                    $(this).val(5);
-                                    alert('You can only purchase up to 5 items');
-                                }
-                            });
-                        });
-                    </script>
                 </form>
             </div>
             <div class="d-flex pt-2">

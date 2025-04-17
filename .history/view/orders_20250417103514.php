@@ -240,8 +240,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container-fluid">
         <div class="row align-items-center px-xl-5 py-3">
             <div class="col-lg-3 d-lg-block d-none">
-                <a href="index.php" class="text-decoration-none">
-                    <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Sarah</h1>
+                <a href="index.php?act=home" class="text-decoration-none">
+                    <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
                 </a>
             </div>
         </div>

@@ -165,7 +165,7 @@ if (isset($_SESSION['email'])) {
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Farah</h1>
+                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
@@ -219,7 +219,7 @@ if (isset($_SESSION['email'])) {
                 <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
                     <a href="index.php?act=home" class="text-decoration-none d-block d-lg-none">
                         <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Sarah</h1>
+                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                     </a>
                     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
@@ -346,7 +346,7 @@ if (isset($_SESSION['email'])) {
                                 if (currentVal < 5) {
                                     quantityInput.val(currentVal + 1).change();
                                 } else {
-                                    alert('You can only purchase up to 5 items');
+                                    alert('Bạn chỉ có thể mua tối đa 5 sản phẩm');
                                 }
                             });
 
@@ -367,7 +367,7 @@ if (isset($_SESSION['email'])) {
                                     $(this).val(1);
                                 } else if (value > 5) {
                                     $(this).val(5);
-                                    alert('You can only purchase up to 5 items');
+                                    alert('Bạn chỉ có thể mua tối đa 5 sản phẩm');
                                 }
                             });
                         });

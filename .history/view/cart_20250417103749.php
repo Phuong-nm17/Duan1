@@ -120,14 +120,14 @@ $result = $conn->query($sql);
                     </div>
                 </form>
             </div>
-            <div class="col-6 col-lg-3 text-right">
-                <a href="index.php?act=wishlist" class="btn border">
-                    <i class="text-primary fa-heart fas"></i>
+            <div class="col-lg-3 col-6 text-right">
+                <a href="" class="btn border">
+                    <i class="fas fa-heart text-primary"></i>
                     <span class="badge">0</span>
                 </a>
-                <a href="index.php?act=cart" class="btn border">
-                    <i class="text-primary fa-shopping-cart fas"></i>
-                    <span class="badge"><?= $cartCount ?></span>
+                <a href="" class="btn border">
+                    <i class="fas fa-shopping-cart text-primary"></i>
+                    <span class="badge">0</span>
                 </a>
             </div>
         </div>

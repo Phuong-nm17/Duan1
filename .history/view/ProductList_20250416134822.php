@@ -166,7 +166,7 @@ try {
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="index.php?act=home" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Sarah</h1>
+                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
@@ -224,7 +224,7 @@ try {
             <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
                 <a href="" class="text-decoration-none d-block d-lg-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Sarah</h1>
+                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
@@ -288,9 +288,7 @@ if (isset($_GET['search'])): ?>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card border-0 mb-4 product-item">
                         <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>">
-                                <img class="w-100 img-fluid" src="<?= $p['thumbnail'] ?>" alt="<?= htmlspecialchars($p['title']) ?>">
-                            </a>
+                            <img class="w-100 img-fluid" src="<?= $p['thumbnail'] ?>" alt="">
                         </div>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
