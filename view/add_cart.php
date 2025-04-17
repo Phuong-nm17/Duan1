@@ -40,4 +40,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: ../index.php?act=cart");
     exit;
 }
-?>
+try {
+    $sql = "SELECT stock FROM product_variant 
+            WHERE product_id = ? AND size_id = ? AND color_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$product_id, $size_id, $color_id]);
+    $variant = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$variant) {
+        die("Không tìm thấy biến thể sản phẩm");
+    }
+
+    if ($quantity > $variant['stock']) {
+        die("Hết hàng tồn kho");
+    }
+
+    // Thêm vào giỏ nếu còn hàng
+    $_SESSION['cart'][] = [
+        'product_id' => $product_id,
+        'size_id' => $size_id,
+        'color_id' => $color_id,
+        'quantity' => $quantity
+    ];
+
+    header("Location: ../index.php?act=cart");
+    exit;
+} catch (Exception $e) {
+    die("Lỗi: " . $e->getMessage());
+}

@@ -1,15 +1,18 @@
 <?php
-class ProductController extends BaseController {
+class ProductController extends BaseController
+{
     private $productVariant;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         parent::__construct();
         $this->productVariant = new ProductVariant($this->conn);
     }
-    
-    public function handle() {
+
+    public function handle()
+    {
         $action = $_GET['action'] ?? 'list';
-        
+
         switch ($action) {
             case 'detail':
                 $this->showDetail();
@@ -33,27 +36,28 @@ class ProductController extends BaseController {
                 $this->showList();
         }
     }
-    
-    private function showDetail() {
+
+    private function showDetail()
+    {
         $productId = $_GET['id'] ?? 0;
-        
+
         // Lấy thông tin sản phẩm
         $stmt = $this->conn->prepare("SELECT * FROM products WHERE id = ?");
         $stmt->execute([$productId]);
         $product = $stmt->fetch();
-        
+
         if (!$product) {
             $this->redirect('/?act=404');
             return;
         }
-        
+
         // Lấy các biến thể của sản phẩm
         $variants = $this->productVariant->getVariantsByProduct($productId);
-        
+
         // Lấy danh sách màu sắc và kích thước
         $colors = $this->productVariant->getAllColors();
         $sizes = $this->productVariant->getAllSizes();
-        
+
         $title = $product['name'];
         $content = '
         <div class="row">
@@ -159,20 +163,21 @@ class ProductController extends BaseController {
         });
         </script>
         ';
-        
+
         $this->render('product_detail', [
             'title' => $title,
             'content' => $content
         ]);
     }
-    
-    private function getVariant() {
+
+    private function getVariant()
+    {
         $productId = $_GET['product_id'] ?? 0;
         $colorId = $_GET['color_id'] ?? 0;
         $sizeId = $_GET['size_id'] ?? 0;
-        
+
         $variant = $this->productVariant->getVariantPriceAndStock($productId, $colorId, $sizeId);
-        
+
         header('Content-Type: application/json');
         if ($variant) {
             echo json_encode([
@@ -188,14 +193,15 @@ class ProductController extends BaseController {
         }
         exit;
     }
-    
-    private function getVariantInfo() {
+
+    private function getVariantInfo()
+    {
         $productId = $_GET['product_id'] ?? 0;
         $colorId = $_GET['color_id'] ?? 0;
         $sizeId = $_GET['size_id'] ?? 0;
 
         $variant = $this->productVariant->getVariantPriceAndStock($productId, $colorId, $sizeId);
-        
+
         header('Content-Type: application/json');
         if ($variant) {
             echo json_encode([
@@ -211,8 +217,9 @@ class ProductController extends BaseController {
         }
         exit;
     }
-    
-    private function generateColorOptions($colors) {
+
+    private function generateColorOptions($colors)
+    {
         $html = '';
         foreach ($colors as $color) {
             $html .= sprintf(
@@ -224,8 +231,9 @@ class ProductController extends BaseController {
         }
         return $html;
     }
-    
-    private function generateSizeOptions($sizes) {
+
+    private function generateSizeOptions($sizes)
+    {
         $html = '';
         foreach ($sizes as $size) {
             $html .= sprintf(
