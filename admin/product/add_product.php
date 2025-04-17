@@ -7,84 +7,48 @@ if (!isset($_SESSION['admin'])) {
     exit;
 }
 
-$id = $_GET['id'] ?? 0;
-$stmt = $conn->prepare("SELECT pv.*, p.title, p.thumbnail, p.description, p.category_id 
-                        FROM product_variants pv 
-                        JOIN product p ON pv.product_id = p.id 
-                        WHERE pv.id = ?");
-$stmt->execute([$id]);
-$product_variant = $stmt->fetch();
-
-if (!$product_variant) {
-    die("Biến thể sản phẩm không tồn tại!");
-}
-
-$colors = $conn->query("SELECT * FROM color")->fetchAll(PDO::FETCH_ASSOC);
-$sizes = $conn->query("SELECT * FROM size")->fetchAll(PDO::FETCH_ASSOC);
-$categories = $conn->query("SELECT * FROM category")->fetchAll(PDO::FETCH_ASSOC);
-
-$color_price_modifiers = [
-    1 => 0, 2 => 3, 3 => 5, 4 => 7, 5 => 2
-];
-
-$size_price_modifiers = [
-    6 => 0, 7 => 2, 8 => 4, 9 => 7
-];
+$error = "";
+$categorys = $conn->query("SELECT * FROM category")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = $_POST['title'];
-    $description = $_POST['description'];
-    $thumbnail = $_POST['thumbnail'];
-    $color = $_POST['color_id'];
-    $size = $_POST['size_id'];
-    $price = $_POST['price']; // Giá bán nhập từ người dùng
-    $discount = $_POST['discount']; // Giá giảm nhập từ người dùng
-    $stock = $_POST['stock'];
-    $sku = $_POST['sku'];
+    $title = htmlspecialchars($_POST['title']);
+    $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
+    $thumbnail = htmlspecialchars($_POST['thumbnail']);
+    $description = htmlspecialchars($_POST['description']);
     $category_id = $_POST['category_id'];
+    $discount = $price * 0.7; // Apply discount to the product price
 
-    // Set discount to 70% of price if discount is not provided
-    if (empty($discount)) {
-        $discount = $price * 0.7;
-    }
+    if (!empty($title) && $price > 0 && !empty($thumbnail)) {
+        // Insert the product with both discounted price and original price
+    $stmt = $conn->prepare("INSERT INTO product (title, discount, price, thumbnail, description, category_id) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$title, $discount, $price, $thumbnail, $description, $category_id]); // Store discounted price and original price
+        $productId = $conn->lastInsertId(); // Get the ID of the newly added product
 
-    // Validate price and discount
-    if ($price <= 0 || $discount < 0) {
-        $error = "Vui lòng nhập giá hợp lệ và mức giảm hợp lệ!";
-    } elseif (empty($sku) || empty($title)) {
-        $error = "Vui lòng nhập đầy đủ thông tin!";
-    } else {
-        // Cập nhật thông tin bảng `product` và `product_variants`
-        try {
-            $conn->beginTransaction();
+        // Create variants
+        $color_price_modifiers = [
+            1 => 0, 2 => 3, 3 => 5, 4 => 7, 5 => 2
+        ];
+        $size_price_modifiers = [
+            6 => 0, 7 => 2, 8 => 4, 9 => 7
+        ];
 
-            // Cập nhật thông tin bảng `product`
-            $stmt = $conn->prepare("UPDATE product SET title=?, description=?, thumbnail=?, category_id=? WHERE id=?");
-            $stmt->execute([$title, $description, $thumbnail, $category_id, $product_variant['product_id']]);
+        // Loop through color and size modifiers to create product variants
+        foreach ($color_price_modifiers as $colorId => $colorMod) {
+            foreach ($size_price_modifiers as $sizeId => $sizeMod) {
+                $sku = "P{$productId}-C{$colorId}-S{$sizeId}";
+                $stock = 10;
+                $finalPrice = $price + $colorMod * 1 + $sizeMod * 1;
 
-            // Loop through color and size modifiers to create product variants
-            foreach ($color_price_modifiers as $colorId => $colorMod) {
-                foreach ($size_price_modifiers as $sizeId => $sizeMod) {
-                    // Calculate the final price based on modifiers
-                    $finalPrice = $price + $colorMod + $sizeMod;
-
-                    // Generate SKU
-                    $sku = "P{$product_variant['product_id']}-C{$colorId}-S{$sizeId}";
-                    $stock = 10; // Assume a fixed stock for each variant, adjust as needed
-
-                    // Update or insert the new variant with the calculated price
-                    $stmt = $conn->prepare("UPDATE product_variants SET price=?, discount=?, stock=?, sku=?, updated_at=NOW() WHERE product_id=? AND color_id=? AND size_id=?");
-                    $stmt->execute([$finalPrice, $discount, $stock, $sku, $product_variant['product_id'], $colorId, $sizeId]);
-                }
+                // Prepare the insert statement for product variants
+                $stmtVar = $conn->prepare("INSERT INTO product_variants (product_id, color_id, size_id, sku, stock, price) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmtVar->execute([$productId, $colorId, $sizeId, $sku, $stock, $finalPrice]);
             }
-
-            $conn->commit();
-            header("Location: product.php");
-            exit;
-        } catch (Exception $e) {
-            $conn->rollBack();
-            $error = "Đã có lỗi xảy ra. Vui lòng thử lại!";
         }
+        
+        header("Location: product.php");
+        exit;
+    } else {
+        $error = "Vui lòng nhập đầy đủ thông tin và tải lên hình ảnh!";
     }
 }
 ?>
