@@ -12,27 +12,60 @@ $colors = $conn->query("SELECT * FROM color")->fetchAll(PDO::FETCH_ASSOC);
 $sizes = $conn->query("SELECT * FROM size")->fetchAll(PDO::FETCH_ASSOC);
 $categorys = $conn->query("SELECT * FROM category")->fetchAll(PDO::FETCH_ASSOC);
 
+$error = "";
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = htmlspecialchars($_POST['title']);
-    $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
-    $discount = filter_var($_POST['discount'], FILTER_VALIDATE_FLOAT);
-    $thumbnail = htmlspecialchars($_POST['thumbnail']);
-    $description = htmlspecialchars($_POST['description']);
-    $color_id = $_POST['color_id'];
-    $size_id = $_POST['size_id'];
-    $category_id = $_POST['category_id'];
-
+    // Thêm sản phẩm vào bảng 'product'
+    $title = htmlspecialchars($_POST['title']); // Đảm bảo 'title' là chuỗi
+    $size_ids = $_POST['size_id']; // Để lại như vậy vì đây là mảng, không cần htmlspecialchars
+    $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT); // Đảm bảo giá trị là số thực hợp lệ
+    $discount = filter_var($_POST['discount'], FILTER_VALIDATE_FLOAT); // Đảm bảo giá trị là số thực hợp lệ
+    $thumbnail = htmlspecialchars($_POST['thumbnail']); // Đảm bảo 'thumbnail' là chuỗi
+    $description = htmlspecialchars($_POST['description']); // Đảm bảo 'description' là chuỗi
+    $category_id = $_POST['category_id']; // Lấy giá trị của category_id
+    
     if (!empty($title) && $price > 0 && !empty($thumbnail)) {
-        $stmt = $conn->prepare("INSERT INTO product (title, price, discount, thumbnail, description, color_id, size_id, category_id) VALUES (?, ?, ?, ?, ?, ?, ?,?)");
-        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color_id, $size_id, $category_id]);
+        // Thêm vào bảng sản phẩm
+        $stmt = $conn->prepare("INSERT INTO product (title, price, discount, thumbnail, description, category_id) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $category_id]);
 
-        header("Location: product.php");
-        exit;
-    } else {
-        $error = "Vui lòng nhập đầy đủ thông tin và tải lên hình ảnh!";
+        // Lấy ID sản phẩm vừa thêm
+        $product_id = $conn->lastInsertId();
+
+        // Kiểm tra nếu có biến thể để thêm vào bảng 'product_variants'
+        // Kiểm tra nếu có biến thể để thêm vào bảng 'product_variants'
+if (empty($_POST['color_id']) || empty($_POST['size_id']) || empty($_POST['variant_price']) || empty($_POST['variant_stock']) || empty($_POST['sku'])) {
+    $error = "Vui lòng thêm ít nhất một biến thể sản phẩm!";
+} else {
+    foreach ($_POST['color_id'] as $index => $color_id) {
+        // Kiểm tra nếu không có size_id, có thể bỏ qua
+        $size_id = $size_ids[$index];
+
+        $variant_price = $_POST['variant_price'][$index];
+        $variant_stock = $_POST['variant_stock'][$index];
+        $sku = $_POST['sku'][$index];
+
+        // Kiểm tra nếu có kích thước và các thông tin khác trước khi thêm vào bảng 'product_variants'
+        if (empty($variant_price) || empty($variant_stock) || empty($sku)) {
+            $error = "Vui lòng nhập đầy đủ thông tin cho tất cả các biến thể!";
+            break;
+        }
+
+        // Thêm biến thể vào bảng product_variants
+        $stmt_variant = $conn->prepare("INSERT INTO product_variants (product_id, color_id, size_id, price, stock, sku, discount, created_at, updated_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+
+        // Nếu size_id là null, truyền giá trị null vào SQL, nếu không có thì truyền giá trị thật
+        $stmt_variant->execute([$product_id, $color_id, $size_id, $variant_price, $variant_stock, $sku, $discount]);
     }
 }
 
+if (empty($error)) {
+    header("Location: product.php");
+    exit;
+}
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -154,7 +187,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php include '../sidebar.php'; ?>
 
-
     <div id="content">
         <h2>Thêm Sản phẩm</h2>
         <form method="POST" enctype="multipart/form-data" class="mt-3">
@@ -180,32 +212,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="text" name="description" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label>Màu sắc:</label>
-                <select class="form-select" name="color_id">
-                    <?php foreach ($colors as $color) : ?>
-                        <option value="<?= $color['id'] ?>"><?= $color['name'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label>Kích thước:</label>
-                <select class="form-select" name="size_id">
-                    <?php foreach ($sizes as $size) : ?>
-                        <option value="<?= $size['id'] ?>"><?= $size['name'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label>thêm vào danh mục</label>
+                <label>Thêm vào danh mục</label>
                 <select class="form-select" name="category_id">
                     <?php foreach ($categorys as $c) : ?>
                         <option value="<?= $c['id'] ?>"><?= $c['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
+
+            <!-- Form cho các biến thể (màu sắc, kích thước, giá, stock, SKU) -->
+            <div id="variant-fields">
+                <div class="mb-3">
+                    <label>Màu sắc:</label>
+                    <select class="form-select" name="color_id[]">
+                        <?php foreach ($colors as $color) : ?>
+                            <option value="<?= $color['id'] ?>"><?= $color['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Kích thước:</label>
+                    <select class="form-select" name="size_id[]">
+                        <?php foreach ($sizes as $size) : ?>
+                            <option value="<?= $size['id'] ?>"><?= $size['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Giá biến thể:</label>
+                    <input type="number" name="variant_price[]" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>Stock:</label>
+                    <input type="number" name="variant_stock[]" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label>SKU:</label>
+                    <input type="text" name="sku[]" class="form-control" required>
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-success">Thêm Sản Phẩm</button>
         </form>
     </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const sidebar = document.getElementById('sidebar');
