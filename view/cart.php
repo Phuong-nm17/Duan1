@@ -24,14 +24,17 @@ $user_id = $_SESSION['id'];
 $sql = "SELECT 
             cart.*, 
             product.title AS product_title, 
-            product.price,
             product.thumbnail,  
             size.name AS size_name, 
-            color.name AS color_name
+            color.name AS color_name, 
+            product_variants.price AS variant_price
         FROM cart
         JOIN product ON cart.product_id = product.id
         LEFT JOIN size ON cart.size_id = size.id
         LEFT JOIN color ON cart.color_id = color.id
+        LEFT JOIN product_variants ON cart.product_id = product_variants.product_id
+            AND cart.size_id = product_variants.size_id
+            AND cart.color_id = product_variants.color_id
         WHERE cart.user_id = $user_id";
 
 $result = $conn->query($sql);
@@ -168,7 +171,7 @@ $result = $conn->query($sql);
                         <?php
                         $subtotal = 0;
                         while ($row = $result->fetch(PDO::FETCH_ASSOC)):
-                            $item_total = $row['price'] * $row['quantity'];
+                            $item_total = $row['variant_price'] * $row['quantity'];
                             $subtotal += $item_total;
                         ?>
 
@@ -184,7 +187,7 @@ $result = $conn->query($sql);
                                     <small>Size: <?= $row['size_name'] ?? 'N/A' ?> | Color:
                                         <?= $row['color_name'] ?? 'N/A' ?></small>
                                 </td>
-                                <td class="align-middle">$<?= number_format($row['price'], 2) ?></td>
+                                <td class="align-middle">$<?= number_format($row['variant_price'], 2) ?></td>
                                 <td class="align-middle">
                                     <div class="input-group quantity mx-auto" style="width: 100px;">
                                         <div class="input-group-btn">
