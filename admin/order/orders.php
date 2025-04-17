@@ -24,6 +24,7 @@ if ($from && $to) {
     $params = ['to' => $to];
 }
 
+
 // Define valid status transitions
 $statusFlow = [
     'chờ xác nhận' => ['chờ xử lý', 'đã hủy'],
@@ -33,11 +34,13 @@ $statusFlow = [
     'đã hủy'        => []
 ];
 
+
 try {
     $sql = "SELECT * FROM orders $where ORDER BY id DESC";
     $stmt = $conn->prepare($sql);
     $stmt->execute($params);
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $_POST['order_id'] ?? null;
@@ -50,6 +53,7 @@ try {
         header("Location: orders.php");
         exit();
     }
+
 } catch (Exception $e) {
     die("Lỗi: " . $e->getMessage());
 }
@@ -66,6 +70,7 @@ try {
         body {
             display: flex;
         }
+
 
         #sidebar {
             width: 250px;
@@ -112,6 +117,9 @@ try {
             background-color: #495057;
         }
 
+
+        /* Submenu */
+
         .submenu {
             display: none;
             background: #495057;
@@ -121,6 +129,9 @@ try {
         .menu-item:hover .submenu {
             display: block;
         }
+
+
+        /* Nếu sidebar thu nhỏ, hiển thị submenu bên cạnh */
 
         #sidebar.collapsed .submenu {
             display: none;
@@ -137,6 +148,9 @@ try {
         #sidebar.collapsed .menu-item:hover .submenu {
             display: block;
         }
+
+
+        /* Nút thu nhỏ sidebar */
 
         #toggle-btn {
             position: absolute;
@@ -187,8 +201,10 @@ try {
                     <th>Điện thoại</th>
                     <th>Địa chỉ</th>
                     <th>Phương thức</th>
+
                     <th>Trạng thái</th>
                     <th>Cập nhật trạng thái</th>
+
                     <th>Thao tác</th>
                 </tr>
             </thead>
@@ -207,6 +223,7 @@ try {
                             <?= $order['zipcode'] ?>
                         </td>
                         <td><?= htmlspecialchars($order['payment_method']) ?></td>
+
                         <td><?= htmlspecialchars($order['status']) ?></td>
                         <td>
                             <?php
@@ -230,6 +247,7 @@ try {
                         <td class="text-center">
                             <a href="view_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-info btn-sm">Chi tiết</a>
                             <a href="edit_order.php?id=<?= htmlspecialchars($order['id']) ?>" class="btn btn-success btn-sm">Sửa</a>
+
                         </td>
                     </tr>
                 <?php endforeach ?>
@@ -249,4 +267,6 @@ try {
     </script>
 </body>
 
+
 </html>
+

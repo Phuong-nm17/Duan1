@@ -1,13 +1,16 @@
 <?php
 session_start();
 require_once(__DIR__ . '/../model/connect.php');
+
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
 $token = $_GET['token'] ?? '';
 $message = "";
+
 $redirect = false;
 $validToken = false;
 $showForm = true;
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['token'];
@@ -19,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($password) < 6) {
         $message = "⚠️ Mật khẩu phải có ít nhất 6 ký tự!";
     } else {
+
         $hashed = password_hash($password, PASSWORD_DEFAULT);
         $update = $conn->prepare("UPDATE user SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ?");
         $update->execute([$hashed, $token]);
@@ -31,12 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 
+
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <title>Đặt lại mật khẩu</title>
+
     <?php if (!empty($redirect)): ?>
         <meta http-equiv="refresh" content="3;url=index.php?act=login">
     <?php endif; ?>
@@ -60,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
             width: 100%;
             max-width: 400px;
         }
@@ -68,13 +75,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-align: center;
             margin-bottom: 20px;
             color: #333;
+
             font-weight: 600;
             font-size: 18px;
+
         }
 
         .message {
             margin-bottom: 15px;
             padding: 12px;
+
             border-radius: 8px;
             font-weight: 500;
             text-align: center;
@@ -91,18 +101,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-color: #ffe6e6;
             color: #c0392b;
             border: 1px solid #f5b5b5;
+
         }
 
         label {
             display: block;
+
             margin-bottom: 8px;
             font-weight: 500;
             color: #555;
             font-size: 14px;
+
         }
 
         input[type="password"] {
             width: 100%;
+
             padding: 12px 14px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
@@ -146,6 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .login-link:hover {
             color: #ee4d2d;
+
         }
     </style>
 </head>
@@ -154,13 +169,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form class="form-wrapper" method="POST">
         <h3>Reset password</h3>
 
+
         <?php if (!empty($message)): ?>
+
             <div class="message <?= strpos($message, '✅') !== false ? 'success' : 'error' ?>">
                 <?= htmlspecialchars($message) ?>
             </div>
         <?php endif; ?>
 
+
         <?php if ($showForm): ?>
+
             <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
             <div>
                 <label>New password:</label>
@@ -171,6 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="confirm" required>
             </div>
             <button type="submit">Update password</button>
+
         <?php endif; ?>
     </form>
 </body>

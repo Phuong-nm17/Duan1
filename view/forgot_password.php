@@ -1,6 +1,8 @@
 <?php
 session_start();
+
 require_once(__DIR__ . '/../model/connect.php');
+
 
 $message = "";
 $redirect = false;
@@ -14,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $stmt->fetch();
 
         if ($user) {
+
             // Tạo token và lưu vào DB
             $token = bin2hex(random_bytes(16));
             $expires = date("Y-m-d H:i:s", strtotime('+15 minutes'));
@@ -36,9 +39,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="vi">
 
+
 <head>
     <meta charset="utf-8">
     <title>Quên mật khẩu - EShopper</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <?php if ($redirect): ?>
@@ -46,6 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php endif; ?>
 
     <!-- CSS -->
+
     <link href="view/css/style.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
@@ -58,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
+
 
         .message {
             text-align: center;
@@ -77,11 +84,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+
         }
     </style>
 </head>
 
 <body>
+
     <!-- Topbar Start -->
     <div class="container-fluid">
         <div class="row align-items-center px-xl-5 py-3">
@@ -106,10 +115,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
+
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
 
             <?php if (!empty($message)): ?>
+
                 <div class="message <?= strpos($message, '✅') !== false ? 'success' : 'error' ?>">
                     <?= htmlspecialchars($message) ?>
                 </div>
@@ -122,6 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </form>
     </div>
+
 </body>
 
 </html>
