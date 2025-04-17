@@ -326,14 +326,9 @@ if (isset($_SESSION['email'])) {
 
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 130px;">
-                            <button type="button" class="btn btn-primary btn-minus">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                            <input type="number" name="quantity" class="form-control bg-secondary text-center"
-                                value="1" min="1" max="5" readonly>
-                            <button type="button" class="btn btn-primary btn-plus">
-                                <i class="fa fa-plus"></i>
-                            </button>
+                            <button type="button" class="btn btn-primary btn-minus"><i class="fa fa-minus"></i></button>
+                            <input type="number" name="quantity" class="form-control bg-secondary text-center" value="1" min="1" max="5">
+                            <button type="button" class="btn btn-primary btn-plus"><i class="fa fa-plus"></i></button>
                         </div>
 
                         <button type="submit" class="btn btn-primary px-3">
@@ -555,39 +550,39 @@ if (isset($_SESSION['email'])) {
     <!-- Template Javascript -->
     <script src="view/js/main.js"></script>
     <script>
-        $(document).ready(function() {
-            // Xử lý nút tăng số lượng
-            $('.btn-plus').click(function(e) {
-                e.preventDefault();
-                var quantityInput = $(this).closest('.input-group').find('input[name="quantity"]');
-                var currentVal = parseInt(quantityInput.val());
-                if (currentVal >= 5) {
-                    quantityInput.val(5);
-                    alert('Bạn chỉ có thể mua tối đa 5 sản phẩm cho mỗi đơn hàng');
-                    return false; // Chặn không cho tăng thêm
-                }
-                quantityInput.val(currentVal + 1).change();
-            });
+$(document).ready(function() {
+    // Xử lý nút tăng số lượng
+    $('.btn-plus').click(function(e) {
+        e.preventDefault();
+        var quantityInput = $(this).closest('.input-group').find('input[name="quantity"]');
+        var currentVal = parseInt(quantityInput.val());
+        if (currentVal >= 5) {
+            quantityInput.val(5);
+            alert('Bạn chỉ có thể mua tối đa 5 sản phẩm cho mỗi đơn hàng');
+            return false; // Chặn không cho tăng thêm
+        }
+        quantityInput.val(currentVal + 1).change();
+    });
 
-            // Xử lý nút giảm số lượng
-            $('.btn-minus').click(function(e) {
-                e.preventDefault();
-                var quantityInput = $(this).closest('.input-group').find('input[name="quantity"]');
-                var currentVal = parseInt(quantityInput.val());
-                if (currentVal > 1) {
-                    quantityInput.val(currentVal - 1).change();
-                }
-            });
+    // Xử lý nút giảm số lượng
+    $('.btn-minus').click(function(e) {
+        e.preventDefault();
+        var quantityInput = $(this).closest('.input-group').find('input[name="quantity"]');
+        var currentVal = parseInt(quantityInput.val());
+        if (currentVal > 1) {
+            quantityInput.val(currentVal - 1).change();
+        }
+    });
 
-            // Xử lý nhập trực tiếp
-            $('input[name="quantity"]').on('change keyup', function() {
-                var value = parseInt($(this).val());
-                if (isNaN(value) || value < 1) {
-                    $(this).val(1);
-                } else if (value > 5) {
-                    $(this).val(5);
-                    alert('Bạn chỉ có thể mua tối đa 5 sản phẩm cho mỗi đơn hàng');
-                }
-            });
-        });
-    </script>
+    // Xử lý nhập trực tiếp
+    $('input[name="quantity"]').on('change keyup', function() {
+        var value = parseInt($(this).val());
+        if (isNaN(value) || value < 1) {
+            $(this).val(1);
+        } else if (value > 5) {
+            $(this).val(5);
+            alert('Bạn chỉ có thể mua tối đa 5 sản phẩm cho mỗi đơn hàng');
+        }
+    });
+});
+</script>

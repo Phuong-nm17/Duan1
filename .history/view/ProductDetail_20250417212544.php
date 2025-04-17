@@ -326,14 +326,9 @@ if (isset($_SESSION['email'])) {
 
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 130px;">
-                            <button type="button" class="btn btn-primary btn-minus">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                            <input type="number" name="quantity" class="form-control bg-secondary text-center"
-                                value="1" min="1" max="5" readonly>
-                            <button type="button" class="btn btn-primary btn-plus">
-                                <i class="fa fa-plus"></i>
-                            </button>
+                            <button type="button" class="btn btn-primary btn-minus"><i class="fa fa-minus"></i></button>
+                            <input type="number" name="quantity" class="form-control bg-secondary text-center" value="1" min="1" max="5">
+                            <button type="button" class="btn btn-primary btn-plus"><i class="fa fa-plus"></i></button>
                         </div>
 
                         <button type="submit" class="btn btn-primary px-3">
