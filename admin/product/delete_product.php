@@ -2,45 +2,50 @@
 session_start();
 require '../../model/connect.php';
 
-if (!isset($_SESSION['admin']))
+// Ensure the user is an admin
+if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
+    exit; // Halt further script execution
+}
 
-if (!isset($_GET['id'])) {
-    echo "<script>alert('Thiếu ID sản phẩm'); window.location.href='product.php';</script>";
+// Ensure the product ID is present and valid
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    echo "<script>alert('ID sản phẩm không hợp lệ!'); window.location.href='product.php';</script>";
     exit;
 }
 
-$variant_id = $_GET['id'];
+$product_id = $_GET['id'];
 
 try {
-    // Bước 1: Lấy thông tin sản phẩm
-    $stmt = $conn->prepare("SELECT product_id FROM product_variants WHERE id = ?");
-    $stmt->execute([$variant_id]);
-    $variant = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Bước 1: Lấy tất cả các variant_id từ bảng product_variants dựa vào product_id
+    $stmt = $conn->prepare("SELECT id FROM product_variants WHERE product_id = ?");
+    $stmt->execute([$product_id]);
+    $variants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if ($variant) {
-        $product_id = $variant['product_id'];
-
-        // Bước 2: Xóa sản phẩm từ bảng product_variants
-        $stmt = $conn->prepare("DELETE FROM product_variants WHERE id = ?");
-        $stmt->execute([$variant_id]);
-
-        // Bước 3: Kiểm tra nếu không còn variants nào liên kết với sản phẩm này, thì xóa luôn sản phẩm
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM product_variants WHERE product_id = ?");
-        $stmt->execute([$product_id]);
-        $count = $stmt->fetchColumn();
-
-        if ($count == 0) {
-            // Nếu không còn variant nào, xóa sản phẩm từ bảng product
-            $stmt = $conn->prepare("DELETE FROM product WHERE id = ?");
-            $stmt->execute([$product_id]);
+    if ($variants) {
+        // Bước 2: Xóa tất cả các variants
+        foreach ($variants as $variant) {
+            $stmt = $conn->prepare("DELETE FROM product_variants WHERE id = ?");
+            $stmt->execute([$variant['id']]);
         }
 
-        echo "<script>alert('Xóa sản phẩm thành công!'); window.location.href='product.php';</script>";
+        // Bước 3: Xóa sản phẩm từ bảng product
+        $stmt = $conn->prepare("DELETE FROM product WHERE id = ?");
+        $stmt->execute([$product_id]);
+
+        // Redirect after successful deletion
+        echo "<script>alert('Xóa sản phẩm và variants thành công!'); window.location.href='product.php';</script>";
+        exit; // Ensure script halts after redirection
     } else {
-        echo "<script>alert('Không tìm thấy sản phẩm!'); window.location.href='product.php';</script>";
+        echo "<script>alert('Không tìm thấy sản phẩm với product_id này!'); window.location.href='product.php';</script>";
+        exit;
     }
 } catch (Exception $e) {
-    die($e->getMessage());
+    // Log the error message (consider writing to a file or logging system in production)
+    error_log($e->getMessage());
+
+    // Display a user-friendly error message
+    echo "<script>alert('Đã xảy ra lỗi. Vui lòng thử lại sau.'); window.location.href='product.php';</script>";
+    exit;
 }
 ?>
