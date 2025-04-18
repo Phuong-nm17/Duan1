@@ -62,6 +62,21 @@ if (isset($_SESSION['email'])) {
         die("Lỗi truy vấn: " . $e->getMessage());
     }
 }
+$product_id = isset($_POST['product_id']) ? $_POST['product_id'] : null;
+$size_id = isset($_POST['size_id']) ? $_POST['size_id'] : null;
+$color_id = isset($_POST['color_id']) ? $_POST['color_id'] : null;
+
+try {
+    // Lấy tất cả biến thể của sản phẩm
+    $sql = "SELECT * FROM product_variants WHERE product_id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$id]);
+    $product_variants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    die($e->getMessage());
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -99,11 +114,15 @@ if (isset($_SESSION['email'])) {
         .menu-item .submenu {
             display: none;
             position: absolute;
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            min-width: 80px;
-            z-index: 10;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            min-width: 150px;
+            z-index: 1000;
+            padding: 8px 0;
+            transition: all 0.3s ease;
         }
 
         .menu-item:hover .submenu {
@@ -232,15 +251,17 @@ if (isset($_SESSION['email'])) {
                                 <a href="index.php?act=register" class="nav-item nav-link">Register</a>
                             <?php else: ?>
                                 <div class="menu-item">
-                                    <a href="#"
-                                        class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                    <a href="#" class="nav-item nav-link">
+                                        <?= htmlspecialchars($user['fullname'] ?? 'user') ?>
+                                        <i class="fas fa-chevron-down ml-1"></i>
+                                    </a>
                                     <div class="submenu">
-                                        <a href="index.php?act=Logout">LogOut</a>
-                                        <a href="#"></a>
+                                        <a href="index.php?act=profile">Profile</a>
+                                        <a href="index.php?act=cart">Cart</a>
+                                        <a href="index.php?act=Logout">Logout</a>
                                     </div>
                                 </div>
                             <?php endif ?>
-
                         </div>
                     </div>
                 </nav>
@@ -291,7 +312,7 @@ if (isset($_SESSION['email'])) {
                     </div>
                     <small class="pt-1">(50 Reviews)</small>
                 </div>
-                <h3 class="font-weight-semi-bold mb-4">$ <?= number_format($product['discount'], 2) ?></h3>
+                <h3 class="font-weight-semi-bold mb-4" id="priceDisplay">$ <?= number_format($product['discount'], 2) ?></h3>
                 <p class="mb-4"><?= $product['description'] ?></p>
                 <form action="view/add_cart.php" method="POST">
                     <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
@@ -320,176 +341,44 @@ if (isset($_SESSION['email'])) {
 
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 130px;">
-                            <button type="button" class="btn btn-primary btn-minus"><i class="fa fa-minus"></i></button>
+                            <button type="button" class="btn btn-primary btn-minus">
+                                <i class="fa fa-minus"></i>
+                            </button>
                             <input type="text" name="quantity" class="form-control bg-secondary text-center" value="1">
-                            <button type="button" class="btn btn-primary btn-plus"><i class="fa fa-plus"></i></button>
+                            <button type="button" class="btn btn-primary btn-plus">
+                                <i class="fa fa-plus"></i>
+                            </button>
                         </div>
-
-                        <button type="submit" class="btn btn-primary px-3">
-
-                            <i class="fa fa-shopping-cart mr-1"></i>Add to cart
-
-                        </button>
+                        <p id="stock-warning" class="text-danger mt-2" style="display: none;"></p>
                     </div>
-                </form>
+
+                    <button type="submit" class="btn btn-primary px-3">
+                        <i class="fa fa-shopping-cart mr-1"></i>Add to cart
+
+                    </button>
             </div>
-            <div class="d-flex pt-2">
-                <p class="text-dark font-weight-medium mb-0 mr-2">Share on:</p>
-                <div class="d-inline-flex">
-                    <a class="text-dark px-2" href="">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a class="text-dark px-2" href="">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a class="text-dark px-2" href="">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a class="text-dark px-2" href="">
-                        <i class="fab fa-pinterest"></i>
-                    </a>
-                </div>
-            </div>
+            </form>
         </div>
-    </div>
-    <div class="row px-xl-5">
-        <div class="col">
-            <div class="nav nav-tabs justify-content-center border-secondary mb-4">
-                <a class="nav-item nav-link active" data-toggle="tab" href="#tab-pane-1">Description</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Information</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Reviews (0)</a>
-            </div>
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="tab-pane-1">
-                    <h4 class="mb-3">Product Description</h4>
-                    <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam
-                        invidunt
-                        duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur
-                        invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam
-                        stet
-                        rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut
-                        diam
-                        consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor
-                        accusam,
-                        ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr
-                        sanctus eirmod takimata dolor ea invidunt.</p>
-                    <p>Dolore magna est eirmod sanctus dolor, amet diam et eirmod et ipsum. Amet dolore tempor
-                        consetetur sed lorem dolor sit lorem tempor. Gubergren amet amet labore sadipscing clita
-                        clita
-                        diam clita. Sea amet et sed ipsum lorem elitr et, amet et labore voluptua sit rebum. Ea erat
-                        sed
-                        et diam takimata sed justo. Magna takimata justo et amet magna et.</p>
-                </div>
-                <div class="tab-pane fade" id="tab-pane-2">
-                    <h4 class="mb-3">Additional Information</h4>
-                    <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam
-                        invidunt
-                        duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur
-                        invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam
-                        stet
-                        rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut
-                        diam
-                        consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor
-                        accusam,
-                        ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr
-                        sanctus eirmod takimata dolor ea invidunt.</p>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item px-0">
-                                    Sit erat duo lorem duo ea consetetur, et eirmod takimata.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Amet kasd gubergren sit sanctus et lorem eos sadipscing at.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Duo amet accusam eirmod nonumy stet et et stet eirmod.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item px-0">
-                                    Sit erat duo lorem duo ea consetetur, et eirmod takimata.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Amet kasd gubergren sit sanctus et lorem eos sadipscing at.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Duo amet accusam eirmod nonumy stet et et stet eirmod.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="tab-pane-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 class="mb-4">1 review for "Colorful Stylish Shirt"</h4>
-                            <div class="media mb-4">
-
-                                <img src="view/img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1"
-                                    style="width: 45px;">
-
-                                <div class="media-body">
-                                    <h6>John Doe<small> - <i>01 Jan 2045</i></small></h6>
-                                    <div class="text-primary mb-2">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star-half-alt"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                    <p>Diam amet duo labore stet elitr ea clita ipsum, tempor labore accusam ipsum
-                                        et no
-                                        at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h4 class="mb-4">Leave a review</h4>
-                            <small>Your email address will not be published. Required fields are marked *</small>
-                            <div class="d-flex my-3">
-                                <p class="mb-0 mr-2">Your Rating * :</p>
-                                <div class="text-primary">
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </div>
-                            <form>
-                                <div class="form-group">
-                                    <label for="message">Your Review *</label>
-                                    <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="name">Your Name *</label>
-                                    <input type="text" class="form-control" id="name">
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Your Email *</label>
-                                    <input type="email" class="form-control" id="email">
-                                </div>
-                                <div class="form-group mb-0">
-                                    <input type="submit" value="Leave Your Review" class="btn btn-primary px-3">
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+        <div class="d-flex pt-2">
+            <p class="text-dark font-weight-medium mb-0 mr-2">Share on:</p>
+            <div class="d-inline-flex">
+                <a class="text-dark px-2" href="">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a class="text-dark px-2" href="">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a class="text-dark px-2" href="">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a class="text-dark px-2" href="">
+                    <i class="fab fa-pinterest"></i>
+                </a>
             </div>
         </div>
     </div>
     </div>
-    <!-- Shop Detail End -->
+
 
 
     <!-- Back to Top -->
@@ -506,5 +395,100 @@ if (isset($_SESSION['email'])) {
     <script src="view/mail/jqBootstrapValidation.min.js"></script>
     <script src="view/mail/contact.js"></script>
 
-    <!-- Template Javascript -->
-    <script src="view/js/main.js"></script>
+    <script>
+        const variants = <?= json_encode($product_variants) ?>;
+        const priceDisplay = document.getElementById('priceDisplay');
+        const quantityInput = document.querySelector('input[name="quantity"]');
+        const stockWarning = document.getElementById('stock-warning');
+
+        function getSelectedValue(name) {
+            const selected = document.querySelector(`input[name="${name}"]:checked`);
+            return selected ? selected.value : null;
+        }
+
+        function updatePrice() {
+            const colorId = getSelectedValue('color_id');
+            const sizeId = getSelectedValue('size_id');
+
+            if (!colorId || !sizeId) {
+                priceDisplay.textContent = 'Vui lòng chọn màu và size';
+                quantityInput.value = 1;
+                quantityInput.disabled = true;
+                stockWarning.style.display = 'none';
+                return;
+            }
+
+            const match = variants.find(v =>
+                v.color_id == colorId && v.size_id == sizeId
+            );
+
+            if (match) {
+                priceDisplay.textContent = '$ ' + match.price.toLocaleString();
+                quantityInput.disabled = false;
+                quantityInput.max = match.stock;
+                checkQuantity(match.stock);
+            } else {
+                priceDisplay.textContent = 'Không có giá cho lựa chọn này';
+                quantityInput.value = 1;
+                quantityInput.disabled = true;
+                stockWarning.style.display = 'none';
+            }
+        }
+
+        function checkQuantity(stock) {
+            const quantity = parseInt(quantityInput.value);
+            if (quantity > stock) {
+                stockWarning.textContent = 'Số lượng vượt quá tồn kho. Số lượng còn lại: ' + stock;
+                stockWarning.style.display = 'block';
+                quantityInput.value = stock;
+                alert('Số lượng vượt quá tồn kho. Số lượng tối đa là: ' + stock);
+            } else {
+                stockWarning.style.display = 'none';
+            }
+        }
+
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('click', updatePrice);
+        });
+
+        quantityInput.addEventListener('change', function() {
+            const colorId = getSelectedValue('color_id');
+            const sizeId = getSelectedValue('size_id');
+            if (colorId && sizeId) {
+                const match = variants.find(v =>
+                    v.color_id == colorId && v.size_id == sizeId
+                );
+                if (match) {
+                    checkQuantity(match.stock);
+                }
+            }
+        });
+
+        document.querySelector('.btn-plus').addEventListener('click', function() {
+            const colorId = getSelectedValue('color_id');
+            const sizeId = getSelectedValue('size_id');
+            if (colorId && sizeId) {
+                const match = variants.find(v =>
+                    v.color_id == colorId && v.size_id == sizeId
+                );
+                if (match) {
+                    if (parseInt(quantityInput.value) < match.stock) {
+                        quantityInput.value = parseInt(quantityInput.value) + 1;
+                        checkQuantity(match.stock);
+                    } else {
+                        alert('Số lượng vượt quá tồn kho. Số lượng tối đa là: ' + match.stock);
+                    }
+                }
+            }
+        });
+
+        document.querySelector('.btn-minus').addEventListener('click', function() {
+            if (parseInt(quantityInput.value) > 1) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+                stockWarning.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

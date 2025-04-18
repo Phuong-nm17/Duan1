@@ -21,25 +21,6 @@ if (!$order) {
   exit();
 }
 
-// Xử lý khi xác nhận đơn hàng
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
-  $fullname = $_POST['fullname'];
-  $email = $_POST['email'];
-  $phone = $_POST['phone'];
-  $address = $_POST['address'];
-  $shipping_method = $_POST['shipping_method'];
-  $payment_method = $_POST['payment_method'];
-  $note = $_POST['note'];
-
-  $update_sql = "UPDATE orders SET fullname = ?, email = ?, phone = ?, address = ?,  payment_method = ?, note = ? WHERE id = ?";
-  $stmt = $conn->prepare($update_sql);
-  $stmt->execute([$fullname, $email, $phone, $address, $payment_method, $note, $order['id']]);
-
-  echo "<div style='text-align:center; margin-top:20px; font-size:20px; color:green;'>🎉 Đặt hàng thành công!</div>";
-  header("Refresh: 1; URL=index.php?act=home");
-  exit();
-}
-
 // Lấy chi tiết sản phẩm trong đơn hàng
 $details_sql = "SELECT od.*, p.title AS product_title, p.thumbnail, s.name AS size_name, c.name AS color_name 
                 FROM order_details od
@@ -50,6 +31,54 @@ $details_sql = "SELECT od.*, p.title AS product_title, p.thumbnail, s.name AS si
 $stmt = $conn->prepare($details_sql);
 $stmt->execute([$order['id']]);
 $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
+  try {
+    // Bắt đầu giao dịch
+    $conn->beginTransaction();
+
+    $fullname = $_POST['fullname'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $address = $_POST['address'];
+    $shipping_method = $_POST['shipping_method'];
+    $payment_method = $_POST['payment_method'];
+    $note = $_POST['note'];
+
+    // Cập nhật thông tin đơn hàng
+    $update_sql = "UPDATE orders SET fullname = ?, email = ?, phone = ?, address = ?, payment_method = ?, note = ? WHERE id = ?";
+    $stmt = $conn->prepare($update_sql);
+    $stmt->execute([$fullname, $email, $phone, $address, $payment_method, $note, $order['id']]);
+
+    // Cập nhật tồn kho cho từng sản phẩm
+    foreach ($order_items as $item) {
+      $product_id = $item['product_id'];
+      $size_id = $item['size_id'];
+      $color_id = $item['color_id'];
+      $quantity = $item['quantity'];
+
+      // Cập nhật số lượng tồn kho
+      $update_stock_sql = "UPDATE product_variants 
+                           SET stock = stock - ? 
+                           WHERE product_id = ? AND size_id = ? AND color_id = ?";
+      $stmt = $conn->prepare($update_stock_sql);
+      $stmt->execute([$quantity, $product_id, $size_id, $color_id]);
+    }
+
+    // Commit giao dịch
+    $conn->commit();
+
+    echo "<div style='text-align:center; margin-top:20px; font-size:20px; color:green;'>🎉 Đặt hàng thành công!</div>";
+    header("Refresh: 1; URL=index.php?act=home");
+    exit();
+  } catch (Exception $e) {
+    // Rollback giao dịch nếu có lỗi
+    $conn->rollBack();
+    echo "Lỗi xảy ra: " . $e->getMessage();
+    exit();
+  }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -175,6 +204,7 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <form action="" method="POST">
       <h2>ORDER CONFIRMATION</h2>
 
+      <!-- Recipient Information -->
       <fieldset>
         <legend>1. Recipient Information</legend>
         <label>Full Name:</label>
@@ -190,6 +220,7 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <textarea name="address"><?= htmlspecialchars($order['address']) ?></textarea>
       </fieldset>
 
+      <!-- Shipping & Payment -->
       <fieldset>
         <legend>2. Shipping & Payment</legend>
         <label>Shipping Method:</label>
@@ -206,11 +237,13 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </select>
       </fieldset>
 
+      <!-- Order Note -->
       <fieldset>
         <legend>3. Order Note</legend>
         <textarea name="note" rows="3" placeholder="Any additional notes for your order..."></textarea>
       </fieldset>
 
+      <!-- Cart Items -->
       <fieldset>
         <legend>4. Cart Items</legend>
         <table>
@@ -228,37 +261,32 @@ $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <tbody>
             <?php
             $total = 0;
-            if (empty($order_items)) {
-              echo '<tr><td colspan="7" style="color: red;">⚠️ No products found in this order.</td></tr>';
-            } else {
-              foreach ($order_items as $item):
-                $subtotal = $item['price'] * $item['quantity'];
-                $total += $subtotal;
+            foreach ($order_items as $item):
+              $subtotal = $item['price'] * $item['quantity'];
+              $total += $subtotal;
             ?>
-                <tr>
-                  <td><img src="<?= $item['thumbnail'] ?>" style="width: 50px;"></td>
-                  <td><?= $item['product_title'] ?></td>
-                  <td><?= $item['size_name'] ?></td>
-                  <td><?= $item['color_name'] ?></td>
-
-                  <td>$<?= number_format($item['price'], 0, ',', '.') ?></td>
-                  <td><?= $item['quantity'] ?></td>
-                  <td>$<?= number_format($subtotal, 0, ',', '.') ?></td>
-
-                </tr>
-            <?php endforeach;
-            }
-            ?>
+              <tr>
+                <td><img src="<?= $item['thumbnail'] ?>" style="width: 50px;"></td>
+                <td><?= $item['product_title'] ?></td>
+                <td><?= $item['size_name'] ?></td>
+                <td><?= $item['color_name'] ?></td>
+                <td>$<?= number_format($item['price'], 0, ',', '.') ?></td>
+                <td><?= $item['quantity'] ?></td>
+                <td>$<?= number_format($subtotal, 0, ',', '.') ?></td>
+              </tr>
+            <?php endforeach; ?>
           </tbody>
         </table>
-        <div class="total">Total:$<?= number_format($subtotal + 10, 2) ?></div>
-
+        <div class="total">Total: $<?= number_format($total + 10, 2) ?></div>
       </fieldset>
 
       <button type="submit" name="confirm_order" class="submit-btn">Confirm Order</button>
     </form>
   </div>
 
+</body>
+
+</html>
 </body>
 
 </html>

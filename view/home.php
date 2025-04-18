@@ -37,10 +37,13 @@ try {
 <?php
 if (isset($_GET['search'])): ?>
 
+
     <h2 class="text-primary text-uppercase mb-3" spullpulltyle="margin-left: 40px;">
         Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
+
     </h2>
     Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
+
     <?php if (empty($product)): ?>
         <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">No products found.
         </p>

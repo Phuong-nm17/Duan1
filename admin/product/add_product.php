@@ -8,31 +8,49 @@ if (!isset($_SESSION['admin'])) {
 }
 
 $error = "";
-$colors = $conn->query("SELECT * FROM color")->fetchAll(PDO::FETCH_ASSOC);
-$sizes = $conn->query("SELECT * FROM size")->fetchAll(PDO::FETCH_ASSOC);
 $categorys = $conn->query("SELECT * FROM category")->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = htmlspecialchars($_POST['title']);
     $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
-    $discount = filter_var($_POST['discount'], FILTER_VALIDATE_FLOAT);
     $thumbnail = htmlspecialchars($_POST['thumbnail']);
     $description = htmlspecialchars($_POST['description']);
-    $color_id = $_POST['color_id'];
-    $size_id = $_POST['size_id'];
     $category_id = $_POST['category_id'];
+    $discount = $price * 0.7; // Apply discount to the product price
 
     if (!empty($title) && $price > 0 && !empty($thumbnail)) {
-        $stmt = $conn->prepare("INSERT INTO product (title, price, discount, thumbnail, description, color_id, size_id, category_id) VALUES (?, ?, ?, ?, ?, ?, ?,?)");
-        $stmt->execute([$title, $price, $discount, $thumbnail, $description, $color_id, $size_id, $category_id]);
+        // Insert the product with both discounted price and original price
+    $stmt = $conn->prepare("INSERT INTO product (title, discount, price, thumbnail, description, category_id) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$title, $discount, $price, $thumbnail, $description, $category_id]); // Store discounted price and original price
+        $productId = $conn->lastInsertId(); // Get the ID of the newly added product
 
+        // Create variants
+        $color_price_modifiers = [
+            1 => 0, 2 => 3, 3 => 5, 4 => 7, 5 => 2
+        ];
+        $size_price_modifiers = [
+            6 => 0, 7 => 2, 8 => 4, 9 => 7
+        ];
+
+        // Loop through color and size modifiers to create product variants
+        foreach ($color_price_modifiers as $colorId => $colorMod) {
+            foreach ($size_price_modifiers as $sizeId => $sizeMod) {
+                $sku = "P{$productId}-C{$colorId}-S{$sizeId}";
+                $stock = 10;
+                $finalPrice = $price + $colorMod * 1 + $sizeMod * 1;
+
+                // Prepare the insert statement for product variants
+                $stmtVar = $conn->prepare("INSERT INTO product_variants (product_id, color_id, size_id, sku, stock, price) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmtVar->execute([$productId, $colorId, $sizeId, $sku, $stock, $finalPrice]);
+            }
+        }
+        
         header("Location: product.php");
         exit;
     } else {
         $error = "Vui lòng nhập đầy đủ thông tin và tải lên hình ảnh!";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -168,32 +186,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="number" name="price" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label>Giá discount:</label>
-                <input type="number" name="discount" class="form-control" required>
-            </div>
-            <div class="mb-3">
                 <label>Hình ảnh:</label>
                 <input type="text" name="thumbnail" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label>Mô tả:</label>
                 <input type="text" name="description" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Màu sắc:</label>
-                <select class="form-select" name="color_id">
-                    <?php foreach ($colors as $color) : ?>
-                        <option value="<?= $color['id'] ?>"><?= $color['name'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label>Kích thước:</label>
-                <select class="form-select" name="size_id">
-                    <?php foreach ($sizes as $size) : ?>
-                        <option value="<?= $size['id'] ?>"><?= $size['name'] ?></option>
-                    <?php endforeach; ?>
-                </select>
             </div>
             <div class="mb-3">
                 <label>thêm vào danh mục</label>

@@ -101,11 +101,15 @@ try {
         .menu-item .submenu {
             display: none;
             position: absolute;
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            min-width: 80px;
-            z-index: 10;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            min-width: 150px;
+            z-index: 1000;
+            padding: 8px 0;
+            transition: all 0.3s ease;
         }
 
         .menu-item:hover .submenu {
@@ -237,15 +241,17 @@ try {
                             <a href="index.php?act=register" class="nav-item nav-link">Register</a>
                         <?php else: ?>
                             <div class="menu-item">
-                                <a href="#"
-                                    class="nav-item nav-link"><?= htmlspecialchars($user['fullname'] ?? 'user') ?></a>
+                                <a href="#" class="nav-item nav-link">
+                                    <?= htmlspecialchars($user['fullname'] ?? 'user') ?>
+                                    <i class="fas fa-chevron-down ml-1"></i>
+                                </a>
                                 <div class="submenu">
-                                    <a href="index.php?act=Logout">LogOut</a>
-                                    <a href="#"></a>
+                                    <a href="index.php?act=profile">Profile</a>
+                                    <a href="index.php?act=cart">Cart</a>
+                                    <a href="index.php?act=Logout">Logout</a>
                                 </div>
                             </div>
                         <?php endif ?>
-
                     </div>
                 </div>
             </nav>
@@ -316,7 +322,8 @@ if (isset($_GET['search'])): ?>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card product-item border-0 mb-4">
                         <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                            <img class="img-fluid w-100" src="<?= $p['thumbnail'] ?>" alt="">
+                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>"><img class="img-fluid w-100" src="<?= $p['thumbnail'] ?>" alt=""></a>
+
                         </div>
                         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>

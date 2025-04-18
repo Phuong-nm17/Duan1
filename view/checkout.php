@@ -42,11 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $zipcode = $_POST['zipcode'] ?? '';
     $note = $_POST['note'] ?? '';
     $status = $_POST['status'] ?? '';
+    $total_price = $_POST['total_price'] ?? '';
 
     if ($fullname && $phone && $address) {
         // Thêm đơn hàng
-        $order_sql = "INSERT INTO orders (user_id, fullname, phone, address, email, order_date, country, city, payment_method, zipcode, note, status)
-              VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?)";
+        $order_sql = "INSERT INTO orders (user_id, fullname, phone, address, email, order_date, country, city, payment_method, zipcode, note, status, total_price)
+              VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?)";
         $order_stmt = $conn->prepare($order_sql);
         $order_stmt->execute([
             $user_id,
@@ -59,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $payment_method,
             $zipcode,
             $note,
-            'chờ xác nhận'
+            'chờ xác nhận',
+            $total_price
         ]);
 
 
@@ -280,6 +282,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="card-footer border-secondary bg-transparent">
                             <div class="d-flex justify-content-between mt-2">
+                                <input type="hidden" name="total_price" value="<?= $total + 10 ?>">
                                 <h5 class="font-weight-bold">Total</h5>
                                 <h5 class="font-weight-bold">$<?= number_format($total + 10, 2) ?></h5>
                             </div>

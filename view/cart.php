@@ -24,14 +24,17 @@ $user_id = $_SESSION['id'];
 $sql = "SELECT 
             cart.*, 
             product.title AS product_title, 
-            product.price,
             product.thumbnail,  
             size.name AS size_name, 
-            color.name AS color_name
+            color.name AS color_name, 
+            product_variants.price AS variant_price
         FROM cart
         JOIN product ON cart.product_id = product.id
         LEFT JOIN size ON cart.size_id = size.id
         LEFT JOIN color ON cart.color_id = color.id
+        LEFT JOIN product_variants ON cart.product_id = product_variants.product_id
+            AND cart.size_id = product_variants.size_id
+            AND cart.color_id = product_variants.color_id
         WHERE cart.user_id = $user_id";
 
 $result = $conn->query($sql);
@@ -101,11 +104,12 @@ $result = $conn->query($sql);
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="index.php?act=home" class="text-decoration-none">
-                <a href="index.php" class="text-decoration-none">
 
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
-                </a>
+                    <a href="index.php" class="text-decoration-none">
+                        <h1 class="m-0 display-5 font-weight-semi-bold"><span
+                                class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                    </a>
+
             </div>
             <div class="col-lg-6 col-6 text-left">
                 <form action="">
@@ -167,7 +171,7 @@ $result = $conn->query($sql);
                         <?php
                         $subtotal = 0;
                         while ($row = $result->fetch(PDO::FETCH_ASSOC)):
-                            $item_total = $row['price'] * $row['quantity'];
+                            $item_total = $row['variant_price'] * $row['quantity'];
                             $subtotal += $item_total;
                         ?>
 
@@ -183,7 +187,7 @@ $result = $conn->query($sql);
                                     <small>Size: <?= $row['size_name'] ?? 'N/A' ?> | Color:
                                         <?= $row['color_name'] ?? 'N/A' ?></small>
                                 </td>
-                                <td class="align-middle">$<?= number_format($row['price'], 2) ?></td>
+                                <td class="align-middle">$<?= number_format($row['variant_price'], 2) ?></td>
                                 <td class="align-middle">
                                     <div class="input-group quantity mx-auto" style="width: 100px;">
                                         <div class="input-group-btn">
@@ -256,16 +260,10 @@ $result = $conn->query($sql);
             </div>
         </div>
     </div>
+    <?php include 'footer.php'; ?>
     <!-- Cart End -->
-
-
-
-
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
-
-
-    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="view/lib/easing/easing.min.js"></script>

@@ -191,7 +191,6 @@ try {
                     <th>Email</th>
                     <th>Số điện thoại</th>
                     <th>Địa chỉ</th>
-                    <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
@@ -202,9 +201,6 @@ try {
                         <td><?= $u['email'] ?></td>
                         <td><?= $u['phone_number'] ?></td>
                         <td><?= $u['address'] ?></td>
-                        <td>
-                            <a href="edit_user.php?id=<?= $u['id'] ?>" class="btn btn-primary">Sửa</a>
-                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

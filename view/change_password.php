@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            background: linear-gradient(to right, #f9f9f9, #e0e0e0);
+            background: #f5f5f5;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -59,24 +59,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .container {
             width: 100%;
-            max-width: 460px;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 40px 30px;
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
-            transition: 0.3s ease;
+            max-width: 400px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-weight: 600;
-            font-size: 24px;
-            color: #2c3e50;
+            font-size: 20px;
+            color: #333;
         }
 
         .form-group {
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         label {
@@ -84,15 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 8px;
             font-size: 14px;
             font-weight: 500;
-            color: #444;
+            color: #555;
         }
 
         input[type="password"] {
             width: 100%;
             padding: 12px 14px;
             font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             transition: border-color 0.3s;
         }
 
@@ -103,13 +102,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .btn {
             width: 100%;
-            padding: 13px;
+            padding: 12px;
             background: #ee4d2d;
             border: none;
             color: white;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
-            border-radius: 8px;
+            border-radius: 4px;
             cursor: pointer;
             transition: background 0.3s;
         }
@@ -123,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 12px;
             text-align: center;
             font-size: 14px;
-            border-radius: 6px;
+            border-radius: 4px;
         }
 
         .success {
@@ -142,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: inline-block;
             margin-top: 18px;
             font-size: 14px;
-            color: #777;
+            color: #555;
             text-decoration: none;
             transition: color 0.3s;
         }
@@ -165,8 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <div class="container">
-        <h2>Đổi mật khẩu</h2>
-
+        <h2>Change Password</h2>
         <?php if ($message): ?>
             <div class="message <?= $success ? 'success' : 'error' ?>">
                 <?= htmlspecialchars($message) ?>
@@ -175,21 +173,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form method="post">
             <div class="form-group">
-                <label for="current_password">Mật khẩu hiện tại</label>
+                <label for="current_password">Current Password</label>
                 <input type="password" name="current_password" required>
             </div>
             <div class="form-group">
-                <label for="new_password">Mật khẩu mới</label>
+                <label for="new_password">New Password</label>
                 <input type="password" name="new_password" required>
             </div>
             <div class="form-group">
-                <label for="confirm_password">Xác nhận mật khẩu mới</label>
+                <label for="confirm_password">Confirm New Password</label>
                 <input type="password" name="confirm_password" required>
             </div>
-            <button class="btn" type="submit">Cập nhật mật khẩu</button>
+            <button class="btn" type="submit">Update Password</button>
         </form>
 
-        <a href="index.php?act=profile" class="back-link">← Quay lại hồ sơ</a>
+        <a href="index.php?act=profile" class="back-link">← Back to Profile</a>
     </div>
 </body>
 
