@@ -323,7 +323,6 @@ if (isset($_GET['search'])): ?>
                     <div class="card product-item border-0 mb-4">
                         <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
                             <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>"><img class="img-fluid w-100" src="<?= $p['thumbnail'] ?>" alt=""></a>
-
                         </div>
                         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../../model/connect.php';
+require '../model/connect.php';
 
 try {
     $sql = "
@@ -241,7 +241,7 @@ try {
 </head>
 
 <body>
-    <?php include '../sidebar.php'; ?>
+    <?php include 'sidebar.php'; ?>
 
     <div class="container pt-5">
         <h2 class="section-title">Thống Kê Shop Farah</h2>

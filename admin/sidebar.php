@@ -1,13 +1,9 @@
 <div id="sidebar">
-    <a href="../dashboard/dashboard.php">
+    <a href="../index.php">
         <h4>Admin Farah</h4>
     </a>
-
-
     <div class="menu-item">
-
-        <a href="../dashboard/dashboard.php"><i>🏠</i> <span>Trang chủ</span></a>
-
+        <a href="../index.php"><i>🏠</i> <span>Trang chủ</span></a>
     </div>
 
     <div class="menu-item">
@@ -34,5 +30,5 @@
         <a href="../order/orders.php"><i>🛒</i> <span>Quản lý đơn hàng</span></a>
     </div>
 
-    <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
+    <a href="./auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
 </div>
