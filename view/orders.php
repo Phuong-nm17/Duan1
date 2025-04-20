@@ -261,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="order-block">
                     <div class="order-header">
                         <span><strong>Order ID:</strong> #<?= htmlspecialchars($id) ?></span>
-                        <span><strong>Date:</strong> <?= htmlspecialchars($order['order_date']) ?></span>
+                        <span><strong>Date:</strong> <?= htmlspecialchars($order['order_date'] ?? '') ?></span>
                         <span><strong>Status:</strong>
                             <?php
                             switch ($order['status']) {
