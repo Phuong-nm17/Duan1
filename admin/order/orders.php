@@ -1,3 +1,4 @@
+order 
 <?php
 session_start();
 require '../../model/connect.php';
@@ -223,10 +224,7 @@ try {
                             <?= $order['zipcode'] ?>
                         </td>
                         <td><?= htmlspecialchars($order['payment_method']) ?></td>
-<<<<<<< HEAD
-=======
 
->>>>>>> 42f9bce5ffb30b3a422588dddb561c997117b422
                         <td><?= htmlspecialchars($order['status']) ?></td>
                         <td>
                             <?php
