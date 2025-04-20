@@ -16,10 +16,7 @@ $stmt = $conn->prepare("
         o.order_date,
         o.fullname, 
         o.email, 
-<<<<<<< HEAD
-=======
         o.address,
->>>>>>> 42f9bce5ffb30b3a422588dddb561c997117b422
         o.payment_method, 
         o.phone, 
         od.product_id, 
@@ -53,10 +50,7 @@ foreach ($rows as $row) {
             'order_date' => $row['order_date'],
             'fullname' => $row['fullname'],
             'email' => $row['email'],
-<<<<<<< HEAD
-=======
             'address' => $row['address'],
->>>>>>> 42f9bce5ffb30b3a422588dddb561c997117b422
             'payment_method' => $row['payment_method'],
             'phone' => $row['phone'],
             'items' => []
@@ -69,10 +63,7 @@ foreach ($rows as $row) {
         'product_thumbnail' => $row['product_thumbnail'],
         'color' => $row['color'],
         'size' => $row['size'],
-<<<<<<< HEAD
-=======
         'address' => $row['address'],
->>>>>>> 42f9bce5ffb30b3a422588dddb561c997117b422
     ];
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -267,42 +258,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>Your Orders</h1>
         <?php if (count($orders) > 0): ?>
             <?php foreach ($orders as $id => $order): ?>
-<<<<<<< HEAD
-                <div class="order-block">
-                    <div class="order-header">
-                        <span><strong>Order ID:</strong> #<?= htmlspecialchars($id) ?></span>
-                        <span><strong>Date:</strong> <?= htmlspecialchars($order['order_date']) ?></span>
-                        <span><strong>Status:</strong>
-                            <?php
-                            switch ($order['status']) {
-                                case 'chờ xác nhận':
-                                    echo '<span style="color: purple;">Awaiting Confirmation</span>';
-                                    break;
-                                case 'chờ xử lý':
-                                    echo '<span style="color: orange;">Pending</span>';
-                                    break;
-                                case 'đang giao':
-                                    echo '<span style="color: green;">In Transit</span>';
-                                    break;
-                                case 'Hoàn thành':
-                                    echo '<span style="color: blue;">Completed</span>';
-                                    break;
-                                case 'đã hủy':
-                                    echo '<span style="color: red;">Cancelled</span>';
-                                    break;
-                                default:
-                                    echo '<span style="color: gray;">Unknown</span>';
-                            }
-                            ?>
-                        </span>
-                        <?php if ($order['status'] !== 'đã hủy' && $order['status'] !== 'Hoàn thành'): ?>
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
-                                <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
-                            </form>
-                        <?php endif; ?>
-                    </div>
-=======
                 <div class="order-header">
                     <span><strong>Order ID:</strong> #<?= htmlspecialchars($id) ?></span>
                     <span><strong>Date:</strong> <?= htmlspecialchars($order['order_date']) ?></span>
@@ -338,70 +293,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </form>
                     <?php endif; ?>
                 </div>
-                <div class="order-block">
->>>>>>> 42f9bce5ffb30b3a422588dddb561c997117b422
-                    <div class="order-content">
-                        <table>
-                            <thead>
+                <div class="order-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product Image</th>
+                                <th>Product Name</th>
+                                <th>Address</th>
+                                <th>Attributes</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($order['items'] as $item): ?>
                                 <tr>
-                                    <th>Product Image</th>
-                                    <th>Product Name</th>
-<<<<<<< HEAD
-=======
-                                    <th>Address</th>
->>>>>>> 42f9bce5ffb30b3a422588dddb561c997117b422
-                                    <th>Attributes</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
+                                    <td>
+                                        <img src="<?= htmlspecialchars($item['product_thumbnail'] ?? 'https://via.placeholder.com/50') ?>"
+                                            alt="<?= htmlspecialchars($item['product_name'] ?? 'No Image') ?>">
+                                    </td>
+                                    <td><?= htmlspecialchars($item['product_name'] ?? 'Unknown Product') ?></td>
+                                    <td><?= htmlspecialchars($order['address'] ?? 'Address not specified') ?></td>
+                                    <td><?= htmlspecialchars($item['color'] ?? 'N/A') ?>, <?= htmlspecialchars($item['size'] ?? 'N/A') ?></td>
+                                    <td><?= htmlspecialchars($item['quantity'] ?? 0) ?></td>
+                                    <td>$<?= number_format(($item['quantity'] ?? 0) * ($item['price'] ?? 0), 2) ?></td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($order['items'] as $item): ?>
-                                    <tr>
-                                        <td>
-                                            <img src="<?= htmlspecialchars($item['product_thumbnail'] ?? 'https://via.placeholder.com/50') ?>"
-                                                alt="<?= htmlspecialchars($item['product_name'] ?? 'No Image') ?>">
-                                        </td>
-                                        <td><?= htmlspecialchars($item['product_name'] ?? 'Unknown Product') ?></td>
-<<<<<<< HEAD
-=======
-                                        <td><?= htmlspecialchars($order['address'] ?? 'Address not specified') ?></td>
->>>>>>> 42f9bce5ffb30b3a422588dddb561c997117b422
-                                        <td><?= htmlspecialchars($item['color'] ?? 'N/A') ?>, <?= htmlspecialchars($item['size'] ?? 'N/A') ?></td>
-                                        <td><?= htmlspecialchars($item['quantity'] ?? 0) ?></td>
-                                        <td>$<?= number_format(($item['quantity'] ?? 0) * ($item['price'] ?? 0), 2) ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="order-footer">
-                        <span>Total: $<?= number_format(array_sum(array_map(fn($item) => $item['quantity'] * $item['price'], $order['items'])), 2) ?></span>
-                    </div>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p class="no-orders">You have no orders yet.</p>
-        <?php endif; ?>
-        <a href="index.php?act=profile" class="btn-back">⬅ Back to Profile</a>
-<<<<<<< HEAD
+                <div class="order-footer">
+                    <span>Total: $<?= number_format(array_sum(array_map(fn($item) => $item['quantity'] * $item['price'], $order['items'])), 2) ?></span>
+                </div>
     </div>
-    <?php include 'footer.php'; ?>
-=======
-    </div> <!-- Đóng container ở đây, sau khi tất cả đơn hàng đã được hiển thị -->
->>>>>>> 42f9bce5ffb30b3a422588dddb561c997117b422
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="view/lib/easing/easing.min.js"></script>
-    <script src="view/lib/owlcarousel/owl.carousel.min.js"></script>
+<?php endforeach; ?>
+<?php else: ?>
+    <p class="no-orders">You have no orders yet.</p>
+<?php endif; ?>
+<a href="index.php?act=profile" class="btn-back">⬅ Back to Profile</a>
+</div>
+<?php include 'footer.php'; ?>
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="view/lib/easing/easing.min.js"></script>
+<script src="view/lib/owlcarousel/owl.carousel.min.js"></script>
 
-    <!-- Contact Javascript File -->
-    <script src="view/mail/jqBootstrapValidation.min.js"></script>
-    <script src="view/mail/contact.js"></script>
+<!-- Contact Javascript File -->
+<script src="view/mail/jqBootstrapValidation.min.js"></script>
+<script src="view/mail/contact.js"></script>
 
-    <!-- Template Javascript -->
-    <script src="view/js/main.js"></script>
+<!-- Template Javascript -->
+<script src="view/js/main.js"></script>
 </body>
 
 </html>
+Tại sao chỉ có sản phẩm đầu tiên có css
