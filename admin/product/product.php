@@ -24,6 +24,11 @@ try {
 
     $params = [];
 
+    if (!empty($_GET['keyword'])) {
+        $sql .= " AND product.title LIKE ?";
+        $params[] = '%' . $_GET['keyword'] . '%';
+    }
+
     if (!empty($_GET['min_price'])) {
         $sql .= " AND product.price >= ?";
         $params[] = $_GET['min_price'];
@@ -33,6 +38,7 @@ try {
         $sql .= " AND product.price <= ?";
         $params[] = $_GET['max_price'];
     }
+
     if (!empty($_GET['sort'])) {
         if ($_GET['sort'] === 'asc') {
             $sql .= " ORDER BY product.price ASC";
@@ -40,6 +46,7 @@ try {
             $sql .= " ORDER BY product.price DESC";
         }
     }
+
     $stmt = $conn->prepare($sql);
     $stmt->execute($params);
     $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -47,9 +54,7 @@ try {
     die($e->getMessage());
 }
 
-// Kiểm tra đăng nhập
 if (!isset($_SESSION['admin'])) header("Location: login.php");
-
 ?>
 
 <!DOCTYPE html>
@@ -64,8 +69,6 @@ if (!isset($_SESSION['admin'])) header("Location: login.php");
         body {
             display: flex;
         }
-
-        /* Sidebar */
         #sidebar {
             width: 250px;
             height: 100vh;
@@ -76,19 +79,15 @@ if (!isset($_SESSION['admin'])) header("Location: login.php");
             transition: width 0.3s ease-in-out;
             overflow: hidden;
         }
-
         #sidebar.collapsed {
             width: 80px;
         }
-
         #sidebar h4 {
             transition: opacity 0.3s;
         }
-
         #sidebar.collapsed h4 {
             opacity: 0;
         }
-
         #sidebar a {
             color: white;
             display: flex;
@@ -100,29 +99,22 @@ if (!isset($_SESSION['admin'])) header("Location: login.php");
             transition: background 0.3s ease-in-out;
             position: relative;
         }
-
         #sidebar a i {
             margin-right: 10px;
             width: 20px;
             text-align: center;
         }
-
         #sidebar a:hover {
             background-color: #495057;
         }
-
-        /* Submenu */
         .submenu {
             display: none;
             background: #495057;
             padding-left: 20px;
         }
-
         .menu-item:hover .submenu {
             display: block;
         }
-
-        /* Nếu sidebar thu nhỏ, hiển thị submenu bên cạnh */
         #sidebar.collapsed .submenu {
             display: none;
             position: absolute;
@@ -134,12 +126,9 @@ if (!isset($_SESSION['admin'])) header("Location: login.php");
             border-radius: 5px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
         }
-
         #sidebar.collapsed .menu-item:hover .submenu {
             display: block;
         }
-
-        /* Nút thu nhỏ sidebar */
         #toggle-btn {
             position: absolute;
             top: 10px;
@@ -150,15 +139,12 @@ if (!isset($_SESSION['admin'])) header("Location: login.php");
             font-size: 20px;
             cursor: pointer;
         }
-
-        /* Nội dung chính */
         #content {
             margin-left: 260px;
             width: 100%;
             padding: 20px;
             transition: margin-left 0.3s ease-in-out;
         }
-
         #content.full-width {
             margin-left: 90px;
         }
@@ -166,23 +152,29 @@ if (!isset($_SESSION['admin'])) header("Location: login.php");
 </head>
 
 <body>
-    <!-- Sidebar -->
     <?php include '../sidebar.php'; ?>
-
-
-    <!-- Nội dung chính -->
     <div id="content">
         <h2>Danh sách sản phẩm</h2>
+
+        <!-- <div class="mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Tìm nhanh tên sản phẩm (client)">
+        </div> -->
+
         <form method="get" class="row g-3 mb-4">
+            <div class="col-auto">
+                <label for="keyword" class="form-label">Tên sản phẩm:</label>
+                <input type="text" class="form-control" name="keyword" id="keyword"
+                    value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>" placeholder="Nhập tên sản phẩm">
+            </div>
             <div class="col-auto">
                 <label for="min_price" class="form-label">Giá từ:</label>
                 <input type="number" class="form-control" name="min_price" id="min_price"
-                    value="<?= $_GET['min_price'] ?? '' ?>" placeholder="0$">
+                    value="<?= htmlspecialchars($_GET['min_price'] ?? '') ?>" placeholder="0$">
             </div>
             <div class="col-auto">
                 <label for="max_price" class="form-label">Đến:</label>
                 <input type="number" class="form-control" name="max_price" id="max_price"
-                    value="<?= $_GET['max_price'] ?? '' ?>" placeholder="10000$">
+                    value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>" placeholder="10000$">
             </div>
             <div class="col-auto">
                 <label for="sort" class="form-label">Sắp xếp:</label>
@@ -215,21 +207,20 @@ if (!isset($_SESSION['admin'])) header("Location: login.php");
             </thead>
             <tbody>
                 <?php foreach ($product as $index => $p): ?>
-                    <tr>
+                    <tr class="product-row">
                         <td><?= $index ?></td>
-                        <td><?= $p['title'] ?></td>
+                        <td class="product-name"><?= htmlspecialchars($p['title']) ?></td>
                         <td><?= number_format($p['price'], 0, ',', '.') ?> $</td>
                         <td><?= number_format($p['discount'], 0, ',', '.') ?> $</td>
-                        <td><img src="<?= $p['thumbnail'] ?>" width="50"></td>
-                        <td><?= $p['description'] ?></td>
-                        <td><?= $p['color_name'] ?></td>
-                        <td><?= $p['size_name'] ?></td>
-                        <td><?= $p['category_name'] ?></td>
+                        <td><img src="<?= htmlspecialchars($p['thumbnail']) ?>" width="50"></td>
+                        <td><?= htmlspecialchars($p['description']) ?></td>
+                        <td><?= htmlspecialchars($p['color_name']) ?></td>
+                        <td><?= htmlspecialchars($p['size_name']) ?></td>
+                        <td><?= htmlspecialchars($p['category_name']) ?></td>
                         <td class="text-center">
                             <a href="edit_product.php?id=<?= htmlspecialchars($p['product_id']) ?>" class="btn btn-warning btn-sm">Sửa</a>
                             <a href="delete_product.php?id=<?= htmlspecialchars($p['product_id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">Xóa</a>
-
-                        
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -241,11 +232,18 @@ if (!isset($_SESSION['admin'])) header("Location: login.php");
         const content = document.getElementById('content');
         const toggleBtn = document.getElementById('toggle-btn');
 
-        toggleBtn.addEventListener('click', () => {
+        toggleBtn?.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
             content.classList.toggle('full-width');
         });
+
+        document.getElementById("searchInput").addEventListener("keyup", function () {
+            let keyword = this.value.toLowerCase();
+            document.querySelectorAll(".product-row").forEach(function (row) {
+                let name = row.querySelector(".product-name").textContent.toLowerCase();
+                row.style.display = name.includes(keyword) ? "" : "none";
+            });
+        });
     </script>
 </body>
-
 </html>
