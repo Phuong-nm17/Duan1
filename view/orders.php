@@ -296,7 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <form method="POST" action="index.php?act=cart" style="display: inline;">
                                 <input type="hidden" name="reorder" value="1">
                                 <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
-                                <button type="submit" class="btn btn-primary btn-sm">Đặt lại</button>
+                                <button type="submit" class="btn btn-primary btn-sm">re order</button>
                             </form>
                         <?php endif; ?>
                     </div>

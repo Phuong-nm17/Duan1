@@ -15,12 +15,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($password !== $confirm) {
         $error = "Mật khẩu xác nhận không khớp!";
     } else {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO user (fullname, email, address, phone_number, password) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$fullname, $email, $address, $phone_number, $hashed_password]);
+        // Kiểm tra email đã tồn tại chưa
+        $check_email = $conn->prepare("SELECT id FROM user WHERE email = ?");
+        $check_email->execute([$email]);
+        if ($check_email->rowCount() > 0) {
+            $error = "Email này đã được sử dụng!";
+        } else {
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("INSERT INTO user (fullname, email, address, phone_number, password) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$fullname, $email, $address, $phone_number, $hashed_password]);
 
-        header("Location: index.php?act=login");
-        exit;
+            // Lấy ID của user vừa tạo
+            $user_id = $conn->lastInsertId();
+
+            // Tự động đăng nhập
+            $_SESSION['id'] = $user_id;
+            $_SESSION['email'] = $email;
+            $_SESSION['fullname'] = $fullname;
+
+            // Chuyển hướng về trang chủ
+            header("Location: index.php?act=home");
+            exit;
+        }
     }
 }
 
