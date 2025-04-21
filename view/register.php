@@ -115,7 +115,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
+    <!-- Topbar Start -->
+    <div class="container-fluid">
+        <div class="row align-items-center px-xl-5 py-3">
+            <div class="col-lg-3 d-lg-block d-none">
 
+                <a href="index.php" class="text-decoration-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold text-primary font-weight-bold px-3 mr-1">
+                        Farah
+                    </h1>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary mb-5">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 100px">
