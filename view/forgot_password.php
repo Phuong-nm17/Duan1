@@ -24,13 +24,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $updateStmt = $conn->prepare("UPDATE user SET reset_token = ?, reset_token_expires = ? WHERE email = ?");
             $updateStmt->execute([$token, $expires, $email]);
 
-            $message = "✅ Đã gửi liên kết đặt lại mật khẩu. Đang chuyển hướng...";
+            $message = "✅ A password reset link has been sent. Redirecting...";
             $redirect = true;
         } else {
-            $message = "❌ Email không tồn tại trong hệ thống.";
+            $message = "❌ The email does not exist in the system.";
         }
     } catch (PDOException $e) {
-        $message = "⚠️ Lỗi hệ thống: " . $e->getMessage();
+        $message = "⚠️ System Error: " . $e->getMessage();
     }
 }
 
@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             <?php endif; ?>
 
-            <button type="submit" class="btn btn-primary w-100">Gửi yêu cầu</button>
+            <button type="submit" class="btn btn-primary w-100">Submit</button>
 
             <div class="text-center mt-3">
                 <a href="index.php?act=login">⬅️ Back to login</a>

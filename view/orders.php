@@ -282,13 +282,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             }
                             ?>
                         </span>
-                        <?php if (strtolower($order['status']) !== 'đã hủy' && strtolower($order['status']) !== 'hoàn thành'): ?>
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
-                                <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
+                        <?php if (
+                            strtolower($order['status']) !== 'đã hủy' &&
+                            strtolower($order['status']) !== 'hoàn thành' &&
+                            strtolower($order['status']) !== 'đang giao'
+                        ): ?>
+                            <form method="POST" style="display: inline;"></form>
+                            <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
+                            <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
                             </form>
                         <?php endif; ?>
-
+                        <?php if (strtolower($order['status']) === 'đã hủy'): ?>
+                            <form method="POST" action="index.php?act=cart" style="display: inline;">
+                                <input type="hidden" name="reorder" value="1">
+                                <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
+                                <button type="submit" class="btn btn-primary btn-sm">Đặt lại</button>
+                            </form>
+                        <?php endif; ?>
                     </div>
                     <div class="order-content">
                         <table>
