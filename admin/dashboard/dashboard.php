@@ -238,100 +238,107 @@ try {
         #sidebar.collapsed .menu-item:hover .submenu {
             display: block;
         }
+
+        #main-content {
+            margin-left: 250px;
+            /* độ rộng sidebar */
+            padding: 20px;
+        }
     </style>
 </head>
 
 <body>
     <?php include '../sidebar.php'; ?>
+    <div id="main-content">
+        <div class="container pt-5">
+            <h2 class="section-title">Thống Kê Shop Farah</h2>
+            <div class="row">
+                <!-- Doanh thu -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Doanh Thu</h5>
+                            <p class="card-text">$<?= number_format($total_revenue, 2) ?></p>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="container pt-5">
-        <h2 class="section-title">Thống Kê Shop Farah</h2>
-        <div class="row">
-            <!-- Doanh thu -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Doanh Thu</h5>
-                        <p class="card-text">$<?= number_format($total_revenue, 2) ?></p>
+                <!-- Tổng số đơn hàng -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Tổng Đơn Hàng</h5>
+                            <p class="card-text"><?= $total_orders ?> đơn</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tổng số sản phẩm -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Tổng Sản Phẩm</h5>
+                            <p class="card-text"><?= $total_products ?> sản phẩm</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tổng số đơn hàng -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Tổng Đơn Hàng</h5>
-                        <p class="card-text"><?= $total_orders ?> đơn</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tổng số sản phẩm -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Tổng Sản Phẩm</h5>
-                        <p class="card-text"><?= $total_products ?> sản phẩm</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Đơn hàng gần đây -->
-        <div class="row mt-5">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header">
-                        Đơn Hàng Gần Đây
-                    </div>
-                    <div class="card-body p-0">
-                        <table class="table table-bordered mb-0 text-center">
-                            <thead>
-                                <tr>
-                                    <th>Mã Đơn Hàng</th>
-                                    <th>Ngày Đặt</th>
-                                    <th>Giá Trị</th>
-                                    <th>Trạng Thái</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $sql_recent_orders = "SELECT id, created_at, total_price, status FROM orders ORDER BY created_at DESC LIMIT 5";
-                                $result_recent_orders = $conn->query($sql_recent_orders);
-                                while ($order = $result_recent_orders->fetch(PDO::FETCH_ASSOC)):
-                                ?>
+            <!-- Đơn hàng gần đây -->
+            <div class="row mt-5">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Đơn Hàng Gần Đây
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-bordered mb-0 text-center">
+                                <thead>
                                     <tr>
-                                        <td><?= $order['id'] ?></td>
-                                        <td><?= $order['created_at'] ?></td>
-                                        <td>$<?= number_format($order['total_price'], 2) ?></td>
-                                        <td>
-                                            <?php
-                                            switch ($order['status']) {
-                                                case 'chờ xác nhận':
-                                                    echo '<span style="color: purple;">Awaiting Confirmation</span>';
-                                                    break;
-                                                case 'chờ xử lý':
-                                                    echo '<span style="color: orange;">Pending</span>';
-                                                    break;
-                                                case 'đang giao':
-                                                    echo '<span style="color: green;">In Transit</span>';
-                                                    break;
-                                                case 'hoàn thành':
-                                                    echo '<span style="color: blue;">Completed</span>';
-                                                    break;
-                                                case 'đã hủy':
-                                                    echo '<span style="color: red;">Cancelled</span>';
-                                                    break;
-                                                default:
-                                                    echo '<span style="color: gray;">Unknown</span>';
-                                            }
-                                            ?>
-                                        </td>
+                                        <th>Mã Đơn Hàng</th>
+                                        <th>Ngày Đặt</th>
+                                        <th>Giá Trị</th>
+                                        <th>Trạng Thái</th>
                                     </tr>
-                                <?php endwhile; ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $sql_recent_orders = "SELECT id, created_at, total_price, status FROM orders ORDER BY created_at DESC LIMIT 5";
+                                    $result_recent_orders = $conn->query($sql_recent_orders);
+                                    while ($order = $result_recent_orders->fetch(PDO::FETCH_ASSOC)):
+                                    ?>
+                                        <tr>
+                                            <td><?= $order['id'] ?></td>
+                                            <td><?= $order['created_at'] ?></td>
+                                            <td>$<?= number_format($order['total_price'], 2) ?></td>
+                                            <td>
+                                                <?php
+                                                switch ($order['status']) {
+                                                    case 'chờ xác nhận':
+                                                        echo '<span style="color: purple;">Awaiting Confirmation</span>';
+                                                        break;
+                                                    case 'chờ xử lý':
+                                                        echo '<span style="color: orange;">Pending</span>';
+                                                        break;
+                                                    case 'đang giao':
+                                                        echo '<span style="color: green;">In Transit</span>';
+                                                        break;
+                                                    case 'hoàn thành':
+                                                        echo '<span style="color: blue;">Completed</span>';
+                                                        break;
+                                                    case 'đã hủy':
+                                                        echo '<span style="color: red;">Cancelled</span>';
+                                                        break;
+                                                    default:
+                                                        echo '<span style="color: gray;">Unknown</span>';
+                                                }
+                                                ?>
+                                            </td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

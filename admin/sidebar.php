@@ -39,6 +39,11 @@
         <div class="submenu">
         </div>
     </div>
+    <div class="menu-item">
+        <a href="../comment/comment.php"><i>🛒</i> <span>Quản lý Bình luận</span></a>
+        <div class="submenu">
+        </div>
+    </div>
 
     <a href="../auth/logout.php" class="text-danger"><i>🚪</i> <span>Đăng xuất</span></a>
 </div>
