@@ -331,7 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </table>
                     </div>
                     <div class="order-footer">
-                        <span>Total: $<?= number_format(array_sum(array_map(fn($item) => $item['quantity'] * $item['price'], $order['items'])), 2) ?></span>
+                        <span>Total: $<?= number_format(array_sum(array_map(fn($item) => $item['quantity'] * $item['price'], $order['items'])) + 10, 2) ?></span>
                     </div>
                 </div>
             <?php endforeach; ?>
