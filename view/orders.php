@@ -282,10 +282,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             }
                             ?>
                         </span>
-                        <?php if (strtolower($order['status']) !== 'đã hủy' && strtolower($order['status']) !== 'hoàn thành'): ?>
-                            <form method="POST" style="display: inline;">
-                                <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
-                                <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
+                        <?php if (
+                            strtolower($order['status']) !== 'đã hủy' &&
+                            strtolower($order['status']) !== 'hoàn thành' &&
+                            strtolower($order['status']) !== 'đang giao'
+                        ): ?>
+                            <form method="POST" style="display: inline;"></form>
+                            <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
+                            <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
                             </form>
                         <?php endif; ?>
 
