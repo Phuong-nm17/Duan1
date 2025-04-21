@@ -6,7 +6,9 @@
 
     <div class="menu-item">
 
+
         <a href="../dashboard/dashboard.php"><i>🏠</i> <span>Trang chủ</span></a>
+
 
     </div>
 

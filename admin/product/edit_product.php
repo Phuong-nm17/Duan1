@@ -31,10 +31,12 @@ $variants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
+
     $description = $_POST['description'];
     $thumbnail = $_POST['thumbnail'];
     $price = $_POST['price'];
     $category_id = $_POST['category_id'];
+
 
     if ($price > 0 && !empty($title)) {
         $conn->beginTransaction();
@@ -70,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $conn->commit();
+
         header("Location: product.php");
         exit;
     } else {
@@ -203,6 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h2>Sửa Sản phẩm</h2>
         <a href="product.php" class="btn btn-secondary">Quay lại</a>
         <form method="POST" enctype="multipart/form-data" class="mt-3">
+
     <?php if (!empty($error)) echo "<p class='text-danger'>$error</p>"; ?>
 
     <div class="mb-3">
@@ -244,6 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="hidden" name="variant[<?= $variant['id'] ?>][variant_id]" value="<?= $variant['id'] ?>">
 
             <!-- Chọn màu -->
+
             <div class="mb-3">
                 <label>Chọn màu:</label>
                 <select class="form-select" name="variant[<?= $variant['id'] ?>][color_id]" required>

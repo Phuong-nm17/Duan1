@@ -271,7 +271,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 case 'đang giao':
                                     echo '<span style="color: green;">In Transit</span>';
                                     break;
+
                                 case 'hoàn thành':
+
                                     echo '<span style="color: blue;">Completed</span>';
                                     break;
                                 case 'đã hủy':
@@ -282,6 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             }
                             ?>
                         </span>
+
                         <?php if (
                             strtolower($order['status']) !== 'đã hủy' &&
                             strtolower($order['status']) !== 'hoàn thành' &&
