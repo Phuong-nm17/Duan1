@@ -11,11 +11,20 @@ try {
                 p.title AS product_name, 
                 p.thumbnail AS product_thumbnail, 
                 s.name AS size_name, 
-                c.name AS color_name 
+                c.name AS color_name,
+                o.address,
+                o.city,
+                o.country,
+                o.payment_method,
+                o.phone,
+                o.fullname,
+                o.email,
+                o.note
             FROM order_details od
             JOIN product p ON od.product_id = p.id
             JOIN size s ON od.size_id = s.id
             JOIN color c ON od.color_id = c.id
+            JOIN orders o ON od.order_id = o.id
             WHERE od.order_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$order_id]);
@@ -141,9 +150,24 @@ try {
 
     <div id="content">
         <h2>Chi tiết đơn hàng #<?= htmlspecialchars($order_id) ?></h2>
-
         <a href="orderS.php" class="btn btn-secondary mb-3">← Quay lại danh sách</a>
-
+        <div class="order-customer-info" style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #eaeaea;">
+            <?php foreach ($order_items as $item): ?>
+                <h5 style="margin-bottom: 10px;">Customer Information</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Name:</strong> <?= htmlspecialchars($item['fullname']) ?? '' ?></p>
+                        <p><strong>Email:</strong> <?= htmlspecialchars($item['email']) ?? '' ?></p>
+                        <p><strong>Address:</strong> <?= htmlspecialchars($item['address']) ?? '' ?>, <?= htmlspecialchars($item['city']) ?? '' ?>, <?= htmlspecialchars($item['country']) ?? '' ?></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Phone:</strong> <?= htmlspecialchars($item['phone']) ?? '' ?></p>
+                        <p><strong>Payment Method:</strong> <?= htmlspecialchars($item['payment_method']) ?? '' ?></p>
+                        <p><strong>Note:</strong> <?= htmlspecialchars($item['note']) ?? '' ?></p>
+                    </div>
+                </div>
+            <?php endforeach ?>
+        </div>
         <table class="table table-bordered table-hover">
             <thead class="table-dark text-center">
                 <tr>

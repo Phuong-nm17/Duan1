@@ -15,9 +15,13 @@ $stmt = $conn->prepare("
         o.status, 
         o.order_date,
         o.fullname, 
-        o.email, 
+        o.email,
+        o.address,
+        o.city,
+        o.country, 
         o.payment_method, 
-        o.phone, 
+        o.phone,
+        o.note,
         od.product_id, 
         od.quantity, 
         od.price,
@@ -51,6 +55,10 @@ foreach ($rows as $row) {
             'email' => $row['email'],
             'payment_method' => $row['payment_method'],
             'phone' => $row['phone'],
+            'address' => $row['address'],
+            'city' => $row['city'],
+            'country' => $row['country'],
+            'note' => $row['note'],
             'items' => []
         ];
     }
@@ -271,9 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 case 'đang giao':
                                     echo '<span style="color: green;">In Transit</span>';
                                     break;
-
                                 case 'hoàn thành':
-
                                     echo '<span style="color: blue;">Completed</span>';
                                     break;
                                 case 'đã hủy':
@@ -295,13 +301,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
                             </form>
                         <?php endif; ?>
-                        <?php if (strtolower($order['status']) === 'đã hủy'): ?>
+                        <?php if (strtolower($order['status']) === 'đã hủy' || $order['status'] === 'hoàn thành'): ?>
                             <form method="POST" action="index.php?act=cart" style="display: inline;">
                                 <input type="hidden" name="reorder" value="1">
                                 <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
-                                <button type="submit" class="btn btn-primary btn-sm">re order</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Re Order</button>
                             </form>
                         <?php endif; ?>
+                    </div>
+                    <div class="order-customer-info" style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #eaeaea;">
+                        <h5 style="margin-bottom: 10px;">Customer Information</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Name:</strong> <?= htmlspecialchars($order['fullname']) ?></p>
+                                <p><strong>Email:</strong> <?= htmlspecialchars($order['email']) ?></p>
+                                <p><strong>Address:</strong> <?= htmlspecialchars($order['address']) ?>, <?= htmlspecialchars($order['city']) ?>, <?= htmlspecialchars($order['country']) ?></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Phone:</strong> <?= htmlspecialchars($order['phone']) ?></p>
+                                <p><strong>Payment Method:</strong> <?= htmlspecialchars($order['payment_method']) ?></p>
+                                <p><strong>Note:</strong> <?= htmlspecialchars($order['note']) ?></p>
+                            </div>
+                        </div>
                     </div>
                     <div class="order-content">
                         <table>

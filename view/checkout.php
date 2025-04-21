@@ -12,10 +12,14 @@ $user_id = $_SESSION['id'];
 
 // Lấy thông tin giỏ hàng của user
 $sql =  "SELECT cart.product_id, cart.size_id, cart.color_id, cart.quantity, 
-               product.title AS product_name, product.price, 
+               pv.price, 
+               product.title AS product_name,
                size.name AS size_name, color.name AS color_name
         FROM cart
         JOIN product ON cart.product_id = product.id
+        JOIN product_variants pv ON cart.product_id = pv.product_id 
+            AND cart.color_id = pv.color_id 
+            AND cart.size_id = pv.size_id
         JOIN size ON cart.size_id = size.id
         JOIN color ON cart.color_id = color.id
         WHERE cart.user_id = ?";

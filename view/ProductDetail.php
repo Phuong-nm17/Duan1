@@ -76,6 +76,24 @@ try {
 } catch (Exception $e) {
     die($e->getMessage());
 }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment_submit'])) {
+    $comment_content = trim($_POST['comment_content']);
+    $user_id = $_SESSION['id'] ?? null;
+
+    if ($user_id && $comment_content !== '') {
+        $sql = "INSERT INTO comments (user_id, product_id, content) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$user_id, $id, $comment_content]);
+    }
+}
+$sql = "SELECT c.content, c.created_at, u.fullname 
+        FROM comments c 
+        JOIN user u ON c.user_id = u.id 
+        WHERE c.product_id = ? 
+        ORDER BY c.created_at DESC";
+$stmt = $conn->prepare($sql);
+$stmt->execute([$id]);
+$comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -378,6 +396,41 @@ try {
         </div>
     </div>
     </div>
+
+    <!-- Comment Section Start -->
+    <div class="col-12 mt-5">
+        <h4 class="mb-4">Customer Comments</h4>
+
+        <!-- Comment Form (Only if user is logged in) -->
+        <?php if (isset($_SESSION['id'])): ?>
+            <form method="POST" class="mb-4">
+                <div class="form-group">
+                    <label for="comment_content">Leave a comment:</label>
+                    <textarea name="comment_content" id="comment_content" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" name="comment_submit" class="btn btn-primary">Post Comment</button>
+            </form>
+        <?php else: ?>
+            <p>Please <a href="index.php?act=login">log in</a> to leave a comment.</p>
+        <?php endif; ?>
+
+        <!-- Comments List -->
+        <div class="comments-list mt-4">
+            <?php if (count($comments) > 0): ?>
+                <?php foreach ($comments as $comment): ?>
+                    <div class="border p-3 mb-3">
+                        <strong><?= htmlspecialchars($comment['fullname']) ?></strong>
+                        <small class="text-muted ml-2"><?= date("d/m/Y H:i", strtotime($comment['created_at'])) ?></small>
+                        <p class="mt-2 mb-0"><?= nl2br(htmlspecialchars($comment['content'])) ?></p>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No comments yet. Be the first to comment!</p>
+            <?php endif; ?>
+        </div>
+    </div>
+    <!-- Comment Section End -->
+
 
 
 
