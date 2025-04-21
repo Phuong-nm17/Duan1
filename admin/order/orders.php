@@ -53,6 +53,7 @@ try {
         header("Location: orders.php");
         exit();
     }
+
 } catch (Exception $e) {
     die("Lỗi: " . $e->getMessage());
 }
@@ -200,8 +201,10 @@ try {
                     <th>Điện thoại</th>
                     <th>Địa chỉ</th>
                     <th>Phương thức</th>
+
                     <th>Trạng thái</th>
                     <th>Cập nhật trạng thái</th>
+
                     <th>Thao tác</th>
                 </tr>
             </thead>
@@ -221,11 +224,13 @@ try {
                         </td>
                         <td><?= htmlspecialchars($order['payment_method']) ?></td>
 
+
                         <td><?= htmlspecialchars($order['status']) ?></td>
                         <td>
                             <?php
                             $currentStatus = $order['status'];
                             $nextStatuses = $statusFlow[$currentStatus] ?? [];
+
                             ?>
                             <?php if (!empty($nextStatuses)): ?>
                                 <form method="POST" class="mt-1">
@@ -265,4 +270,7 @@ try {
 </body>
 
 
+
 </html>
+
+

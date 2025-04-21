@@ -27,7 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update = $conn->prepare("UPDATE user SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ?");
         $update->execute([$hashed, $token]);
 
+
         $message = "✅ The password has been changed successfully!";
+
         $redirect = true;
         $showForm = false;
     }

@@ -16,7 +16,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (password_verify($password, $user['password'])) {
                 $_SESSION['id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
+
                 $_SESSION['login_success'] = "Login Successfully!";
+
                 header("Location: index.php?act=home");
                 exit();
             } else {

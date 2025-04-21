@@ -19,16 +19,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 
     if (!$user || !password_verify($current, $user['password'])) {
+
         $message = 'The current password is incorrect.';
     } elseif ($new !== $confirm) {
         $message = 'The new password and confirmation do not match.';
     } elseif (strlen($new) < 6) {
         $message = 'The new password must be at least 6 characters long.';
+
     } else {
         $hashed = password_hash($new, PASSWORD_DEFAULT);
         $stmt = $conn->prepare("UPDATE user SET password = ? WHERE id = ?");
         $stmt->execute([$hashed, $_SESSION['id']]);
+
         $message = 'Password change successfully!';
+
         $success = true;
     }
 }

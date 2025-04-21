@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $updateStmt = $conn->prepare("UPDATE user SET reset_token = ?, reset_token_expires = ? WHERE email = ?");
             $updateStmt->execute([$token, $expires, $email]);
 
+
             $message = "✅ A password reset link has been sent. Redirecting...";
             $redirect = true;
         } else {
@@ -31,6 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } catch (PDOException $e) {
         $message = "⚠️ System Error: " . $e->getMessage();
+
     }
 }
 
@@ -127,6 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php endif; ?>
 
             <button type="submit" class="btn btn-primary w-100">Submit</button>
+
 
             <div class="text-center mt-3">
                 <a href="index.php?act=login">⬅️ Back to login</a>
