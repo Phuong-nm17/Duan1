@@ -15,7 +15,7 @@ if (isset($_GET["act"])) {
             include "view/footer.php";
             break;
         case 'register':
-            include "view/register.php";
+            include "view/register.php";    
             break;
         case 'login':
             include "view/login.php";

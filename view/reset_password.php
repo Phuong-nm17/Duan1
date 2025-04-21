@@ -18,16 +18,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirm = $_POST['confirm'];
 
     if ($password !== $confirm) {
-        $message = "⚠️ Mật khẩu xác nhận không khớp!";
+        $message = "⚠️ Confirmation password doesn't match!";
     } elseif (strlen($password) < 6) {
-        $message = "⚠️ Mật khẩu phải có ít nhất 6 ký tự!";
+        $message = "⚠️ The password must be at least 6 characters long!";
     } else {
 
         $hashed = password_hash($password, PASSWORD_DEFAULT);
         $update = $conn->prepare("UPDATE user SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE reset_token = ?");
         $update->execute([$hashed, $token]);
 
-        $message = "✅ Mật khẩu đã được thay đổi thành công!";
+
+        $message = "✅ The password has been changed successfully!";
+
         $redirect = true;
         $showForm = false;
     }

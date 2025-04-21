@@ -2,6 +2,60 @@
 session_start();
 require_once(__DIR__ . '/../model/connect.php');
 
+// Xử lý đặt lại đơn hàng
+if (isset($_POST['reorder']) && isset($_POST['order_id'])) {
+    $order_id = $_POST['order_id'];
+
+    // Lấy chi tiết đơn hàng cũ
+    $stmt = $conn->prepare("
+        SELECT od.product_id, od.quantity, od.color_id, od.size_id, pv.price
+        FROM order_details od
+        JOIN product_variants pv ON od.product_id = pv.product_id 
+            AND od.color_id = pv.color_id 
+            AND od.size_id = pv.size_id
+        WHERE od.order_id = ?
+    ");
+    $stmt->execute([$order_id]);
+    $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Xóa giỏ hàng hiện tại
+    if (isset($_SESSION['cart'])) {
+        unset($_SESSION['cart']);
+    }
+
+    // Thêm các sản phẩm vào giỏ hàng mới
+    foreach ($order_items as $item) {
+        // Kiểm tra tồn kho trước khi thêm vào giỏ hàng
+        $check_stock = $conn->prepare("
+            SELECT stock FROM product_variants 
+            WHERE product_id = ? AND color_id = ? AND size_id = ?
+        ");
+        $check_stock->execute([$item['product_id'], $item['color_id'], $item['size_id']]);
+        $stock = $check_stock->fetchColumn();
+
+        if ($stock > 0) {
+            // Thêm vào giỏ hàng với số lượng tối đa bằng tồn kho
+            $quantity = min($item['quantity'], $stock);
+
+            // Thêm vào database
+            $add_to_cart = $conn->prepare("
+                INSERT INTO cart (user_id, product_id, quantity, color_id, size_id)
+                VALUES (?, ?, ?, ?, ?)
+            ");
+            $add_to_cart->execute([
+                $_SESSION['id'],
+                $item['product_id'],
+                $quantity,
+                $item['color_id'],
+                $item['size_id']
+            ]);
+        }
+    }
+
+    // Chuyển hướng về trang giỏ hàng
+    header("Location: index.php?act=cart");
+    exit();
+}
 
 if (isset($_SESSION['email'])) {
     try {
@@ -24,14 +78,17 @@ $user_id = $_SESSION['id'];
 $sql = "SELECT 
             cart.*, 
             product.title AS product_title, 
-            product.price,
             product.thumbnail,  
             size.name AS size_name, 
-            color.name AS color_name
+            color.name AS color_name, 
+            product_variants.price AS variant_price
         FROM cart
         JOIN product ON cart.product_id = product.id
         LEFT JOIN size ON cart.size_id = size.id
         LEFT JOIN color ON cart.color_id = color.id
+        LEFT JOIN product_variants ON cart.product_id = product_variants.product_id
+            AND cart.size_id = product_variants.size_id
+            AND cart.color_id = product_variants.color_id
         WHERE cart.user_id = $user_id";
 
 $result = $conn->query($sql);
@@ -168,7 +225,7 @@ $result = $conn->query($sql);
                         <?php
                         $subtotal = 0;
                         while ($row = $result->fetch(PDO::FETCH_ASSOC)):
-                            $item_total = $row['price'] * $row['quantity'];
+                            $item_total = $row['variant_price'] * $row['quantity'];
                             $subtotal += $item_total;
                         ?>
 
@@ -184,7 +241,7 @@ $result = $conn->query($sql);
                                     <small>Size: <?= $row['size_name'] ?? 'N/A' ?> | Color:
                                         <?= $row['color_name'] ?? 'N/A' ?></small>
                                 </td>
-                                <td class="align-middle">$<?= number_format($row['price'], 2) ?></td>
+                                <td class="align-middle">$<?= number_format($row['variant_price'], 2) ?></td>
                                 <td class="align-middle">
                                     <div class="input-group quantity mx-auto" style="width: 100px;">
                                         <div class="input-group-btn">

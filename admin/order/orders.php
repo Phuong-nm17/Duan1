@@ -223,11 +223,14 @@ try {
                             <?= $order['zipcode'] ?>
                         </td>
                         <td><?= htmlspecialchars($order['payment_method']) ?></td>
+
+
                         <td><?= htmlspecialchars($order['status']) ?></td>
                         <td>
                             <?php
-                                $currentStatus = $order['status'];
-                                $nextStatuses = $statusFlow[$currentStatus] ?? [];
+                            $currentStatus = $order['status'];
+                            $nextStatuses = $statusFlow[$currentStatus] ?? [];
+
                             ?>
                             <?php if (!empty($nextStatuses)): ?>
                                 <form method="POST" class="mt-1">
@@ -267,5 +270,7 @@ try {
 </body>
 
 
+
 </html>
+
 

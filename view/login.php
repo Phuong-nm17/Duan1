@@ -16,14 +16,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (password_verify($password, $user['password'])) {
                 $_SESSION['id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
-                $_SESSION['login_success'] = "Đăng nhập thành công!";
+
+                $_SESSION['login_success'] = "Login Successfully!";
+
                 header("Location: index.php?act=home");
                 exit();
             } else {
-                $error = "Sai mật khẩu!";
+                $error = "Wrong password!";
             }
         } else {
-            $error = "Email không tồn tại!";
+            $error = "Email doesn't exist!";
         }
     } catch (PDOException $e) {
         die("Lỗi kết nối: " . $e->getMessage());

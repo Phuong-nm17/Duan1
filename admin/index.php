@@ -27,7 +27,7 @@ if (!isset($_SESSION['csrf_token'])) {
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Admin Panel</a>
+            <a class="navbar-brand" href="#">Admin Farah</a>
             <a href="./auth/logout.php" class="btn btn-danger">Đăng xuất</a>
         </div>
     </nav>

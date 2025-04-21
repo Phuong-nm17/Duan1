@@ -271,7 +271,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 case 'đang giao':
                                     echo '<span style="color: green;">In Transit</span>';
                                     break;
-                                case 'Hoàn thành':
+
+                                case 'hoàn thành':
+
                                     echo '<span style="color: blue;">Completed</span>';
                                     break;
                                 case 'đã hủy':
@@ -282,10 +284,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             }
                             ?>
                         </span>
-                        <?php if ($order['status'] !== 'đã hủy' && $order['status'] !== 'Hoàn thành'): ?>
-                            <form method="POST" style="display: inline;">
+
+                        <?php if (
+                            strtolower($order['status']) !== 'đã hủy' &&
+                            strtolower($order['status']) !== 'hoàn thành' &&
+                            strtolower($order['status']) !== 'đang giao'
+                        ): ?>
+                            <form method="POST" style="display: inline;"></form>
+                            <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
+                            <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
+                            </form>
+                        <?php endif; ?>
+                        <?php if (strtolower($order['status']) === 'đã hủy'): ?>
+                            <form method="POST" action="index.php?act=cart" style="display: inline;">
+                                <input type="hidden" name="reorder" value="1">
                                 <input type="hidden" name="order_id" value="<?= htmlspecialchars($id) ?>">
-                                <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Đặt lại</button>
+
                             </form>
                         <?php endif; ?>
                     </div>

@@ -1,11 +1,14 @@
 <?php
-class Product{
+class Product
+{
     private $conn;
-    public function __construct(){
+    public function __construct()
+    {
         include('Connect.php');
         $this->conn = $conn;
     }
-    public function getAll(){
+    public function getAll()
+    {
         $sql = 'SELECT * FROM product';
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
