@@ -166,7 +166,7 @@ try {
         <div class="row align-items-center py-3 px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="index.php?act=home" class="text-decoration-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                    <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">Farah</span></h1>
 
                 </a>
             </div>
@@ -283,7 +283,7 @@ if (isset($_GET['search'])): ?>
 
 
     <?php if (empty($product)): ?>
-        <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">Không tìm thấy sản phẩm nào.
+        <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">No products found.
         </p>
     <?php else: ?>
         <div class=" row pb-3 px-xl-5">
@@ -343,7 +343,7 @@ if (isset($_GET['search'])): ?>
                     </div>
                 <?php endforeach; ?>
             <?php else : ?>
-                <p class="text-center">Không có sản phẩm nào trong danh mục này.</p>
+                <p class="text-center">There are no products in this category.</p>
             <?php endif; ?>
         </div>
     </div>

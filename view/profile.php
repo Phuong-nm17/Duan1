@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h2>My Profile</h2>
             <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
                 <div id="success-message" style="background: #e6ffed; color: #2f855a; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-                    ✅ Thông tin đã được cập nhật thành công!
+                    ✅ Information has been updated successfully!
                 </div>
                 <script>
                     const url = new URL(window.location.href);

@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
     // Commit giao dịch
     $conn->commit();
 
-    echo "<div style='text-align:center; margin-top:20px; font-size:20px; color:green;'>🎉 Đặt hàng thành công!</div>";
+    echo "<div style='text-align:center; margin-top:20px; font-size:20px; color:green;'>🎉 Order successful!</div>";
     header("Refresh: 1; URL=index.php?act=home");
     exit();
   } catch (Exception $e) {
