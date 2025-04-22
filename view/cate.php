@@ -21,8 +21,7 @@ if (isset($_SESSION['email'])) {
 try {
 
     $category_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-
-
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
     $sql = "SELECT product.id AS product_id, product.title, product.price, product.thumbnail, product.discount, category.name 
             FROM product 
@@ -47,8 +46,9 @@ try {
 
     $stmt = $conn->prepare($sql);
 
-    if ($category_id > 0) {
-        $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
+    // Bind tất cả các parameters
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
     }
 
     $stmt->execute();
@@ -280,8 +280,6 @@ if (isset($_GET['search'])): ?>
     <h2 class="text-primary text-uppercase mb-3" style="margin-left: 40px;">
         Kết quả tìm kiếm cho: "<?= htmlspecialchars($_GET['search']) ?>"
     </h2>
-
-
     <?php if (empty($product)): ?>
         <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">No products found.
         </p>
