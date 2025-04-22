@@ -278,7 +278,7 @@ try {
 <?php
 if (isset($_GET['search'])): ?>
     <h2 class="text-primary text-uppercase mb-3" style="margin-left: 40px;">
-        Kết quả tìm kiếm cho: "<?= htmlspecialchars($_GET['search']) ?>"
+    Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
     </h2>
     <?php if (empty($product)): ?>
         <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">No products found.
@@ -289,7 +289,9 @@ if (isset($_GET['search'])): ?>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card border-0 mb-4 product-item">
                         <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
+                            <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>">
                             <img class="w-100 img-fluid" src="<?= $p['thumbnail'] ?>" alt="">
+                            </a>
                         </div>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
@@ -300,7 +302,7 @@ if (isset($_GET['search'])): ?>
                         </div>
                         <div class="d-flex card-footer bg-light border justify-content-between">
                             <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm p-0 text-dark"><i class="text-primary fa-shopping-cart fas mr-1"></i>Add To
+                            <a href="index.php?act=ProductDetail&id=<?= $p['product_id'] ?>" class="btn btn-sm p-0 text-dark"><i class="text-primary fa-shopping-cart fas mr-1"></i>Add To
                                 Cart</a>
                         </div>
                     </div>
