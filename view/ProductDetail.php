@@ -3,11 +3,11 @@ session_start();
 require_once(__DIR__ . '/../model/connect.php');
 
 try {
-    $id = $_GET['id'] ?? null; // Get 'id' from the URL
+    $id = $_GET['id'] ?? null; 
     if ($id) {
         $sql = "SELECT * FROM product WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$id]); // Pass the ID parameter
+        $stmt->execute([$id]); 
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
     } else {
         die("Invalid product ID");
@@ -358,6 +358,9 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php endforeach; ?>
                     </div>
 
+                    <!-- Hiển thị thông tin stock -->
+                    <div id="variant-stock" class="mb-3 text-primary font-weight-bold"></div>
+
                     <div class="d-flex align-items-center mb-4 pt-2">
                         <div class="input-group quantity mr-3" style="width: 130px;">
                             <button type="button" class="btn btn-primary btn-minus">
@@ -469,6 +472,7 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 quantityInput.value = 1;
                 quantityInput.disabled = true;
                 stockWarning.style.display = 'none';
+                document.getElementById('variant-stock').textContent = '';
                 return;
             }
 
@@ -480,19 +484,21 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 priceDisplay.textContent = '$ ' + match.price.toLocaleString();
                 quantityInput.disabled = false;
                 quantityInput.max = match.stock;
+                document.getElementById('variant-stock').textContent = 'Remaining quantity: ' + match.stock;
                 checkQuantity(match.stock);
             } else {
                 priceDisplay.textContent = 'Không có giá cho lựa chọn này';
                 quantityInput.value = 1;
                 quantityInput.disabled = true;
                 stockWarning.style.display = 'none';
+                document.getElementById('variant-stock').textContent = 'Không có sản phẩm cho lựa chọn này';
             }
         }
 
         function checkQuantity(stock) {
             const quantity = parseInt(quantityInput.value);
             if (quantity > stock) {
-                stockWarning.textContent = 'Số lượng vượt quá tồn kho. Số lượng còn lại: ' + stock;
+                stockWarning.textContent = 'Số lượng vượt quá tồn kho. Remaining quantity: ' + stock;
                 stockWarning.style.display = 'block';
                 quantityInput.value = stock;
                 alert('Số lượng vượt quá tồn kho. Số lượng tối đa là: ' + stock);

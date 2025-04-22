@@ -4,7 +4,7 @@ require '../../model/connect.php';
 if (!isset($_SESSION['admin']))
     header("Location: login.php");
 
-$stmt = $conn->prepare("SELECT c.id, c.content, c.created_at, u.fullname AS user_name, p.title AS product_name FROM comments c JOIN user u ON c.user_id = u.id JOIN product p ON c.product_id = p.id ORDER BY c.created_at DESC");
+$stmt = $conn->prepare("SELECT c.id, c.content, c.created_at, u.fullname AS user_name, p.title AS product_name, p.thumbnail AS product_image FROM comments c JOIN user u ON c.user_id = u.id JOIN product p ON c.product_id = p.id ORDER BY c.created_at DESC");
 $stmt->execute();
 $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -138,9 +138,10 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Ảnh sản phẩm</th>
+                                        <th>Tên sản phẩm</th>
                                         <th>Nội dung</th>
                                         <th>Người bình luận</th>
-                                        <th>Sản phẩm</th>
                                         <th>Thời gian</th>
                                     </tr>
                                 </thead>
@@ -148,9 +149,10 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <?php foreach ($comments as $comment): ?>
                                         <tr>
                                             <td><?= htmlspecialchars($comment['id']) ?></td>
+                                            <td><img src="<?= htmlspecialchars($comment['product_image']) ?>" style="width: 50px; height: 50px; object-fit: cover;"></td>
+                                            <td><?= htmlspecialchars($comment['product_name']) ?></td>
                                             <td><?= htmlspecialchars($comment['content']) ?></td>
                                             <td><?= htmlspecialchars($comment['user_name']) ?></td>
-                                            <td><?= htmlspecialchars($comment['product_name']) ?></td>
                                             <td><?= htmlspecialchars($comment['created_at']) ?></td>
                                         </tr>
                                     <?php endforeach; ?>

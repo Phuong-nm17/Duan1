@@ -38,7 +38,8 @@ if (!isset($_SESSION['csrf_token'])) {
             <a href="product/product.php" class="btn btn-success mb-3">Quản lý Sản phẩm</a>
             <a href="category/categories.php" class="btn btn-secondary mb-3">Quản lý danh mục</a>
             <a href="user/user_management.php" class="btn btn-primary mb-3">Quản lý khách hàng</a>
-            <a href="order/orders.php" class="btn btn-info ">Quản lý đơn hàng</a>
+            <a href="order/orders.php" class="btn btn-info mb-3">Quản lý đơn hàng</a>
+            <a href="comment/comment.php" class="btn btn-warning ">Quản lý bình luận</a>
         </div>
     </div>
 </body>
