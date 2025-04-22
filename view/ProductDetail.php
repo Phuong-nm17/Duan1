@@ -427,7 +427,7 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <small class="text-muted ml-2"><?= date("d/m/Y H:i", strtotime($comment['created_at'])) ?></small>
                         <p class="mt-2 mb-0"><?= nl2br(htmlspecialchars($comment['content'])) ?></p>
                     </div>
-                <?php endforeach; 
+                <?php endforeach; ?>
             <?php else: ?>
                 <p>No comments yet. Be the first to comment!</p>
             <?php endif; ?>
