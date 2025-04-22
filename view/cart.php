@@ -40,10 +40,10 @@ if (isset($_POST['reorder']) && isset($_POST['order_id'])) {
         } else if ($item['stock'] > 0) {
             // Nếu tồn kho không đủ nhưng còn hàng, thêm với số lượng tồn kho
             $quantity = $item['stock'];
-            $reorder_message .= "Sản phẩm {$item['title']} chỉ còn {$item['stock']} trong kho. ";
+            $reorder_message .= "Product {$item['title']} only has {$item['stock']} items in stock. ";
         } else {
-            // Nếu hết hàng, bỏ qua sản phẩm này
-            $reorder_message .= "Sản phẩm {$item['title']} đã hết hàng. ";
+            // If out of stock, skip this product
+            $reorder_message .= "Product {$item['title']} is out of stock. ";
             continue;
         }
             
@@ -225,6 +225,16 @@ $result = $conn->query($sql);
     <div class="container-fluid pt-5">
         <div class="row px-xl-5">
             <div class="col-lg-8 table-responsive mb-5">
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?= $_SESSION['error'] ?>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <?php unset($_SESSION['error']); ?>
+                <?php endif; ?>
+                
                 <table class="table table-bordered text-center mb-0">
                     <thead class="bg-secondary text-dark">
                         <tr>
@@ -285,10 +295,17 @@ $result = $conn->query($sql);
                             </tr>
                         <?php endwhile; ?>
 
-
-
-
                 </table>
+                    <!-- Hiển thị thông báo Re Order nếu có -->
+    <?php if (isset($_SESSION['reorder_message'])): ?>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <?= $_SESSION['reorder_message'] ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <?php unset($_SESSION['reorder_message']); ?>
+<?php endif; ?>
             </div>
             <div class="col-lg-4">
                 <form class="mb-5" action="">
@@ -329,16 +346,7 @@ $result = $conn->query($sql);
             </div>
         </div>
     </div>
-    <!-- Hiển thị thông báo Re Order nếu có -->
-<?php if (isset($_SESSION['reorder_message'])): ?>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <?= $_SESSION['reorder_message'] ?>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <?php unset($_SESSION['reorder_message']); ?>
-<?php endif; ?>
+
 
 <!-- Cart Start -->
     <?php include 'footer.php'; ?>

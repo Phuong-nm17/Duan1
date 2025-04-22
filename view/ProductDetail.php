@@ -13,7 +13,7 @@ try {
         die("Invalid product ID");
     }
 } catch (Exception $e) {
-    die($e->getMessage());
+    die("Query error: " . $e->getMessage());
 }
 try {
 
@@ -102,7 +102,7 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <head>
     <meta charset="utf-8">
-    <title>Thời trang Farah</title>
+    <title>Farah Fashion</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
@@ -427,7 +427,7 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <small class="text-muted ml-2"><?= date("d/m/Y H:i", strtotime($comment['created_at'])) ?></small>
                         <p class="mt-2 mb-0"><?= nl2br(htmlspecialchars($comment['content'])) ?></p>
                     </div>
-                <?php endforeach; ?>
+                <?php endforeach; 
             <?php else: ?>
                 <p>No comments yet. Be the first to comment!</p>
             <?php endif; ?>
@@ -468,7 +468,7 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const sizeId = getSelectedValue('size_id');
 
             if (!colorId || !sizeId) {
-                priceDisplay.textContent = 'Vui lòng chọn màu và size';
+                priceDisplay.textContent = 'Please select color and size';
                 quantityInput.value = 1;
                 quantityInput.disabled = true;
                 stockWarning.style.display = 'none';
@@ -487,11 +487,11 @@ $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 document.getElementById('variant-stock').textContent = 'Remaining quantity: ' + match.stock;
                 checkQuantity(match.stock);
             } else {
-                priceDisplay.textContent = 'Không có giá cho lựa chọn này';
+                priceDisplay.textContent = 'No price available for this selection';
                 quantityInput.value = 1;
                 quantityInput.disabled = true;
                 stockWarning.style.display = 'none';
-                document.getElementById('variant-stock').textContent = 'Không có sản phẩm cho lựa chọn này';
+                document.getElementById('variant-stock').textContent = 'No product available for this selection';
             }
         }
 
