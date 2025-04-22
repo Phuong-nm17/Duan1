@@ -152,21 +152,19 @@ try {
         <h2>Chi tiết đơn hàng #<?= htmlspecialchars($order_id) ?></h2>
         <a href="orderS.php" class="btn btn-secondary mb-3">← Quay lại danh sách</a>
         <div class="order-customer-info" style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #eaeaea;">
-            <?php foreach ($order_items as $item): ?>
-                <h5 style="margin-bottom: 10px;">Customer Information</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Name:</strong> <?= htmlspecialchars($item['fullname']) ?? '' ?></p>
-                        <p><strong>Email:</strong> <?= htmlspecialchars($item['email']) ?? '' ?></p>
-                        <p><strong>Address:</strong> <?= htmlspecialchars($item['address']) ?? '' ?>, <?= htmlspecialchars($item['city']) ?? '' ?>, <?= htmlspecialchars($item['country']) ?? '' ?></p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Phone:</strong> <?= htmlspecialchars($item['phone']) ?? '' ?></p>
-                        <p><strong>Payment Method:</strong> <?= htmlspecialchars($item['payment_method']) ?? '' ?></p>
-                        <p><strong>Note:</strong> <?= htmlspecialchars($item['note']) ?? '' ?></p>
-                    </div>
+            <h5 style="margin-bottom: 10px;">Customer Information</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Name:</strong> <?= htmlspecialchars($order_items[0]['fullname']) ?? '' ?></p>
+                    <p><strong>Email:</strong> <?= htmlspecialchars($order_items[0]['email']) ?? '' ?></p>
+                    <p><strong>Address:</strong> <?= htmlspecialchars($order_items[0]['address']) ?? '' ?>, <?= htmlspecialchars($order_items[0]['city']) ?? '' ?>, <?= htmlspecialchars($order_items[0]['country']) ?? '' ?></p>
                 </div>
-            <?php endforeach ?>
+                <div class="col-md-6">
+                    <p><strong>Phone:</strong> <?= htmlspecialchars($order_items[0]['phone']) ?? '' ?></p>
+                    <p><strong>Payment Method:</strong> <?= htmlspecialchars($order_items[0]['payment_method']) ?? '' ?></p>
+                    <p><strong>Note:</strong> <?= htmlspecialchars($order_items[0]['note']) ?? '' ?></p>
+                </div>
+            </div>
         </div>
         <table class="table table-bordered table-hover">
             <thead class="table-dark text-center">

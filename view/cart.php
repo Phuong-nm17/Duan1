@@ -8,48 +8,62 @@ if (isset($_POST['reorder']) && isset($_POST['order_id'])) {
 
     // Lấy chi tiết đơn hàng cũ
     $stmt = $conn->prepare("
-        SELECT od.product_id, od.quantity, od.color_id, od.size_id, pv.price
+        SELECT 
+            od.product_id, 
+            od.quantity, 
+            od.color_id, 
+            od.size_id,
+            pv.stock,
+            p.title
         FROM order_details od
         JOIN product_variants pv ON od.product_id = pv.product_id 
             AND od.color_id = pv.color_id 
             AND od.size_id = pv.size_id
+        JOIN product p ON od.product_id = p.id
         WHERE od.order_id = ?
     ");
     $stmt->execute([$order_id]);
     $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Xóa giỏ hàng hiện tại
-    if (isset($_SESSION['cart'])) {
-        unset($_SESSION['cart']);
-    }
+    $delete_cart = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
+    $delete_cart->execute([$_SESSION['id']]);
+
+    $reorder_message = '';
 
     // Thêm các sản phẩm vào giỏ hàng mới
     foreach ($order_items as $item) {
-        // Kiểm tra tồn kho trước khi thêm vào giỏ hàng
-        $check_stock = $conn->prepare("
-            SELECT stock FROM product_variants 
-            WHERE product_id = ? AND color_id = ? AND size_id = ?
-        ");
-        $check_stock->execute([$item['product_id'], $item['color_id'], $item['size_id']]);
-        $stock = $check_stock->fetchColumn();
-
-        if ($stock > 0) {
-            // Thêm vào giỏ hàng với số lượng tối đa bằng tồn kho
-            $quantity = min($item['quantity'], $stock);
-
-            // Thêm vào database
-            $add_to_cart = $conn->prepare("
-                INSERT INTO cart (user_id, product_id, quantity, color_id, size_id)
-                VALUES (?, ?, ?, ?, ?)
-            ");
-            $add_to_cart->execute([
-                $_SESSION['id'],
-                $item['product_id'],
-                $quantity,
-                $item['color_id'],
-                $item['size_id']
-            ]);
+        // Kiểm tra số lượng tồn kho
+        if ($item['stock'] >= $item['quantity']) {
+            // Nếu tồn kho đủ, thêm với số lượng gốc
+            $quantity = $item['quantity'];
+        } else if ($item['stock'] > 0) {
+            // Nếu tồn kho không đủ nhưng còn hàng, thêm với số lượng tồn kho
+            $quantity = $item['stock'];
+            $reorder_message .= "Sản phẩm {$item['title']} chỉ còn {$item['stock']} trong kho. ";
+        } else {
+            // Nếu hết hàng, bỏ qua sản phẩm này
+            $reorder_message .= "Sản phẩm {$item['title']} đã hết hàng. ";
+            continue;
         }
+            
+        // Thêm vào database
+        $add_to_cart = $conn->prepare("
+            INSERT INTO cart (user_id, product_id, quantity, color_id, size_id)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $add_to_cart->execute([
+            $_SESSION['id'],
+            $item['product_id'], 
+            $quantity,
+            $item['color_id'],
+            $item['size_id']
+        ]);
+    }
+
+    // Lưu thông báo vào session
+    if (!empty($reorder_message)) {
+        $_SESSION['reorder_message'] = $reorder_message;
     }
 
     // Chuyển hướng về trang giỏ hàng
@@ -315,6 +329,18 @@ $result = $conn->query($sql);
             </div>
         </div>
     </div>
+    <!-- Hiển thị thông báo Re Order nếu có -->
+<?php if (isset($_SESSION['reorder_message'])): ?>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <?= $_SESSION['reorder_message'] ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <?php unset($_SESSION['reorder_message']); ?>
+<?php endif; ?>
+
+<!-- Cart Start -->
     <?php include 'footer.php'; ?>
     <!-- Cart End -->
     <!-- Back to Top -->
