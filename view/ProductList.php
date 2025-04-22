@@ -2,6 +2,52 @@
 session_start();
 require_once(__DIR__ . '/../model/connect.php');
 
+function fetchProducts($conn, $search = '', $min_price = 0, $max_price = 0, $sort = 'asc')
+{
+    $sql = "SELECT * FROM product WHERE 1=1";
+
+    if (!empty($search)) {
+        $sql .= " AND title LIKE :search";
+    }
+    if ($min_price > 0) {
+        $sql .= " AND discount >= :min_price";  // Thay đổi từ price sang discount
+    }
+    if ($max_price > 0) {
+        $sql .= " AND discount <= :max_price";  // Thay đổi từ price sang discount
+    }
+
+    $sort = strtolower($sort) === 'desc' ? 'DESC' : 'ASC';
+    $sql .= " ORDER BY discount $sort";  // Thay đổi từ price sang discount
+
+    $stmt = $conn->prepare($sql);
+
+    if (!empty($search)) {
+        $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
+    }
+    if ($min_price > 0) {
+        $stmt->bindValue(':min_price', $min_price, PDO::PARAM_INT);
+    }
+    if ($max_price > 0) {
+        $stmt->bindValue(':max_price', $max_price, PDO::PARAM_INT);
+    }
+
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Lấy dữ liệu từ GET
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$min_price = isset($_GET['min_price']) ? (int) $_GET['min_price'] : 0;
+$max_price = isset($_GET['max_price']) ? (int) $_GET['max_price'] : 0;
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'asc';
+
+try {
+    $products = fetchProducts($conn, $search, $min_price, $max_price, $sort);
+} catch (Exception $e) {
+    die("Lỗi truy vấn: " . $e->getMessage());
+}
+
+// Lấy thông tin user nếu đã đăng nhập
 if (isset($_SESSION['email'])) {
     try {
         $sql = "SELECT fullname FROM user WHERE email = :email";
@@ -14,54 +60,14 @@ if (isset($_SESSION['email'])) {
     }
 }
 
+// Lấy danh sách categories
 try {
-
-    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-
-    if (!empty($search)) {
-        $sql = "SELECT * FROM product WHERE title LIKE :search";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
-    } else {
-        $sql = "SELECT * FROM product";
-        $stmt = $conn->prepare($sql);
-    }
-
-    $stmt->execute();
-
-    $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) {
-    die($e->getMessage());
-}
-try {
-
-    $sql = "SELECT * FROM category;";
-
+    $sql = "SELECT * FROM category";
     $stmt = $conn->prepare($sql);
-
     $stmt->execute();
-
     $category = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
-    die($e->getMessage());
-}
-try {
-
-    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-
-    if (!empty($search)) {
-        $sql = "SELECT * FROM product WHERE title LIKE :search";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
-    } else {
-        $sql = "SELECT * FROM product";
-        $stmt = $conn->prepare($sql);
-    }
-
-    $stmt->execute();
-    $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) {
-    die($e->getMessage());
+    die("Lỗi truy vấn: " . $e->getMessage());
 }
 
 ?>
@@ -125,6 +131,46 @@ try {
 
         .submenu a:hover {
             background: #f1f1f1;
+        }
+
+        .filter-form .form-label {
+            font-weight: 600;
+        }
+
+        .filter-form .form-control,
+        .filter-form .form-select {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .filter-form button {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+
+        .filter-form button:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .filter-form a {
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            color: #333;
+        }
+
+        .filter-form a:hover {
+            background-color: #e2e6ea;
+            color: #007bff;
+        }
+
+        .product-container {
+            display: flex;
+            /* flex-wrap: wrap; */
+            gap: 20px;
+            justify-content: flex-start;
+            align-items: stretch;
         }
     </style>
 </head>
@@ -223,9 +269,10 @@ try {
         </div>
         <div class="col-lg-9">
             <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
-                <a href="" class="text-decoration-none d-block d-lg-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold"><span
-                            class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+                <a href="index.php?act=home" class="text-decoration-none d-block d-lg-none">
+                    <h1 class="m-0 display-5 font-weight-semi-bold text-primary font-weight-bold px-3 mr-1">
+                        Farah
+                    </h1>
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
@@ -272,81 +319,79 @@ try {
     </div>
 </div>
 <!-- Page Header End -->
-
-<?php
-if (isset($_GET['search'])): ?>
-    <h2 class="text-primary text-uppercase mb-3" style="margin-left: 40px;">
-        Search results for: "<?= htmlspecialchars($_GET['search']) ?>"
-    </h2>
-
-
-    <?php if (empty($product)): ?>
-        <p class="text-danger mb-3" style="margin-left: 60px; font-size: 20px; font-weight: bold;">No products found.
-        </p>
-    <?php else: ?>
-        <div class=" row pb-3 px-xl-5">
-            <?php foreach ($product as $p): ?>
-                <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                    <div class="card border-0 mb-4 product-item">
-                        <div class="card-header bg-transparent border p-0 position-relative overflow-hidden product-img">
-                            <img class="w-100 img-fluid" src="<?= $p['thumbnail'] ?>" alt="">
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <form method="GET" action="index.php" class="filter-form mb-5">
+                <input type="hidden" name="act" value="ProductList">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="price-range" class="form-label">Price Range:</label>
+                        <div class="d-flex align-items-center">
+                            <span id="min-price-display">$0</span>
+                            <input type="range" class="form-range mx-2" id="price-range" 
+                                min="0" max="200" step="1"
+                                value="<?= htmlspecialchars($max_price ?: '200') ?>">
+                            <span id="max-price-display">$200</span>
                         </div>
-                        <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
-                            <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
-                            <div class="d-flex justify-content-center">
-                                <h6> $ <?= number_format($p['price'], 2) ?></h6>
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount'], 2) ?></del></h6>
-                            </div>
-                        </div>
-                        <div class="d-flex card-footer bg-light border justify-content-between">
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
-                                    class="text-primary fa-eye fas mr-1"></i>View Detail</a>
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm p-0 text-dark"><i
-                                    class="text-primary fa-shopping-cart fas mr-1"></i>Add To
-                                Cart</a>
-
-                        </div>
+                        <input type="hidden" name="min_price" id="min_price" value="<?= htmlspecialchars($min_price) ?>">
+                        <input type="hidden" name="max_price" id="max_price" value="<?= htmlspecialchars($max_price) ?>">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="sort" class="form-label">Sort by:</label>
+                        <select class="form-control" name="sort" id="sort">
+                            <option value="asc" <?= $sort === 'asc' ? 'selected' : '' ?>>Price: Low to High</option>
+                            <option value="desc" <?= $sort === 'desc' ? 'selected' : '' ?>>Price: High to Low</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
                     </div>
                 </div>
-            <?php endforeach; ?>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <a href="index.php?act=ProductList" class="btn btn-secondary w-100">Reset</a>
+                    </div>
+                </div>
+            </form>
         </div>
-        </div>
-    <?php endif; ?>
-<?php else: ?>
-    <!-- Products start -->
-    <div class="container-fluid pt-5">
-        <div class="text-center mb-4">
-            <h2 class="section-title px-5"><span class="px-2">Shop</span></h2>
-        </div>
-        <div class="row px-xl-5 pb-3">
-            <?php foreach ($product as $p): ?>
+    </div>
+
+    <div class="row px-xl-5">
+        <?php if (!empty($products)): ?>
+            <?php foreach ($products as $product): ?>
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card product-item border-0 mb-4">
                         <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>"><img class="img-fluid w-100" src="<?= $p['thumbnail'] ?>" alt=""></a>
+                            <img class="img-fluid w-100" src="<?= htmlspecialchars($product['thumbnail']) ?>" alt="">
                         </div>
                         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                            <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
+                            <h6 class="text-truncate mb-3"><?= htmlspecialchars($product['title']) ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6>$ <?= number_format($p['discount'], 2) ?></h6>
-                                <h6 class="text-muted ml-2">$ <del><?= number_format($p['price'], 2) ?> </del></h6>
+                                <h6><?= number_format($product['discount'], 0, ',', '.') ?>đ</h6>
+                                <?php if ($product['price'] > $product['discount']): ?>
+                                    <h6 class="text-muted ml-2"><del><?= number_format($product['price'], 0, ',', '.') ?>đ</del></h6>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i
-                                    class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                            <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>" class="btn btn-sm text-dark p-0"><i
-                                    class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-
-
+                            <a href="index.php?act=ProductDetail&id=<?= $product['id'] ?>" class="btn btn-sm text-dark p-0">
+                                <i class="fas fa-eye text-primary mr-1"></i>View Detail
+                            </a>
+                            <a href="index.php?act=ProductDetail&id=<?= $product['id'] ?>" class="btn btn-sm text-dark p-0">
+                                <i class="fas fa-shopping-cart text-primary mr-1"></i>Add to Cart
+                            </a>
                         </div>
-
                     </div>
                 </div>
             <?php endforeach; ?>
-        </div>
+        <?php else: ?>
+            <div class="col-12">
+                <p class="text-center">No products found.</p>
+            </div>
+        <?php endif; ?>
     </div>
-<?php endif; ?>
+</div>
 
 <!-- Products End -->
 <!-- Back to Top -->
@@ -365,3 +410,68 @@ if (isset($_GET['search'])): ?>
 
 <!-- Template Javascript -->
 <script src="view/js/main.js"></script>
+
+<!-- Thêm style cho thanh range slider -->
+<style>
+    .form-range {
+        width: 100%;
+        height: 10px;
+        padding: 0;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+        border-radius: 5px;
+    }
+
+    .form-range:hover {
+        opacity: 1;
+    }
+
+    .form-range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #007bff;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    .form-range::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: #007bff;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    #min-price-display, #max-price-display {
+        min-width: 80px;
+    }
+</style>
+
+<!-- Thêm script để xử lý thanh range -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const priceRange = document.getElementById('price-range');
+    const minPriceInput = document.getElementById('min_price');
+    const maxPriceInput = document.getElementById('max_price');
+    const minPriceDisplay = document.getElementById('min-price-display');
+    const maxPriceDisplay = document.getElementById('max-price-display');
+
+    function formatPrice(price) {
+        return '$' + new Intl.NumberFormat().format(price);
+    }
+
+    priceRange.addEventListener('input', function() {
+        const value = this.value;
+        maxPriceInput.value = value;
+        maxPriceDisplay.textContent = formatPrice(value);
+    });
+
+    // Khởi tạo giá trị ban đầu
+    maxPriceDisplay.textContent = formatPrice(priceRange.value);
+});
+</script>

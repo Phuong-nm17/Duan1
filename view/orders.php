@@ -246,7 +246,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row align-items-center px-xl-5 py-3">
             <div class="col-lg-3 d-lg-block d-none">
                 <a href="index.php?act=home" class="text-decoration-none">
-                    <h1 class="display-5 m-0 font-weight-semi-bold"><span class="border text-primary font-weight-bold mr-1 px-3">E</span>Shopper</h1>
+                    <h1 class="m-0 display-5 font-weight-semi-bold text-primary font-weight-bold px-3 mr-1">
+                        Farah
+                    </h1>
                 </a>
             </div>
         </div>
