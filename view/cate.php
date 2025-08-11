@@ -329,8 +329,8 @@ if (isset($_GET['search'])): ?>
                             <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                                 <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                                 <div class="d-flex justify-content-center">
-                                    <h6>$ <?= number_format($p['price']) ?></h6>
-                                    <h6 class="text-muted ml-2">$ <del><?= number_format($p['discount']) ?> </del></h6>
+                                    <h6>$ <?= number_format($p['discount'],2) ?></h6>
+                                    <h6 class="text-muted ml-2">$ <del><?= number_format($p['price'],2) ?> </del></h6>
                                 </div>
                             </div>
                             <div class="card-footer d-flex justify-content-between bg-light border">

@@ -368,9 +368,9 @@ try {
                         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                             <h6 class="text-truncate mb-3"><?= htmlspecialchars($product['title']) ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6><?= number_format($product['discount'], 0, ',', '.') ?>đ</h6>
+                                <h6>$<?= number_format($product['discount'], 2, ',', '.') ?></h6>
                                 <?php if ($product['price'] > $product['discount']): ?>
-                                    <h6 class="text-muted ml-2"><del><?= number_format($product['price'], 0, ',', '.') ?>đ</del></h6>
+                                    <h6 class="text-muted ml-2"><del>$<?= number_format($product['price'], 2, ',', '.') ?></del></h6>
                                 <?php endif; ?>
                             </div>
                         </div>

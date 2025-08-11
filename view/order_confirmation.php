@@ -264,20 +264,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_order'])) {
             foreach ($order_items as $item):
               $subtotal = $item['price'] * $item['quantity'];
               $total += $subtotal;
+              
+              $discount_amount = 0; // số tiền giảm
+              $coupon_code = '';
+
+              if (isset($_POST['apply_coupon']) && !empty($_POST['coupon_code'])) {
+                  $coupon_code = trim($_POST['coupon_code']);
+
+                  $stmt = $conn->prepare("SELECT * FROM coupons WHERE code = ? AND (expiry_date IS NULL OR expiry_date >= CURDATE())");
+                  $stmt->execute([$coupon_code]);
+                  $coupon = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                  if ($coupon) {
+                      // Kiểm tra giới hạn sử dụng
+                      if ($coupon['usage_limit'] === null || $coupon['used_count'] < $coupon['usage_limit']) {
+                          if ($coupon['discount_type'] === 'percent') {
+                              $discount_amount = ($subtotal * $coupon['discount_value']) / 100;
+                          } else {
+                              $discount_amount = $coupon['discount_value'];
+                          }
+                          $_SESSION['coupon'] = [
+                              'code' => $coupon_code,
+                              'discount_amount' => $discount_amount
+                          ];
+                      } else {
+                          $_SESSION['error'] = "Mã giảm giá đã hết lượt sử dụng.";
+                      }
+                  } else {
+                      $_SESSION['error'] = "Mã giảm giá không hợp lệ hoặc đã hết hạn.";
+                  }
+              }
+
+    // Nếu đã lưu mã giảm giá trong session thì áp dụng
+    if (isset($_SESSION['coupon'])) {
+        $discount_amount = $_SESSION['coupon']['discount_amount'];
+        $coupon_code = $_SESSION['coupon']['code'];
+    }
             ?>
               <tr>
                 <td><img src="<?= $item['thumbnail'] ?>" style="width: 50px;"></td>
                 <td><?= $item['product_title'] ?></td>
                 <td><?= $item['size_name'] ?></td>
                 <td><?= $item['color_name'] ?></td>
-                <td>$<?= number_format($item['price'], 0, ',', '.') ?></td>
+                <td>$<?= number_format($item['price'], 2, ',', '.') ?></td>
                 <td><?= $item['quantity'] ?></td>
-                <td>$<?= number_format($subtotal, 0, ',', '.') ?></td>
+                <td>$<?= number_format($subtotal, 2, ',', '.') ?></td>
               </tr>
             <?php endforeach; ?>
           </tbody>
         </table>
-        <div class="total">Total: $<?= number_format($total + 10, 2) ?></div>
+        <div class="total">Total: $<?= number_format($total + 10 - $discount_amount, 2) ?></div>
       </fieldset>
 
       <button type="submit" name="confirm_order" class="submit-btn">Confirm Order</button>

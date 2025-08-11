@@ -33,6 +33,43 @@ foreach ($cart_items as $item) {
     $total += $item['price'] * $item['quantity'];
 }
 
+    $discount_amount = 0; // số tiền giảm
+    $coupon_code = '';
+
+    if (isset($_POST['apply_coupon']) && !empty($_POST['coupon_code'])) {
+        $coupon_code = trim($_POST['coupon_code']);
+
+        $stmt = $conn->prepare("SELECT * FROM coupons WHERE code = ? AND (expiry_date IS NULL OR expiry_date >= CURDATE())");
+        $stmt->execute([$coupon_code]);
+        $coupon = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($coupon) {
+            // Kiểm tra giới hạn sử dụng
+            if ($coupon['usage_limit'] === null || $coupon['used_count'] < $coupon['usage_limit']) {
+                if ($coupon['discount_type'] === 'percent') {
+                    $discount_amount = ($subtotal * $coupon['discount_value']) / 100;
+                } else {
+                    $discount_amount = $coupon['discount_value'];
+                }
+                $_SESSION['coupon'] = [
+                    'code' => $coupon_code,
+                    'discount_amount' => $discount_amount
+                ];
+            } else {
+                $_SESSION['error'] = "Mã giảm giá đã hết lượt sử dụng.";
+            }
+        } else {
+            $_SESSION['error'] = "Mã giảm giá không hợp lệ hoặc đã hết hạn.";
+        }
+    }
+
+    // Nếu đã lưu mã giảm giá trong session thì áp dụng
+    if (isset($_SESSION['coupon'])) {
+        $discount_amount = $_SESSION['coupon']['discount_amount'];
+        $coupon_code = $_SESSION['coupon']['code'];
+    }
+                     
+
 // Xử lý đặt hàng
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullname = $_POST['fullname'] ?? '';
@@ -50,8 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($fullname && $phone && $address) {
         // Thêm đơn hàng
-        $order_sql = "INSERT INTO orders (user_id, fullname, phone, address, email, order_date, country, city, payment_method, zipcode, note, status, total_price)
-              VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?)";
+        $order_sql = "INSERT INTO orders (user_id, fullname, phone, address, email, order_date, country, city, payment_method, zipcode, note, status, total_price, coupon_code, discount_amount)
+              VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $order_stmt = $conn->prepare($order_sql);
         $order_stmt->execute([
             $user_id,
@@ -65,7 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $zipcode,
             $note,
             'chờ xác nhận',
-            $total_price
+            $total_price,
+            $coupon,
+            $discount_amount
         ]);
 
 
@@ -281,6 +320,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <h6 class="font-weight-medium">Subtotal</h6>
                                 <h6 class="font-weight-medium">$<?= number_format($total, 2) ?></h6>
                             </div>
+                             <?php if ($discount_amount > 0): ?>
+                            <div class="d-flex justify-content-between mb-3 pt-1 text-success">
+                                <h6 class="font-weight-medium">Discount (<?= htmlspecialchars($coupon_code) ?>)</h6>
+                                <h6 class="font-weight-medium">- $<?= number_format($discount_amount, 2) ?></h6>
+                            </div>
+                            <?php endif; ?>
                             <div class="d-flex justify-content-between">
                                 <h6 class="font-weight-medium">Shipping</h6>
                                 <h6 class="font-weight-medium">$10.00</h6>
@@ -290,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="d-flex justify-content-between mt-2">
                                 <input type="hidden" name="total_price" value="<?= $total + 10 ?>">
                                 <h5 class="font-weight-bold">Total</h5>
-                                <h5 class="font-weight-bold">$<?= number_format($total + 10, 2) ?></h5>
+                                <h5 class="font-weight-bold">$<?= number_format($total + 10 - $discount_amount, 2) ?></h5>
                             </div>
                         </div>
                     </div>

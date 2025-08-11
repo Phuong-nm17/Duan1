@@ -19,7 +19,9 @@ try {
                 o.phone,
                 o.fullname,
                 o.email,
-                o.note
+                o.note,
+                o.coupon_code,
+                o.discount_amount
             FROM order_details od
             JOIN product p ON od.product_id = p.id
             JOIN size s ON od.size_id = s.id
@@ -174,6 +176,7 @@ try {
                     <th>Số lượng</th>
                     <th>Kích cỡ</th>
                     <th>Màu sắc</th>
+                    <th>Giảm giá</th>
                     <th>Thành tiền</th>
                 </tr>
             </thead>
@@ -181,7 +184,7 @@ try {
                 <?php
                 $total = 0;
                 foreach ($order_items as $item):
-                    $subtotal = $item['price'] * $item['quantity'];
+                    $subtotal = $item['price'] * $item['quantity'] - $item['discount_amount'];
                     $total + 10;
                     $total += $subtotal;
                 ?>
@@ -196,11 +199,12 @@ try {
                             </div>
 
                         </td>
-                        <td><?= number_format($item['price'], 0, ',', '.') ?> $</td>
+                        <td>$<?= number_format($item['price'], 2, ',', '.') ?> </td>
                         <td><?= $item['quantity'] ?></td>
                         <td><?= $item['size_name'] ?></td>
                         <td><?= $item['color_name'] ?></td>
-                        <td><?= number_format($subtotal, 0, ',', '.') ?> $</td>
+                        <td>$<?= $item['discount_amount'] ?></td>
+                        <td>$<?= number_format($subtotal, 2, ',', '.') ?> </td>
                     </tr>
                 <?php endforeach ?>
             </tbody>
@@ -209,11 +213,11 @@ try {
                 <tfoot>
                     <tr class="text-end">
                         <td colspan="5">Phí vận chuyển:</td>
-                        <td><?= number_format($shipping, 0, ',', '.') ?> $</td>
+                        <td>$<?= number_format($shipping, 2, ',', '.') ?> </td>
                     </tr>
                     <tr class="fw-bold text-end">
                         <td colspan="5">Tổng cộng:</td>
-                        <td><?= number_format($total + $shipping, 0, ',', '.') ?> $</td>
+                        <td>$<?= number_format($total + $shipping, 2, ',', '.') ?> </td>
                     </tr>
                 </tfoot>
 

@@ -253,6 +253,43 @@ $result = $conn->query($sql);
                             $item_total = $row['variant_price'] * $row['quantity'];
                             $subtotal += $item_total;
                         ?>
+                        <?php
+                        $discount_amount = 0; // số tiền giảm
+                        $coupon_code = '';
+
+                        if (isset($_POST['apply_coupon']) && !empty($_POST['coupon_code'])) {
+                            $coupon_code = trim($_POST['coupon_code']);
+
+                            $stmt = $conn->prepare("SELECT * FROM coupons WHERE code = ? AND (expiry_date IS NULL OR expiry_date >= CURDATE())");
+                            $stmt->execute([$coupon_code]);
+                            $coupon = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                            if ($coupon) {
+                                // Kiểm tra giới hạn sử dụng
+                                if ($coupon['usage_limit'] === null || $coupon['used_count'] < $coupon['usage_limit']) {
+                                    if ($coupon['discount_type'] === 'percent') {
+                                        $discount_amount = ($subtotal * $coupon['discount_value']) / 100;
+                                    } else {
+                                        $discount_amount = $coupon['discount_value'];
+                                    }
+                                    $_SESSION['coupon'] = [
+                                        'code' => $coupon_code,
+                                        'discount_amount' => $discount_amount
+                                    ];
+                                } else {
+                                    $_SESSION['error'] = "Mã giảm giá đã hết lượt sử dụng.";
+                                }
+                            } else {
+                                $_SESSION['error'] = "Mã giảm giá không hợp lệ hoặc đã hết hạn.";
+                            }
+                        }
+
+                        // Nếu đã lưu mã giảm giá trong session thì áp dụng
+                        // if (isset($_SESSION['coupon'])) {
+                        //     $discount_amount = $_SESSION['coupon']['discount_amount'];
+                        //     $coupon_code = $_SESSION['coupon']['code'];
+                        // }
+                        ?>
 
                             <tr>
                                 <td class="align-middle">
@@ -308,11 +345,11 @@ $result = $conn->query($sql);
 <?php endif; ?>
             </div>
             <div class="col-lg-4">
-                <form class="mb-5" action="">
+                <form class="mb-5" action="" method="POST">
                     <div class="input-group">
-                        <input type="text" class="form-control p-4" placeholder="Coupon Code">
+                        <input type="text" name="coupon_code" class="form-control p-4" placeholder="Coupon Code" value="">
                         <div class="input-group-append">
-                            <button class="btn btn-primary">Apply Coupon</button>
+                            <button type="submit" name="apply_coupon" class="btn btn-primary">Apply Coupon</button>
                         </div>
                     </div>
                 </form>
@@ -325,18 +362,32 @@ $result = $conn->query($sql);
                             <h6 class="font-weight-medium">Subtotal</h6>
                             <h6 class="font-weight-medium">$<?= number_format($subtotal, 2) ?></h6>
                         </div>
+
+                        <?php
+// Nếu không nhập mã thì gán 0
+if (empty($coupon_code)) {
+    $discount_amount = 0;
+}
+?>
+
+<div class="d-flex justify-content-between mb-3 pt-1 text-success">
+    <h6 class="font-weight-medium">
+        Discount <?= !empty($coupon_code) ? '(' . htmlspecialchars($coupon_code) . ')' : '' ?>
+    </h6>
+    <h6 class="font-weight-medium">
+        - $<?= number_format($discount_amount, 2) ?>
+    </h6>
+</div>
+
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Shipping</h6>
                             <h6 class="font-weight-medium">$10.00</h6>
                         </div>
-                        ...
-                        <h5 class="font-weight-bold">Total</h5>
-                        <h5 class="font-weight-bold">$<?= number_format($subtotal + 10, 2) ?></h5>
                     </div>
                     <div class="card-footer border-secondary bg-transparent">
                         <div class="d-flex justify-content-between mt-2">
                             <h5 class="font-weight-bold">Total</h5>
-                            <h5 class="font-weight-bold">$<?= number_format($subtotal + 10, 2) ?></h5>
+                            <h5 class="font-weight-bold">$<?= number_format($subtotal - $discount_amount + 10, 2) ?></h5>
                         </div>
                         <a href="index.php?act=checkout">
                             <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>

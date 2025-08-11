@@ -59,9 +59,9 @@ if (isset($_GET['search'])): ?>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
                             <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6> $ <?= number_format($p['discount']) ?></h6>
+                                <h6> $ <?= number_format($p['price']) ?></h6>
 
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price'], 2) ?></del></h6>
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount'], 2) ?></del></h6>
                             </div>
                         </div>
                         <div class="d-flex card-footer bg-light border justify-content-between">
@@ -212,10 +212,10 @@ if (isset($_GET['search'])): ?>
                             <a href="index.php?act=ProductDetail&id=<?= $p['id'] ?>"> <img class="w-100 img-fluid" src="<?= $p['thumbnail'] ?>" alt=""></a>
                         </div>
                         <div class="card-body border-left border-right p-0 text-center pb-3 pt-4">
-                            <h6 class="text-truncate mb-3"><?= $p['title'] ?></h6>
+                            <h6 class="text-truncate mb-3 "><?= $p['title'] ?></h6>
                             <div class="d-flex justify-content-center">
-                                <h6> $<?= number_format($p['price'], 2) ?></h6>
-                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['discount'], 2) ?></del></h6>
+                                <h6> $<?= number_format($p['discount'], 2) ?></h6>
+                                <h6 class="text-muted ml-2"><del>$<?= number_format($p['price'], 2) ?></del></h6>
                             </div>
                         </div>
                         <div class="d-flex card-footer bg-light border justify-content-between">

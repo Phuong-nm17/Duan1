@@ -120,6 +120,7 @@ if (isset($_SESSION['email'])) {
         .submenu a:hover {
             background: #f1f1f1;
         }
+        
     </style>
 
 </head>

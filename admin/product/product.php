@@ -212,8 +212,8 @@ if (!isset($_SESSION['admin'])) header("Location: login.php");
                     <tr>
                         <td><?= $index + 1 ?></td>
                         <td><?= $p['title'] ?></td>
-                        <td><?= number_format($p['price'], 0, ',', '.') ?> $</td>
-                        <td><?= number_format($p['discount'], 0, ',', '.') ?> $</td>
+                        <td>$<?= number_format($p['price'], 2, ',', '.') ?> </td>
+                        <td>$<?= number_format($p['discount'], 2, ',', '.') ?> </td>
                         <td><img src="<?= $p['thumbnail'] ?>" width="50"></td>
                         <td><?= $p['description'] ?></td>
                         <td><?= $p['category_name'] ?></td>
